@@ -13,6 +13,7 @@ import CartBar from "@/components/ui/CartBar";
 function MinibarContent() {
   const [category, setCategory] = useState(minibarCategories[0].id);
   const [minibarItems, setMinibarItems] = useState<MenuItem[]>(defaultItems);
+  const [openId, setOpenId] = useState<string | null>(null);
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
@@ -30,7 +31,14 @@ function MinibarContent() {
       <PageHeader title="Minibar" subtitle="Directo a tu habitación" />
 
       <div className="sticky top-[86px] z-20 bg-[var(--color-sand)]/90 backdrop-blur-md py-3">
-        <CategoryTabs categories={minibarCategories} active={category} onChange={setCategory} />
+        <CategoryTabs
+          categories={minibarCategories}
+          active={category}
+          onChange={(c) => {
+            setCategory(c);
+            setOpenId(null);
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
@@ -41,6 +49,8 @@ function MinibarContent() {
             quantity={quantityOf(item.id)}
             onAdd={() => addItem(item)}
             onRemove={() => decrement(item.id)}
+            isOpen={openId === item.id}
+            onToggle={() => setOpenId((cur) => (cur === item.id ? null : item.id))}
           />
         ))}
       </div>

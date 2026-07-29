@@ -13,6 +13,7 @@ import CartBar from "@/components/ui/CartBar";
 function BoutiqueContent() {
   const [category, setCategory] = useState(boutiqueCategories[0].id);
   const [boutiqueItems, setBoutiqueItems] = useState<MenuItem[]>(defaultItems);
+  const [openId, setOpenId] = useState<string | null>(null);
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
@@ -30,7 +31,14 @@ function BoutiqueContent() {
       <PageHeader title="Boutique" subtitle="Detalles de AMBAR para llevar" />
 
       <div className="sticky top-[86px] z-20 bg-[var(--color-sand)]/90 backdrop-blur-md py-3">
-        <CategoryTabs categories={boutiqueCategories} active={category} onChange={setCategory} />
+        <CategoryTabs
+          categories={boutiqueCategories}
+          active={category}
+          onChange={(c) => {
+            setCategory(c);
+            setOpenId(null);
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
@@ -41,6 +49,8 @@ function BoutiqueContent() {
             quantity={quantityOf(item.id)}
             onAdd={() => addItem(item)}
             onRemove={() => decrement(item.id)}
+            isOpen={openId === item.id}
+            onToggle={() => setOpenId((cur) => (cur === item.id ? null : item.id))}
           />
         ))}
       </div>

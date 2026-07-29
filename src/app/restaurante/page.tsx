@@ -13,6 +13,7 @@ import ProductCardReadOnly from "@/components/ui/ProductCardReadOnly";
 export default function RestaurantPage() {
   const [category, setCategory] = useState(restaurantCategories[0].id);
   const [restaurantItems, setRestaurantItems] = useState<MenuItem[]>(defaultItems);
+  const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     setRestaurantItems(loadCollection<MenuItem>("restaurantItems", defaultItems));
@@ -25,12 +26,24 @@ export default function RestaurantPage() {
       <PageHeader title="Restaurante" subtitle="Nuestro menú" />
 
       <div className="sticky top-[86px] z-20 bg-[var(--color-sand)]/90 backdrop-blur-md py-3">
-        <CategoryTabs categories={restaurantCategories} active={category} onChange={setCategory} />
+        <CategoryTabs
+          categories={restaurantCategories}
+          active={category}
+          onChange={(c) => {
+            setCategory(c);
+            setOpenId(null);
+          }}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
         {filtered.map((item) => (
-          <ProductCardReadOnly key={item.id} item={item} />
+          <ProductCardReadOnly
+            key={item.id}
+            item={item}
+            isOpen={openId === item.id}
+            onToggle={() => setOpenId((cur) => (cur === item.id ? null : item.id))}
+          />
         ))}
       </div>
     </main>
