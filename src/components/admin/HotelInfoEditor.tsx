@@ -27,22 +27,12 @@ export default function HotelInfoEditor() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--color-ink-soft)]">
-          Información general mostrada en WiFi, Guía y Contacto
+          Información general mostrada en Guía y Contacto
         </p>
         {saved && <span className="text-xs font-medium text-emerald-600">Guardado ✓</span>}
       </div>
 
       <div className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)] space-y-3">
-        <Field
-          label="Nombre de la red WiFi"
-          value={info.wifiSsid}
-          onChange={(v) => persist({ ...info, wifiSsid: v })}
-        />
-        <Field
-          label="Contraseña WiFi"
-          value={info.wifiPassword}
-          onChange={(v) => persist({ ...info, wifiPassword: v })}
-        />
         <Field
           label="Número de WhatsApp de recepción (sin +, ej. 573001234567)"
           value={info.whatsappNumber}

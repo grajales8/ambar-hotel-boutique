@@ -1,18 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
-import { places } from "@/data/places";
+import { MapPin, Phone, Globe } from "lucide-react";
+import { places as defaultPlaces } from "@/data/places";
+import { loadCollection } from "@/lib/storage";
+import { PlaceOfInterest } from "@/lib/types";
 import PageHeader from "@/components/ui/PageHeader";
 
 export default function DiscoverPage() {
+  const [places, setPlaces] = useState<PlaceOfInterest[]>(defaultPlaces);
+
+  useEffect(() => {
+    setPlaces(loadCollection<PlaceOfInterest>("places", defaultPlaces));
+  }, []);
+
+  const activePlaces = places.filter((p) => p.active);
+
   return (
     <main className="min-h-screen bg-[var(--color-sand)] pb-10">
       <PageHeader title="Descubre Cali" subtitle="Recomendaciones cerca de AMBAR" />
 
       <div className="space-y-4 px-5 pt-4">
-        {places.map((place, i) => (
+        {activePlaces.map((place, i) => (
           <motion.div
             key={place.id}
             initial={{ opacity: 0, y: 14 }}
@@ -28,23 +39,52 @@ export default function DiscoverPage() {
                 sizes="(max-width: 480px) 100vw, 500px"
                 className="object-cover"
               />
+              <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-[var(--color-navy)]">
+                {place.category}
+              </span>
             </div>
             <div className="p-4">
               <h3 className="font-display text-lg text-[var(--color-navy)]">{place.name}</h3>
               <p className="mt-1 text-sm leading-relaxed text-[var(--color-ink-soft)]">
                 {place.description}
               </p>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  place.mapsQuery
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-navy)] px-4 py-2.5 text-sm font-medium text-white active:scale-95 transition-transform"
-              >
-                <MapPin size={15} />
-                Abrir en Google Maps
-              </a>
+
+              <div className="mt-3 space-y-1 text-xs text-[var(--color-ink-soft)]">
+                {place.address && <p>{place.address}</p>}
+                {place.hours && <p>{place.hours}</p>}
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <a
+                  href={place.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--color-navy)] px-4 py-2.5 text-sm font-medium text-white active:scale-95 transition-transform"
+                >
+                  <MapPin size={15} />
+                  Abrir en Google Maps
+                </a>
+                {place.phone && (
+                  <a
+                    href={`tel:${place.phone.replace(/\s/g, "")}`}
+                    className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
+                  >
+                    <Phone size={15} />
+                    Llamar
+                  </a>
+                )}
+                {place.website && (
+                  <a
+                    href={place.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
+                  >
+                    <Globe size={15} />
+                    Sitio web
+                  </a>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}

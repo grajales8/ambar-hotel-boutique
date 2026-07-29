@@ -8,10 +8,14 @@ import { restaurantCategories, restaurantItems } from "@/data/restaurant";
 import { minibarCategories, minibarItems } from "@/data/minibar";
 import CatalogEditor from "@/components/admin/CatalogEditor";
 import HotelInfoEditor from "@/components/admin/HotelInfoEditor";
+import PlacesEditor from "@/components/admin/PlacesEditor";
+import WifiEditor from "@/components/admin/WifiEditor";
 
 const TABS = [
   { id: "restaurante", label: "Restaurante" },
   { id: "minibar", label: "Minibar" },
+  { id: "descubre", label: "Descubre Cali" },
+  { id: "wifi", label: "Redes WiFi" },
   { id: "info", label: "Información" },
 ] as const;
 
@@ -52,12 +56,12 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="scrollbar-thin mt-4 flex gap-2 overflow-x-auto pb-1">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 tab === t.id
                   ? "bg-[var(--color-navy)] text-white"
                   : "bg-white text-[var(--color-ink-soft)] shadow-[var(--shadow-card)]"
@@ -84,6 +88,8 @@ export default function AdminDashboardPage() {
             initialItems={minibarItems}
           />
         )}
+        {tab === "descubre" && <PlacesEditor />}
+        {tab === "wifi" && <WifiEditor />}
         {tab === "info" && <HotelInfoEditor />}
       </div>
     </main>

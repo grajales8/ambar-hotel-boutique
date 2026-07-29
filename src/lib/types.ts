@@ -48,16 +48,28 @@ export type ScheduleEntry = {
 export type PlaceOfInterest = {
   id: string;
   name: string;
+  category: string;
   description: string;
   image: string;
-  mapsQuery: string; // usado para construir el link a Google Maps
+  address: string;
+  hours: string;
+  phone?: string;
+  mapsUrl: string; // enlace directo a Google Maps
+  website?: string;
+  active: boolean;
+};
+
+export type WifiNetwork = {
+  id: string;
+  ssid: string;
+  password: string;
+  description?: string;
+  active: boolean;
 };
 
 export type HotelInfo = {
   name: string;
   tagline: string;
-  wifiSsid: string;
-  wifiPassword: string;
   whatsappNumber: string; // formato internacional sin '+' ej. 573001234567
   emergencyNumbers: { label: string; number: string }[];
   checkOutTime: string;

@@ -107,9 +107,9 @@ export default function MenuGrid() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.08 * mainEntries.length }}
         whileTap={{ scale: 0.97 }}
-        className="mx-auto mt-5 flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium text-[var(--color-ink-soft)]"
+        className="mx-auto mt-5 flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-[var(--color-ink-soft)]"
       >
-        <Star size={13} strokeWidth={1.75} className="text-[var(--color-gold)]" />
+        <Star size={15} strokeWidth={1.75} className="text-[var(--color-gold)]" />
         Calificar experiencia
       </motion.a>
     </div>

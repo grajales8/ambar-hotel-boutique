@@ -4,8 +4,6 @@ import { WHATSAPP_NUMBER, GOOGLE_REVIEW_URL } from "@/lib/config";
 export const hotelInfo: HotelInfo = {
   name: "AMBAR Hotel Boutique",
   tagline: "Un refugio elegante en el corazón de Cali",
-  wifiSsid: "AMBAR_Huespedes",
-  wifiPassword: "Ambar2025",
   whatsappNumber: WHATSAPP_NUMBER,
   emergencyNumbers: [
     { label: "Recepción 24h", number: "601 000 0000" },

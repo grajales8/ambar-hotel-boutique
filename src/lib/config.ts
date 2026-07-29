@@ -20,7 +20,7 @@ export const siteConfig = {
 // Número de WhatsApp de recepción, formato internacional sin "+".
 // TODO integración: reemplazar por variable de entorno NEXT_PUBLIC_WHATSAPP_NUMBER
 export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "573000000000";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "573186059083";
 
 // ---------------------------------------------------------------------------
 // Puntos de integración futura (hoy no implementados, solo documentados).
