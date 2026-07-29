@@ -5,6 +5,7 @@ import { Trash2, Plus } from "lucide-react";
 import { MenuItem, MenuCategory } from "@/lib/types";
 import { loadCollection, saveCollection } from "@/lib/storage";
 import { formatCOP } from "@/lib/cart-context";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 export default function CatalogEditor({
   storageKey,
@@ -65,13 +66,13 @@ export default function CatalogEditor({
       <div className="space-y-3">
         {items.map((item) => (
           <div key={item.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)]">
-            <div className="flex items-start gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.image}
-                alt=""
-                className="h-16 w-16 shrink-0 rounded-xl object-cover"
-              />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              <div className="w-full sm:w-40">
+                <ImageUploader
+                  value={item.image}
+                  onChange={(url) => updateItem(item.id, { image: url })}
+                />
+              </div>
               <div className="min-w-0 flex-1 space-y-2">
                 <input
                   value={item.name}
@@ -85,12 +86,6 @@ export default function CatalogEditor({
                   rows={2}
                   className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
                   placeholder="Descripción"
-                />
-                <input
-                  value={item.image}
-                  onChange={(e) => updateItem(item.id, { image: e.target.value })}
-                  className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
-                  placeholder="URL de la fotografía"
                 />
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">

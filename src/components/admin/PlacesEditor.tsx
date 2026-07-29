@@ -5,6 +5,7 @@ import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import { PlaceOfInterest } from "@/lib/types";
 import { loadCollection, saveCollection } from "@/lib/storage";
 import { places as defaultPlaces } from "@/data/places";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 const STORAGE_KEY = "places";
 
@@ -69,9 +70,13 @@ export default function PlacesEditor() {
       <div className="space-y-3">
         {places.map((place, index) => (
           <div key={place.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)]">
-            <div className="flex items-start gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={place.image} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              <div className="w-full sm:w-40">
+                <ImageUploader
+                  value={place.image}
+                  onChange={(url) => updatePlace(place.id, { image: url })}
+                />
+              </div>
 
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex gap-2">
@@ -95,13 +100,6 @@ export default function PlacesEditor() {
                   rows={2}
                   placeholder="Descripción"
                   className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
-                />
-
-                <input
-                  value={place.image}
-                  onChange={(e) => updatePlace(place.id, { image: e.target.value })}
-                  placeholder="URL de la fotografía"
-                  className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
                 />
 
                 <div className="flex gap-2">

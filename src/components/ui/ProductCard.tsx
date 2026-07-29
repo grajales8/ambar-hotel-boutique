@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { MenuItem } from "@/lib/types";
@@ -26,12 +25,11 @@ export default function ProductCard({
       className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]"
     >
       <div className="relative h-36 w-full">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={item.image}
           alt={item.name}
-          fill
-          sizes="(max-width: 480px) 100vw, 400px"
-          className="object-cover"
+          className="h-full w-full object-cover"
         />
         {!item.available && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50">

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Globe } from "lucide-react";
 import { places as defaultPlaces } from "@/data/places";
@@ -32,12 +31,11 @@ export default function DiscoverPage() {
             className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]"
           >
             <div className="relative h-44 w-full">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={place.image}
                 alt={place.name}
-                fill
-                sizes="(max-width: 480px) 100vw, 500px"
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
               <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-[var(--color-navy)]">
                 {place.category}
