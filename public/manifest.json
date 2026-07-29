@@ -1,0 +1,25 @@
+{
+  "name": "AMBAR Hotel Boutique",
+  "short_name": "AMBAR",
+  "description": "Tu estadía en AMBAR Hotel Boutique, a un toque de distancia.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8EEE2",
+  "theme_color": "#05244F",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

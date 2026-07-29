@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+  Sistema de tokens — AMBAR Hotel Boutique
+  Azul oscuro (marca):   #05244F
+  Beige (fondo cálido):  #F8EEE2
+  Blanco:                #FFFFFF
+  Dorado (acento sutil): #C6A15B  -- usar SOLO en detalles: hairlines, iconos, sello
+*/
+:root {
+  --color-navy: #05244F;
+  --color-navy-2: #0B3568;
+  --color-sand: #F8EEE2;
+  --color-sand-2: #F1E4D2;
+  --color-white: #FFFFFF;
+  --color-gold: #C6A15B;
+  --color-gold-soft: #DCC28F;
+  --color-ink: #1B2635;
+  --color-ink-soft: #4B5768;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Manrope", sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(5, 36, 79, 0.04), 0 8px 24px rgba(5, 36, 79, 0.08);
+  --shadow-card-hover: 0 2px 4px rgba(5, 36, 79, 0.06), 0 16px 32px rgba(5, 36, 79, 0.12);
+}
+
+@theme inline {
+  --color-navy: var(--color-navy);
+  --color-navy-2: var(--color-navy-2);
+  --color-sand: var(--color-sand);
+  --color-sand-2: var(--color-sand-2);
+  --color-white: var(--color-white);
+  --color-gold: var(--color-gold);
+  --color-gold-soft: var(--color-gold-soft);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Sello dorado — elemento de firma reutilizado como divisor de sección */
+.seal-ring {
+  border: 1px solid var(--color-gold);
+  position: relative;
+}
+.seal-ring::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--color-gold-soft);
+  border-radius: inherit;
+}
+
+.gold-hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold) 20%,
+    var(--color-gold) 80%,
+    transparent
+  );
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scrollbar discreta para carritos y listas horizontales */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--color-gold-soft);
+  border-radius: 4px;
+}
