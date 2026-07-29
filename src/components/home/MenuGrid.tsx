@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import {
   UtensilsCrossed,
   CupSoda,
+  ShoppingBag,
   BellRing,
   BookOpenText,
   Compass,
@@ -29,14 +30,16 @@ type MenuEntry = {
   action: MenuAction;
 };
 
-// Los 8 accesos principales de la app, en tarjetas del mismo tamaño para
-// mantener la grilla perfectamente simétrica (4 filas x 2 columnas).
+// Los 10 accesos principales de la app, en tarjetas del mismo tamaño para
+// mantener la grilla perfectamente simétrica (5 filas x 2 columnas), en el
+// orden de prioridad solicitado.
 const mainEntries: MenuEntry[] = [
+  { id: "guia-hotel", label: "Guía del Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
+  { id: "guia-habitacion", label: "Guía de la habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
+  { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
   { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
   { id: "minibar", label: "Minibar", icon: CupSoda, action: { type: "link", href: "/minibar" } },
-  { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
-  { id: "guia-habitacion", label: "Guía de la habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
-  { id: "guia-hotel", label: "Guía del Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
+  { id: "boutique", label: "Boutique", icon: ShoppingBag, action: { type: "link", href: "/boutique" } },
   { id: "descubre", label: "Descubre Cali", icon: MapPinned, action: { type: "link", href: "/descubre" } },
   { id: "wifi", label: "WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
   {
@@ -48,6 +51,7 @@ const mainEntries: MenuEntry[] = [
       message: "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta.",
     },
   },
+  { id: "calificar", label: "Calificar experiencia", icon: Star, action: { type: "external", href: GOOGLE_REVIEW_URL } },
 ];
 
 function renderAction(action: MenuAction, children: React.ReactNode, key: string) {
@@ -97,21 +101,6 @@ export default function MenuGrid() {
           return renderAction(entry.action, card, entry.id);
         })}
       </div>
-
-      {/* Acción secundaria y discreta: no compite con los accesos principales */}
-      <motion.a
-        href={GOOGLE_REVIEW_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.08 * mainEntries.length }}
-        whileTap={{ scale: 0.97 }}
-        className="mx-auto mt-5 flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-[var(--color-ink-soft)]"
-      >
-        <Star size={15} strokeWidth={1.75} className="text-[var(--color-gold)]" />
-        Calificar experiencia
-      </motion.a>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { LogOut } from "lucide-react";
 import { hasAdminSession, setAdminSession } from "@/lib/storage";
 import { restaurantCategories, restaurantItems } from "@/data/restaurant";
 import { minibarCategories, minibarItems } from "@/data/minibar";
+import { boutiqueCategories, boutiqueItems } from "@/data/boutique";
 import CatalogEditor from "@/components/admin/CatalogEditor";
 import HotelInfoEditor from "@/components/admin/HotelInfoEditor";
 import PlacesEditor from "@/components/admin/PlacesEditor";
@@ -14,6 +15,7 @@ import WifiEditor from "@/components/admin/WifiEditor";
 const TABS = [
   { id: "restaurante", label: "Restaurante" },
   { id: "minibar", label: "Minibar" },
+  { id: "boutique", label: "Boutique" },
   { id: "descubre", label: "Descubre Cali" },
   { id: "wifi", label: "Redes WiFi" },
   { id: "info", label: "Información" },
@@ -86,6 +88,13 @@ export default function AdminDashboardPage() {
             storageKey="minibarItems"
             categories={minibarCategories}
             initialItems={minibarItems}
+          />
+        )}
+        {tab === "boutique" && (
+          <CatalogEditor
+            storageKey="boutiqueItems"
+            categories={boutiqueCategories}
+            initialItems={boutiqueItems}
           />
         )}
         {tab === "descubre" && <PlacesEditor />}
