@@ -17,7 +17,13 @@ function BoutiqueContent() {
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
-    setBoutiqueItems(loadCollection<MenuItem>("boutiqueItems", defaultItems));
+    let active = true;
+    loadCollection<MenuItem>("boutiqueItems", defaultItems).then((data) => {
+      if (active) setBoutiqueItems(data);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const filtered = boutiqueItems.filter((i) => i.categoryId === category);

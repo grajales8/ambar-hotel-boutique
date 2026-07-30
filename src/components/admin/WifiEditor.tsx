@@ -1,26 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
 import { WifiNetwork } from "@/lib/types";
-import { loadCollection, saveCollection } from "@/lib/storage";
+import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { wifiNetworks as defaultNetworks } from "@/data/wifi";
 
 const STORAGE_KEY = "wifiNetworks";
 
 export default function WifiEditor() {
   const [networks, setNetworks] = useState<WifiNetwork[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setNetworks(loadCollection<WifiNetwork>(STORAGE_KEY, defaultNetworks));
+    let active = true;
+    loadCollection<WifiNetwork>(STORAGE_KEY, defaultNetworks).then((data) => {
+      if (active) {
+        setNetworks(data);
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const debouncedSave = useMemo(
+    () =>
+      debounce((next: WifiNetwork[]) => {
+        saveCollection(STORAGE_KEY, next).then(() => {
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1200);
+        });
+      }, 700),
+    []
+  );
 
   function persist(next: WifiNetwork[]) {
     setNetworks(next);
-    saveCollection(STORAGE_KEY, next);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1200);
+    debouncedSave(next);
   }
 
   function updateNetwork(id: string, patch: Partial<WifiNetwork>) {
@@ -41,6 +60,10 @@ export default function WifiEditor() {
       active: true,
     };
     persist([...networks, next]);
+  }
+
+  if (loading) {
+    return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (

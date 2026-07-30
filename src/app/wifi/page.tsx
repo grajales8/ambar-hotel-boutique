@@ -13,7 +13,13 @@ export default function WifiPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setNetworks(loadCollection<WifiNetwork>("wifiNetworks", defaultNetworks));
+    let active = true;
+    loadCollection<WifiNetwork>("wifiNetworks", defaultNetworks).then((data) => {
+      if (active) setNetworks(data);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const activeNetworks = networks.filter((n) => n.active);

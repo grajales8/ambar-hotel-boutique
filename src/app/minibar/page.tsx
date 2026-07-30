@@ -17,7 +17,13 @@ function MinibarContent() {
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
-    setMinibarItems(loadCollection<MenuItem>("minibarItems", defaultItems));
+    let active = true;
+    loadCollection<MenuItem>("minibarItems", defaultItems).then((data) => {
+      if (active) setMinibarItems(data);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const filtered = minibarItems.filter((i) => i.categoryId === category);

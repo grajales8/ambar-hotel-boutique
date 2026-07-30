@@ -1,26 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HotelInfo } from "@/lib/types";
-import { loadCollection, saveCollection } from "@/lib/storage";
+import { loadSingleton, saveSingleton, debounce } from "@/lib/storage";
 import { hotelInfo as defaultHotelInfo } from "@/data/hotelInfo";
 
 const STORAGE_KEY = "hotelInfo";
+const DOC_ID = "main";
 
 export default function HotelInfoEditor() {
   const [info, setInfo] = useState<HotelInfo>(defaultHotelInfo);
+  const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const [stored] = loadCollection<HotelInfo>(STORAGE_KEY, [defaultHotelInfo]);
-    setInfo(stored);
+    let active = true;
+    loadSingleton<HotelInfo>(STORAGE_KEY, DOC_ID, defaultHotelInfo).then((data) => {
+      if (active) {
+        setInfo(data);
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const debouncedSave = useMemo(
+    () =>
+      debounce((next: HotelInfo) => {
+        saveSingleton(STORAGE_KEY, DOC_ID, next).then(() => {
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1200);
+        });
+      }, 700),
+    []
+  );
 
   function persist(next: HotelInfo) {
     setInfo(next);
-    saveCollection(STORAGE_KEY, [next]);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1200);
+    debouncedSave(next);
+  }
+
+  if (loading) {
+    return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (
@@ -51,10 +74,8 @@ export default function HotelInfoEditor() {
       </div>
 
       <p className="px-1 text-xs text-[var(--color-ink-soft)]">
-        Nota: por ahora estos cambios se guardan en este dispositivo/navegador
-        (localStorage). Al conectar Firebase o Supabase, este mismo panel
-        podrá administrar la información para todos los huéspedes en tiempo
-        real sin cambios en el diseño.
+        Estos cambios se guardan en Firebase y se ven igual en cualquier
+        dispositivo, no solo en este navegador.
       </p>
     </div>
   );

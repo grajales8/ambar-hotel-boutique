@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import { PlaceOfInterest } from "@/lib/types";
-import { loadCollection, saveCollection } from "@/lib/storage";
+import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { places as defaultPlaces } from "@/data/places";
 import ImageUploader from "@/components/admin/ImageUploader";
 
@@ -11,17 +11,36 @@ const STORAGE_KEY = "places";
 
 export default function PlacesEditor() {
   const [places, setPlaces] = useState<PlaceOfInterest[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setPlaces(loadCollection<PlaceOfInterest>(STORAGE_KEY, defaultPlaces));
+    let active = true;
+    loadCollection<PlaceOfInterest>(STORAGE_KEY, defaultPlaces).then((data) => {
+      if (active) {
+        setPlaces([...data].sort((a, b) => a.order - b.order));
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const debouncedSave = useMemo(
+    () =>
+      debounce((next: PlaceOfInterest[]) => {
+        saveCollection(STORAGE_KEY, next).then(() => {
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1200);
+        });
+      }, 700),
+    []
+  );
 
   function persist(next: PlaceOfInterest[]) {
     setPlaces(next);
-    saveCollection(STORAGE_KEY, next);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1200);
+    debouncedSave(next);
   }
 
   function updatePlace(id: string, patch: Partial<PlaceOfInterest>) {
@@ -45,6 +64,7 @@ export default function PlacesEditor() {
       hours: "",
       mapsUrl: "",
       active: true,
+      order: places.length,
     };
     persist([...places, next]);
   }
@@ -55,7 +75,14 @@ export default function PlacesEditor() {
     if (targetIndex < 0 || targetIndex >= places.length) return;
     const next = [...places];
     [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-    persist(next);
+    // Reasigna `order` según la nueva posición, para que el orden
+    // sobreviva a una relectura desde Firestore.
+    const reordered = next.map((p, i) => ({ ...p, order: i }));
+    persist(reordered);
+  }
+
+  if (loading) {
+    return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (

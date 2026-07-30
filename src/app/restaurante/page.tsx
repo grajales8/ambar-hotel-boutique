@@ -16,7 +16,13 @@ export default function RestaurantPage() {
   const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
-    setRestaurantItems(loadCollection<MenuItem>("restaurantItems", defaultItems));
+    let active = true;
+    loadCollection<MenuItem>("restaurantItems", defaultItems).then((data) => {
+      if (active) setRestaurantItems(data);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const filtered = restaurantItems.filter((i) => i.categoryId === category);

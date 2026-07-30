@@ -57,6 +57,7 @@ export type PlaceOfInterest = {
   mapsUrl: string; // enlace directo a Google Maps
   website?: string;
   active: boolean;
+  order: number; // controla el orden de aparición para el huésped
 };
 
 export type WifiNetwork = {

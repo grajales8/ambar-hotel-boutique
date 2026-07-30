@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2, Plus } from "lucide-react";
 import { MenuItem, MenuCategory } from "@/lib/types";
-import { loadCollection, saveCollection } from "@/lib/storage";
+import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { formatCOP } from "@/lib/cart-context";
 import ImageUploader from "@/components/admin/ImageUploader";
 
@@ -17,18 +17,39 @@ export default function CatalogEditor({
   initialItems: MenuItem[];
 }) {
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    setItems(loadCollection<MenuItem>(storageKey, initialItems));
+    let active = true;
+    loadCollection<MenuItem>(storageKey, initialItems).then((data) => {
+      if (active) {
+        setItems(data);
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [storageKey]);
+
+  // Escritura diferida: espera a que dejes de escribir antes de mandar el
+  // guardado a Firestore, para no disparar una escritura por cada tecla.
+  const debouncedSave = useMemo(
+    () =>
+      debounce((next: MenuItem[]) => {
+        saveCollection(storageKey, next).then(() => {
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1200);
+        });
+      }, 700),
+    [storageKey]
+  );
 
   function persist(next: MenuItem[]) {
     setItems(next);
-    saveCollection(storageKey, next);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1200);
+    debouncedSave(next);
   }
 
   function updateItem(id: string, patch: Partial<MenuItem>) {
@@ -52,6 +73,10 @@ export default function CatalogEditor({
       available: true,
     };
     persist([...items, next]);
+  }
+
+  if (loading) {
+    return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (

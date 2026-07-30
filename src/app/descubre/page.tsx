@@ -12,7 +12,13 @@ export default function DiscoverPage() {
   const [places, setPlaces] = useState<PlaceOfInterest[]>(defaultPlaces);
 
   useEffect(() => {
-    setPlaces(loadCollection<PlaceOfInterest>("places", defaultPlaces));
+    let active = true;
+    loadCollection<PlaceOfInterest>("places", defaultPlaces).then((data) => {
+      if (active) setPlaces([...data].sort((a, b) => a.order - b.order));
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   const activePlaces = places.filter((p) => p.active);

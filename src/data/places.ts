@@ -11,6 +11,7 @@ export const places: PlaceOfInterest[] = [
     hours: "6:00 a.m. – 6:00 p.m.",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Cristo%20Rey%20Cali",
     active: true,
+    order: 0,
   },
   {
     id: "p-2",
@@ -22,6 +23,7 @@ export const places: PlaceOfInterest[] = [
     hours: "Todo el día",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Barrio%20San%20Antonio%20Cali",
     active: true,
+    order: 1,
   },
   {
     id: "p-3",
@@ -33,6 +35,7 @@ export const places: PlaceOfInterest[] = [
     hours: "Todo el día",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Bulevar%20del%20R%C3%ADo%20Cali",
     active: true,
+    order: 2,
   },
   {
     id: "p-4",
@@ -45,6 +48,7 @@ export const places: PlaceOfInterest[] = [
     website: "https://zoologicodecali.com.co",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Zool%C3%B3gico%20de%20Cali",
     active: true,
+    order: 3,
   },
   {
     id: "p-5",
@@ -56,6 +60,7 @@ export const places: PlaceOfInterest[] = [
     hours: "8:00 a.m. – 5:00 p.m.",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=R%C3%ADo%20Pance%20Cali",
     active: true,
+    order: 4,
   },
   {
     id: "p-6",
@@ -67,5 +72,6 @@ export const places: PlaceOfInterest[] = [
     hours: "Varía según el establecimiento",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Barrio%20Granada%20Cali",
     active: true,
+    order: 5,
   },
 ];

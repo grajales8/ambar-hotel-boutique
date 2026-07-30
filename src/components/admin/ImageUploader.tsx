@@ -1,41 +1,40 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ImagePlus, X, Loader2, CheckCircle2, AlertCircle, Upload } from "lucide-react";
+import { storage } from "@/lib/firebase";
 
 // Formatos aceptados, según lo solicitado.
 const ACCEPTED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const ACCEPTED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 
 // Límite de tamaño de salida: la imagen se redimensiona y comprime antes de
-// guardarse, para no llenar el almacenamiento del navegador con fotos pesadas.
+// subirse, para que el catálogo cargue rápido y ocupe poco espacio en Storage.
 const MAX_DIMENSION = 1000; // px, lado más largo
 const JPEG_QUALITY = 0.72;
 
 type Status = "idle" | "loading" | "success" | "error";
 
 /**
- * Sube una imagen desde el computador, la redimensiona/comprime en el propio
- * navegador (sin backend) y la entrega como un data URI listo para guardarse
- * en el mismo campo `image` que ya usa cada producto/lugar — exactamente el
- * mismo sistema de almacenamiento (localStorage vía /src/lib/storage.ts) que
- * ya emplea el proyecto, sin requerir un servidor de archivos aparte.
- *
- * Al conectar Firebase/Supabase más adelante, este componente puede seguir
- * igual: solo cambiaría qué hace `onChange` con el resultado (subirlo a
- * Storage y guardar la URL, en vez de guardar el data URI directamente).
+ * Sube una imagen desde el computador: la redimensiona/comprime en el propio
+ * navegador y la sube a Firebase Storage. El campo `image` de cada
+ * producto/lugar guarda la URL pública resultante — la misma forma de dato
+ * que ya usaba (una URL), así que el resto de la app no necesita cambios
+ * para mostrarla.
  */
 export default function ImageUploader({
   value,
   onChange,
 }: {
   value: string;
-  onChange: (dataUrlOrUrl: string) => void;
+  onChange: (url: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string>("");
   const [dragActive, setDragActive] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   function isValidFile(file: File) {
     const nameLower = file.name.toLowerCase();
@@ -62,7 +61,7 @@ export default function ImageUploader({
     });
   }
 
-  async function compressImage(file: File): Promise<string> {
+  async function compressImage(file: File): Promise<Blob> {
     const rawDataUrl = await readFileAsDataUrl(file);
     const img = await loadImageElement(rawDataUrl);
 
@@ -81,10 +80,15 @@ export default function ImageUploader({
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return rawDataUrl; // fallback si el navegador no soporta canvas
+    if (ctx) ctx.drawImage(img, 0, 0, width, height);
 
-    ctx.drawImage(img, 0, 0, width, height);
-    return canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => (blob ? resolve(blob) : reject(new Error("No se pudo comprimir la imagen"))),
+        "image/jpeg",
+        JPEG_QUALITY
+      );
+    });
   }
 
   async function handleFile(file: File | undefined) {
@@ -98,15 +102,28 @@ export default function ImageUploader({
 
     setStatus("loading");
     setMessage("");
+
+    // Vista previa inmediata mientras se sube, con el archivo local.
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+
     try {
-      const compressed = await compressImage(file);
-      onChange(compressed);
+      const blob = await compressImage(file);
+      const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+      const fileRef = ref(storage, path);
+      await uploadBytes(fileRef, blob, { contentType: "image/jpeg" });
+      const url = await getDownloadURL(fileRef);
+
+      onChange(url);
       setStatus("success");
-      setMessage("Imagen cargada correctamente.");
+      setMessage("Imagen subida correctamente.");
       setTimeout(() => setStatus((s) => (s === "success" ? "idle" : s)), 2000);
     } catch {
       setStatus("error");
-      setMessage("No se pudo procesar la imagen. Intenta con otro archivo.");
+      setMessage("No se pudo subir la imagen. Verifica tu conexión e intenta de nuevo.");
+    } finally {
+      URL.revokeObjectURL(localPreview);
+      setPreviewUrl(null);
     }
   }
 
@@ -127,6 +144,8 @@ export default function ImageUploader({
     setMessage("");
   }
 
+  const displayImage = previewUrl || value;
+
   return (
     <div>
       <div
@@ -140,18 +159,20 @@ export default function ImageUploader({
           dragActive ? "border-[var(--color-gold)] bg-[var(--color-sand)]" : "border-[var(--color-sand-2)]"
         }`}
       >
-        {value ? (
+        {displayImage ? (
           <div className="relative h-32 w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={value} alt="" className="h-full w-full object-cover" />
-            <button
-              type="button"
-              onClick={handleRemove}
-              aria-label="Eliminar imagen"
-              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--color-navy)] shadow-[var(--shadow-card)]"
-            >
-              <X size={14} />
-            </button>
+            <img src={displayImage} alt="" className="h-full w-full object-cover" />
+            {!previewUrl && (
+              <button
+                type="button"
+                onClick={handleRemove}
+                aria-label="Eliminar imagen"
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--color-navy)] shadow-[var(--shadow-card)]"
+              >
+                <X size={14} />
+              </button>
+            )}
             {status === "loading" && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                 <Loader2 size={22} className="animate-spin text-white" />
@@ -178,7 +199,7 @@ export default function ImageUploader({
         )}
       </div>
 
-      {value && (
+      {value && !previewUrl && (
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
