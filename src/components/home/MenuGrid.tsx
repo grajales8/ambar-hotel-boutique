@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  UtensilsCrossed,
-  CupSoda,
-  ShoppingBag,
-  BellRing,
+  Compass,
   BookOpenText,
+  BellRing,
+  Wifi,
+  CupSoda,
+  UtensilsCrossed,
+  ShoppingBag,
   Sparkles,
   MapPinned,
-  Wifi,
   MessageCircle,
   Star,
   type LucideIcon,
@@ -27,18 +28,19 @@ type MenuEntry = {
   action: MenuAction;
 };
 
-// Los 9 accesos principales de la app, en tarjetas del mismo tamaño para
-// mantener la grilla perfectamente simétrica (2 columnas), en el orden de
-// prioridad solicitado. El hero de bienvenida vive aparte (WelcomeHero) y
-// no forma parte de esta grilla de botones.
+// Los 10 accesos principales de la app, en tarjetas del mismo tamaño para
+// mantener la grilla perfectamente simétrica (2 columnas x 5 filas), en el
+// orden de prioridad solicitado. El hero de bienvenida vive aparte
+// (WelcomeHero) y no forma parte de esta grilla de botones.
 const mainEntries: MenuEntry[] = [
+  { id: "hotel", label: "Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
   { id: "guia-habitacion", label: "Guía de la habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
-  { id: "servicio", label: "Solicitar servicios", icon: BellRing, action: { type: "link", href: "/servicio" } },
-  { id: "wifi", label: "Redes WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
+  { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
+  { id: "wifi", label: "WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
   { id: "minibar", label: "Minibar", icon: CupSoda, action: { type: "link", href: "/minibar" } },
   { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
   { id: "boutique", label: "Boutique", icon: ShoppingBag, action: { type: "link", href: "/boutique" } },
-  { id: "experiencias", label: "Servicios & Experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
+  { id: "experiencias", label: "Servicios y Experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
   { id: "descubre", label: "Descubre Cali", icon: MapPinned, action: { type: "link", href: "/descubre" } },
   {
     id: "chat",
