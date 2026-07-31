@@ -11,11 +11,13 @@ import CatalogEditor from "@/components/admin/CatalogEditor";
 import HotelInfoEditor from "@/components/admin/HotelInfoEditor";
 import PlacesEditor from "@/components/admin/PlacesEditor";
 import WifiEditor from "@/components/admin/WifiEditor";
+import ExperiencesEditor from "@/components/admin/ExperiencesEditor";
 
 const TABS = [
   { id: "restaurante", label: "Restaurante" },
   { id: "minibar", label: "Minibar" },
   { id: "boutique", label: "Boutique" },
+  { id: "experiencias", label: "Servicios & Experiencias" },
   { id: "descubre", label: "Descubre Cali" },
   { id: "wifi", label: "Redes WiFi" },
   { id: "info", label: "Información" },
@@ -97,6 +99,7 @@ export default function AdminDashboardPage() {
             initialItems={boutiqueItems}
           />
         )}
+        {tab === "experiencias" && <ExperiencesEditor />}
         {tab === "descubre" && <PlacesEditor />}
         {tab === "wifi" && <WifiEditor />}
         {tab === "info" && <HotelInfoEditor />}
