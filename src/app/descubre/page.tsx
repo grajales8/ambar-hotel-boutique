@@ -9,12 +9,16 @@ import { PlaceOfInterest } from "@/lib/types";
 import PageHeader from "@/components/ui/PageHeader";
 
 export default function DiscoverPage() {
-  const [places, setPlaces] = useState<PlaceOfInterest[]>(defaultPlaces);
+  const [places, setPlaces] = useState<PlaceOfInterest[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     loadCollection<PlaceOfInterest>("places", defaultPlaces).then((data) => {
-      if (active) setPlaces([...data].sort((a, b) => a.order - b.order));
+      if (active) {
+        setPlaces([...data].sort((a, b) => a.order - b.order));
+        setLoading(false);
+      }
     });
     return () => {
       active = false;
@@ -28,7 +32,10 @@ export default function DiscoverPage() {
       <PageHeader title="Descubre Cali" subtitle="Recomendaciones cerca de AMBAR" />
 
       <div className="space-y-4 px-5 pt-4">
-        {activePlaces.map((place, i) => (
+        {loading && (
+          <p className="pt-4 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+        )}
+        {!loading && activePlaces.map((place, i) => (
           <motion.div
             key={place.id}
             initial={{ opacity: 0, y: 14 }}

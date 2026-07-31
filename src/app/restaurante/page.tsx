@@ -12,13 +12,17 @@ import ProductCardReadOnly from "@/components/ui/ProductCardReadOnly";
 // revisa platos, fotos, descripciones y precios.
 export default function RestaurantPage() {
   const [category, setCategory] = useState(restaurantCategories[0].id);
-  const [restaurantItems, setRestaurantItems] = useState<MenuItem[]>(defaultItems);
+  const [restaurantItems, setRestaurantItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     loadCollection<MenuItem>("restaurantItems", defaultItems).then((data) => {
-      if (active) setRestaurantItems(data);
+      if (active) {
+        setRestaurantItems(data);
+        setLoading(false);
+      }
     });
     return () => {
       active = false;
@@ -43,7 +47,10 @@ export default function RestaurantPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
-        {filtered.map((item) => (
+        {loading && (
+          <p className="col-span-2 pt-4 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+        )}
+        {!loading && filtered.map((item) => (
           <ProductCardReadOnly
             key={item.id}
             item={item}

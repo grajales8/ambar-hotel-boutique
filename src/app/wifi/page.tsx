@@ -9,13 +9,17 @@ import { WifiNetwork } from "@/lib/types";
 import PageHeader from "@/components/ui/PageHeader";
 
 export default function WifiPage() {
-  const [networks, setNetworks] = useState<WifiNetwork[]>(defaultNetworks);
+  const [networks, setNetworks] = useState<WifiNetwork[]>([]);
+  const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     loadCollection<WifiNetwork>("wifiNetworks", defaultNetworks).then((data) => {
-      if (active) setNetworks(data);
+      if (active) {
+        setNetworks(data);
+        setLoading(false);
+      }
     });
     return () => {
       active = false;
@@ -39,13 +43,17 @@ export default function WifiPage() {
       <PageHeader title="WiFi" subtitle="Conéctate en segundos" />
 
       <div className="flex flex-col items-center gap-4 px-6 pt-8">
-        {activeNetworks.length === 0 && (
+        {loading && (
+          <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+        )}
+
+        {!loading && activeNetworks.length === 0 && (
           <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">
             No hay redes WiFi disponibles en este momento.
           </p>
         )}
 
-        {activeNetworks.map((network, i) => (
+        {!loading && activeNetworks.map((network, i) => (
           <motion.div
             key={network.id}
             initial={{ opacity: 0, y: 12 }}

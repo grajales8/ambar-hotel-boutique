@@ -12,14 +12,18 @@ import CartBar from "@/components/ui/CartBar";
 
 function MinibarContent() {
   const [category, setCategory] = useState(minibarCategories[0].id);
-  const [minibarItems, setMinibarItems] = useState<MenuItem[]>(defaultItems);
+  const [minibarItems, setMinibarItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
     let active = true;
     loadCollection<MenuItem>("minibarItems", defaultItems).then((data) => {
-      if (active) setMinibarItems(data);
+      if (active) {
+        setMinibarItems(data);
+        setLoading(false);
+      }
     });
     return () => {
       active = false;
@@ -48,7 +52,10 @@ function MinibarContent() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
-        {filtered.map((item) => (
+        {loading && (
+          <p className="col-span-2 pt-4 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+        )}
+        {!loading && filtered.map((item) => (
           <ProductCard
             key={item.id}
             item={item}
