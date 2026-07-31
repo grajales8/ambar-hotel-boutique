@@ -8,7 +8,7 @@ import {
   ShoppingBag,
   BellRing,
   BookOpenText,
-  Compass,
+  Sparkles,
   MapPinned,
   Wifi,
   MessageCircle,
@@ -18,10 +18,7 @@ import {
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import { GOOGLE_REVIEW_URL } from "@/lib/config";
 
-type MenuAction =
-  | { type: "link"; href: string }
-  | { type: "whatsapp"; message: string }
-  | { type: "external"; href: string };
+type MenuAction = { type: "link"; href: string } | { type: "whatsapp"; message: string };
 
 type MenuEntry = {
   id: string;
@@ -30,18 +27,19 @@ type MenuEntry = {
   action: MenuAction;
 };
 
-// Los 10 accesos principales de la app, en tarjetas del mismo tamaño para
-// mantener la grilla perfectamente simétrica (5 filas x 2 columnas), en el
-// orden de prioridad solicitado.
+// Los 9 accesos principales de la app, en tarjetas del mismo tamaño para
+// mantener la grilla perfectamente simétrica (2 columnas), en el orden de
+// prioridad solicitado. El hero de bienvenida vive aparte (WelcomeHero) y
+// no forma parte de esta grilla de botones.
 const mainEntries: MenuEntry[] = [
-  { id: "guia-hotel", label: "Guía del Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
   { id: "guia-habitacion", label: "Guía de la habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
-  { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
-  { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
+  { id: "servicio", label: "Solicitar servicios", icon: BellRing, action: { type: "link", href: "/servicio" } },
+  { id: "wifi", label: "Redes WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
   { id: "minibar", label: "Minibar", icon: CupSoda, action: { type: "link", href: "/minibar" } },
+  { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
   { id: "boutique", label: "Boutique", icon: ShoppingBag, action: { type: "link", href: "/boutique" } },
+  { id: "experiencias", label: "Servicios & Experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
   { id: "descubre", label: "Descubre Cali", icon: MapPinned, action: { type: "link", href: "/descubre" } },
-  { id: "wifi", label: "WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
   {
     id: "chat",
     label: "Chatear con recepción",
@@ -51,7 +49,6 @@ const mainEntries: MenuEntry[] = [
       message: "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta.",
     },
   },
-  { id: "calificar", label: "Calificar experiencia", icon: Star, action: { type: "external", href: GOOGLE_REVIEW_URL } },
 ];
 
 function renderAction(action: MenuAction, children: React.ReactNode, key: string) {
@@ -60,13 +57,6 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
       <Link key={key} href={action.href}>
         {children}
       </Link>
-    );
-  }
-  if (action.type === "external") {
-    return (
-      <a key={key} href={action.href} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
     );
   }
   return (
@@ -101,6 +91,22 @@ export default function MenuGrid() {
           return renderAction(entry.action, card, entry.id);
         })}
       </div>
+
+      {/* Acción secundaria: cierre natural de la pantalla, sin formato de
+          tarjeta, más angosta y de menor jerarquía visual. */}
+      <motion.a
+        href={GOOGLE_REVIEW_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.08 * mainEntries.length }}
+        whileTap={{ scale: 0.97 }}
+        className="mx-auto mt-6 flex w-[70%] items-center justify-center gap-2 rounded-full border border-[var(--color-sand-2)] py-3 text-sm font-medium text-[var(--color-ink-soft)]"
+      >
+        <Star size={15} strokeWidth={1.75} className="text-[var(--color-gold)]" />
+        Calificar experiencia
+      </motion.a>
     </div>
   );
 }
