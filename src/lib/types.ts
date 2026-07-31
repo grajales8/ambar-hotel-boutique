@@ -60,6 +60,25 @@ export type PlaceOfInterest = {
   order: number; // controla el orden de aparición para el huésped
 };
 
+export type ExperienceCategory = {
+  id: string;
+  name: string;
+};
+
+export type ExperienceService = {
+  id: string;
+  name: string;
+  categoryId: string;
+  shortDescription: string;
+  fullDescription: string;
+  includes: string[]; // "qué incluye"
+  benefits: string[];
+  price?: number; // si no tiene valor, se muestra "Consultar precio"
+  images: string[]; // galería — siempre una lista, lista para Firebase Storage
+  active: boolean;
+  order: number;
+};
+
 export type WifiNetwork = {
   id: string;
   ssid: string;
