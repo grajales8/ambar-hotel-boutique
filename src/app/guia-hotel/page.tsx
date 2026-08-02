@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Hotel,
   Leaf,
@@ -22,6 +23,7 @@ import {
   Search,
   BellRing,
   AlertTriangle,
+  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -51,32 +53,67 @@ const iconMap: Record<string, LucideIcon> = {
   AlertTriangle,
 };
 
-function Card({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+// Mismo patrón visual de acordeón que usa "Guía de la habitación"
+// (ver /components/ui/GuideAccordion.tsx): encabezado con ícono circular,
+// título y flecha que rota; el contenido se expande/contrae con animación.
+// Se implementa aparte para no tocar esa sección, tal como se pidió.
+function AccordionSection({
+  id,
+  icon: Icon,
+  title,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  id: string;
+  icon: LucideIcon;
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.4, delay, ease: "easeOut" }}
-      className="rounded-2xl bg-white p-5 shadow-[var(--shadow-card)]"
-    >
-      {children}
-    </motion.div>
-  );
-}
+    <div className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center gap-3 px-4 py-4 text-left"
+        aria-expanded={isOpen}
+        aria-controls={`section-${id}`}
+      >
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
+          <Icon size={18} strokeWidth={1.75} />
+        </span>
+        <span className="flex-1 font-display text-[15px] text-[var(--color-navy)]">{title}</span>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+          <ChevronDown size={18} className="text-[var(--color-ink-soft)]" />
+        </motion.span>
+      </button>
 
-function CardTitle({ icon: Icon, title }: { icon: LucideIcon; title: string }) {
-  return (
-    <div className="mb-3 flex items-center gap-3">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-        <Icon size={18} strokeWidth={1.75} />
-      </span>
-      <h2 className="font-display text-base text-[var(--color-navy)]">{title}</h2>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            id={`section-${id}`}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-5">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function HotelGuidePage() {
+  const [openId, setOpenId] = useState<string | null>("intro");
+
+  function toggle(id: string) {
+    setOpenId((cur) => (cur === id ? null : id));
+  }
+
   const mapsQuery = encodeURIComponent(hotelLocation.address);
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
   const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
@@ -85,10 +122,15 @@ export default function HotelGuidePage() {
     <main className="min-h-screen bg-[var(--color-sand)] pb-10">
       <PageHeader title="Guía del Hotel" subtitle="Todo sobre AMBAR, en un solo lugar" />
 
-      <div className="space-y-4 px-5 pt-4">
+      <div className="space-y-3 px-5 pt-4">
         {/* 1. Sobre AMBAR Hotel Boutique */}
-        <Card>
-          <CardTitle icon={Hotel} title={hotelIntro.title} />
+        <AccordionSection
+          id="intro"
+          icon={Hotel}
+          title={hotelIntro.title}
+          isOpen={openId === "intro"}
+          onToggle={() => toggle("intro")}
+        >
           <div className="space-y-2.5">
             {hotelIntro.paragraphs.map((p, i) => (
               <p key={i} className="text-sm leading-relaxed text-[var(--color-ink-soft)]">
@@ -96,11 +138,16 @@ export default function HotelGuidePage() {
               </p>
             ))}
           </div>
-        </Card>
+        </AccordionSection>
 
         {/* 2. Nuestros espacios */}
-        <Card delay={0.05}>
-          <CardTitle icon={Leaf} title="Nuestros espacios" />
+        <AccordionSection
+          id="espacios"
+          icon={Leaf}
+          title="Nuestros espacios"
+          isOpen={openId === "espacios"}
+          onToggle={() => toggle("espacios")}
+        >
           <div className="space-y-3">
             {hotelSpaces.map((space) => {
               const Icon = iconMap[space.icon] ?? Building2;
@@ -136,11 +183,16 @@ export default function HotelGuidePage() {
               );
             })}
           </div>
-        </Card>
+        </AccordionSection>
 
         {/* 3. Horarios */}
-        <Card delay={0.1}>
-          <CardTitle icon={Clock} title="Horarios" />
+        <AccordionSection
+          id="horarios"
+          icon={Clock}
+          title="Horarios"
+          isOpen={openId === "horarios"}
+          onToggle={() => toggle("horarios")}
+        >
           <div className="divide-y divide-[var(--color-sand-2)] overflow-hidden rounded-xl bg-[var(--color-sand)]">
             {hotelSchedules.map((s) => (
               <div key={s.label} className="flex items-center justify-between px-4 py-3 text-sm">
@@ -149,49 +201,47 @@ export default function HotelGuidePage() {
               </div>
             ))}
           </div>
-        </Card>
+        </AccordionSection>
 
         {/* 4. Información importante */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
-          className="flex items-center gap-2 pt-2"
+        <AccordionSection
+          id="info"
+          icon={Info}
+          title="Información importante"
+          isOpen={openId === "info"}
+          onToggle={() => toggle("info")}
         >
-          <Info size={16} className="text-[var(--color-navy)]" />
-          <h2 className="font-display text-base text-[var(--color-navy)]">Información importante</h2>
-        </motion.div>
-
-        <div className="space-y-3">
-          {hotelInfoPoints.map((point, i) => {
-            const Icon = iconMap[point.icon] ?? Info;
-            return (
-              <motion.div
-                key={point.title}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.35, delay: 0.03 * i, ease: "easeOut" }}
-                className="flex items-start gap-3 rounded-2xl bg-white p-4 shadow-[var(--shadow-card)]"
-              >
-                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-                  <Icon size={16} strokeWidth={1.75} />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-[var(--color-navy)]">{point.title}</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-soft)]">
-                    {point.text}
-                  </p>
+          <div className="space-y-3">
+            {hotelInfoPoints.map((point) => {
+              const Icon = iconMap[point.icon] ?? Info;
+              return (
+                <div
+                  key={point.title}
+                  className="flex items-start gap-3 rounded-xl bg-[var(--color-sand)] p-3"
+                >
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-navy)]">
+                    <Icon size={15} strokeWidth={1.75} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--color-navy)]">{point.title}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-soft)]">
+                      {point.text}
+                    </p>
+                  </div>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </AccordionSection>
 
         {/* 5. Nuestra ubicación */}
-        <Card delay={0.05}>
-          <CardTitle icon={MapPin} title={hotelLocation.title} />
+        <AccordionSection
+          id="ubicacion"
+          icon={MapPin}
+          title={hotelLocation.title}
+          isOpen={openId === "ubicacion"}
+          onToggle={() => toggle("ubicacion")}
+        >
           <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">{hotelLocation.text}</p>
           <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[var(--color-navy)]">
             <MapPin size={15} className="mt-0.5 shrink-0 text-[var(--color-gold)]" />
@@ -216,9 +266,6 @@ export default function HotelGuidePage() {
               referrerPolicy="no-referrer-when-downgrade"
               title="Ubicación de AMBAR Hotel Boutique"
             />
-            {/* Capa transparente: al tocar el mapa se abre Google Maps
-                directamente (app si está instalada, o navegador si no),
-                en vez de interactuar con el mapa incrustado. */}
             <a
               href={mapsUrl}
               target="_blank"
@@ -227,15 +274,20 @@ export default function HotelGuidePage() {
               className="absolute inset-0"
             />
           </div>
-        </Card>
+        </AccordionSection>
 
         {/* 6. Nuestro compromiso */}
-        <Card delay={0.05}>
-          <CardTitle icon={Heart} title="Nuestro compromiso" />
+        <AccordionSection
+          id="compromiso"
+          icon={Heart}
+          title="Nuestro compromiso"
+          isOpen={openId === "compromiso"}
+          onToggle={() => toggle("compromiso")}
+        >
           <p className="font-display text-[15px] italic leading-relaxed text-[var(--color-navy)]">
             {hotelCommitment}
           </p>
-        </Card>
+        </AccordionSection>
       </div>
     </main>
   );
