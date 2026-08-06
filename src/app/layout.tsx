@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { siteConfig } from "@/lib/config";
 import ServiceWorkerRegister from "@/components/system/ServiceWorkerRegister";
+import SplashScreen from "@/components/system/SplashScreen";
 
 // Nota: las fuentes se cargan por <link> en el <head> (ver más abajo) en vez
 // de usar next/font/google, porque este entorno de construcción no tiene
@@ -50,6 +51,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-[var(--color-sand)] text-[var(--color-ink)] antialiased">
+        <SplashScreen />
         {children}
         <ServiceWorkerRegister />
       </body>
