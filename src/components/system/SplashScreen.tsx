@@ -20,10 +20,10 @@ export default function SplashScreen() {
         <motion.div
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-navy)]"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-sand)]"
         >
           <motion.img
-            src="/brand/logo-dorado.png"
+            src="/brand/logo-terracota.png"
             alt="AMBAR Hotel Boutique"
             initial={{ opacity: 0, scale: 0.86 }}
             animate={{ opacity: 1, scale: 1 }}
