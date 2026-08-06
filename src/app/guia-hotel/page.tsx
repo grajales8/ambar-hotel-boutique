@@ -152,12 +152,13 @@ export default function HotelGuidePage() {
             {hotelSpaces.map((space) => {
               const Icon = iconMap[space.icon] ?? Building2;
               return (
-                <div key={space.label} className="flex items-start gap-3">
+                <div
+                  key={space.title}
+                  className="flex items-start gap-3 rounded-xl bg-[var(--color-sand)] p-3"
+                >
                   <span
                     className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      space.disabled
-                        ? "bg-[var(--color-sand-2)] text-[var(--color-ink-soft)]"
-                        : "bg-[var(--color-sand)] text-[var(--color-navy)]"
+                      space.disabled ? "bg-[var(--color-sand-2)] text-[var(--color-ink-soft)]" : "bg-white text-[var(--color-navy)]"
                     }`}
                   >
                     <Icon size={15} strokeWidth={1.75} />
@@ -168,16 +169,16 @@ export default function HotelGuidePage() {
                         space.disabled ? "text-[var(--color-ink-soft)]" : "text-[var(--color-navy)]"
                       }`}
                     >
-                      {space.label}
+                      {space.title}
                       {space.disabled && (
-                        <span className="ml-2 rounded-full bg-[var(--color-sand-2)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-ink-soft)]">
+                        <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-[var(--color-ink-soft)]">
                           Fuera de servicio
                         </span>
                       )}
                     </p>
-                    {space.note && (
-                      <p className="text-xs text-[var(--color-ink-soft)]">{space.note}</p>
-                    )}
+                    <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-soft)]">
+                      {space.text}
+                    </p>
                   </div>
                 </div>
               );
@@ -284,7 +285,7 @@ export default function HotelGuidePage() {
           isOpen={openId === "compromiso"}
           onToggle={() => toggle("compromiso")}
         >
-          <p className="font-display text-[15px] italic leading-relaxed text-[var(--color-navy)]">
+          <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">
             {hotelCommitment}
           </p>
         </AccordionSection>

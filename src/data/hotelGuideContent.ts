@@ -13,33 +13,41 @@ export const hotelIntro = {
 
 export type HotelSpace = {
   icon: string;
-  label: string;
-  note?: string;
+  title: string;
+  text: string;
   disabled?: boolean;
 };
 
 export const hotelSpaces: HotelSpace[] = [
-  { icon: "Car", label: "Parqueadero privado", note: "Sujeto a disponibilidad" },
+  {
+    icon: "Car",
+    title: "Parqueadero privado para huéspedes",
+    text: "Sujeto a disponibilidad.",
+  },
   {
     icon: "UtensilsCrossed",
-    label: "Restaurante & Bar",
-    note: "Desayunos, almuerzos, cenas, bebidas y cócteles",
+    title: "Restaurante & Bar",
+    text: "Donde podrás disfrutar de desayunos, almuerzos, cenas, bebidas y cócteles en un ambiente agradable.",
   },
   {
     icon: "Users",
-    label: "Salones para reuniones y eventos",
-    note: "Encuentros corporativos, capacitaciones, celebraciones y eventos sociales (previa reserva)",
+    title: "Salones para reuniones y eventos",
+    text: "Ideales para encuentros corporativos, capacitaciones, celebraciones y eventos sociales (previa reserva).",
   },
   {
     icon: "Laptop",
-    label: "Espacio coworking",
-    note: "Primer piso, equipado y con WiFi",
+    title: "Espacio coworking",
+    text: "En el primer piso, equipado para trabajar, estudiar o realizar reuniones en un ambiente cómodo y con conexión Wi-Fi.",
   },
-  { icon: "Armchair", label: "Lobby y áreas de descanso" },
+  {
+    icon: "Armchair",
+    title: "Lobby y áreas de descanso",
+    text: "Espacios ideales para relajarte o esperar cómodamente.",
+  },
   {
     icon: "Droplets",
-    label: "Zona húmeda",
-    note: "Temporalmente fuera de servicio por mantenimiento",
+    title: "Zona húmeda",
+    text: "Temporalmente fuera de servicio por mantenimiento.",
     disabled: true,
   },
 ];
