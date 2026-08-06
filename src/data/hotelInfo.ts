@@ -11,6 +11,6 @@ export const hotelInfo: HotelInfo = {
     { label: "Línea de emergencias médicas", number: "125" },
     { label: "Bomberos Cali", number: "119" },
   ],
-  checkOutTime: "12:00 m.",
+  checkOutTime: "1:00 p.m.",
   googleReviewUrl: GOOGLE_REVIEW_URL,
 };

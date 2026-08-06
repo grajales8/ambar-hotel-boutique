@@ -5,7 +5,7 @@ export const guideSections: GuideSection[] = [
     id: "bienvenida",
     title: "Bienvenida",
     icon: "Sparkles",
-    image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1200&auto=format&fit=crop",
+    image: "/rooms/habitacion-bienvenida.jpg",
     content: [
       "Nos alegra tenerte en AMBAR Hotel Boutique. Esta guía reúne todo lo que necesitas para sentirte como en casa durante tu estadía.",
       "Si en algún momento necesitas algo que no encuentres aquí, escríbenos por el chat de recepción; estamos disponibles las 24 horas.",
@@ -50,7 +50,7 @@ export const guideSections: GuideSection[] = [
     title: "Check-out y Late Check-out",
     icon: "DoorOpen",
     content: [
-      "El check-out estándar es a las 12:00 m.",
+      "El check-out estándar es hasta la 1:00 p.m.",
       "Si deseas un late check-out, solicítalo con anticipación por el chat de recepción; está sujeto a disponibilidad.",
     ],
     scope: "habitacion",
