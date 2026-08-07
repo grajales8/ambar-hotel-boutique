@@ -14,6 +14,7 @@ import {
   MapPinned,
   MessageCircle,
   Star,
+  ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 import { buildWhatsappLink } from "@/lib/whatsapp";
@@ -28,29 +29,18 @@ type MenuEntry = {
   action: MenuAction;
 };
 
-// Los 10 accesos principales de la app, en tarjetas del mismo tamaño para
-// mantener la grilla perfectamente simétrica (2 columnas x 5 filas), en el
-// orden de prioridad solicitado. El hero de bienvenida vive aparte
-// (WelcomeHero) y no forma parte de esta grilla de botones.
-const mainEntries: MenuEntry[] = [
+// Los 9 accesos que forman la grilla 3x3, en el orden solicitado. El hero
+// de bienvenida vive aparte (WelcomeHero).
+const gridEntries: MenuEntry[] = [
   { id: "hotel", label: "Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
-  { id: "guia-habitacion", label: "Guía de la habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
+  { id: "guia-habitacion", label: "Guía habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
   { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
   { id: "wifi", label: "WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
   { id: "minibar", label: "Minibar", icon: CupSoda, action: { type: "link", href: "/minibar" } },
   { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
   { id: "boutique", label: "Boutique", icon: ShoppingBag, action: { type: "link", href: "/boutique" } },
-  { id: "experiencias", label: "Servicios y Experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
+  { id: "experiencias", label: "Servicios y experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
   { id: "descubre", label: "Descubre Cali", icon: MapPinned, action: { type: "link", href: "/descubre" } },
-  {
-    id: "chat",
-    label: "Chatear con recepción",
-    icon: MessageCircle,
-    action: {
-      type: "whatsapp",
-      message: "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta.",
-    },
-  },
 ];
 
 function renderAction(action: MenuAction, children: React.ReactNode, key: string) {
@@ -70,45 +60,86 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 
 export default function MenuGrid() {
   return (
-    <div className="px-5 pb-10">
-      <div className="grid grid-cols-2 gap-4">
-        {mainEntries.map((entry, i) => {
+    <div className="px-5 pb-10 pt-6">
+      <div className="gold-hairline w-10" />
+      <p className="mt-3 text-sm text-[var(--color-ink-soft)]">
+        Todo lo que necesitas durante tu estadía, a un toque de distancia.
+      </p>
+
+      <div className="mt-5 grid grid-cols-3 gap-3">
+        {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, delay: 0.08 * i, ease: "easeOut" }}
-              whileTap={{ scale: 0.96 }}
-              className="flex h-32 flex-col items-center justify-center gap-2.5 rounded-2xl bg-white p-4 text-center shadow-[var(--shadow-card)]"
+              transition={{ duration: 0.4, delay: 0.06 * i, ease: "easeOut" }}
+              whileTap={{ scale: 0.95 }}
+              className="flex h-28 flex-col items-center justify-center gap-2 rounded-2xl bg-white px-2 py-3 text-center shadow-[var(--shadow-card)]"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-                <Icon size={20} strokeWidth={1.75} />
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
+                <Icon size={18} strokeWidth={1.75} />
               </span>
-              <span className="text-sm font-medium leading-tight text-[var(--color-navy)]">
+              <span className="text-xs font-medium leading-tight text-[var(--color-navy)]">
                 {entry.label}
               </span>
+              <span className="h-px w-4 bg-[var(--color-gold)]" />
             </motion.div>
           );
           return renderAction(entry.action, card, entry.id);
         })}
       </div>
 
-      {/* Acción secundaria: cierre natural de la pantalla, sin formato de
-          tarjeta, más angosta y de menor jerarquía visual. */}
-      <motion.a
-        href={GOOGLE_REVIEW_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.08 * mainEntries.length }}
-        whileTap={{ scale: 0.97 }}
-        className="mx-auto mt-6 flex w-[70%] items-center justify-center gap-2 rounded-full border border-[var(--color-sand-2)] py-3 text-sm font-medium text-[var(--color-ink-soft)]"
-      >
-        <Star size={15} strokeWidth={1.75} className="text-[var(--color-gold)]" />
-        Calificar experiencia
-      </motion.a>
+      {/* Accesos anchos, con más presencia: chatear (primario) y calificar
+          (secundario), con el mismo lenguaje de color que ya usa la app —
+          el dorado se queda como detalle, nunca como relleno grande. */}
+      <div className="mt-4 space-y-3">
+        <motion.a
+          href={buildWhatsappLink(
+            "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
+          )}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.06 * gridEntries.length }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center gap-3 rounded-2xl bg-[var(--color-navy)] px-4 py-3.5 shadow-[var(--shadow-card)]"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-[var(--color-gold-soft)]">
+            <MessageCircle size={18} strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-medium text-white">Chatear con recepción</span>
+            <span className="block text-xs text-white/60">Estamos para ayudarte</span>
+          </span>
+          <ChevronRight size={18} className="shrink-0 text-white/50" />
+        </motion.a>
+
+        <motion.a
+          href={GOOGLE_REVIEW_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.06 * gridEntries.length + 0.06 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex items-center gap-3 rounded-2xl border border-[var(--color-sand-2)] bg-white px-4 py-3.5"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-gold)]">
+            <Star size={18} strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-medium text-[var(--color-navy)]">
+              Calificar experiencia
+            </span>
+            <span className="block text-xs text-[var(--color-ink-soft)]">
+              Tu opinión nos ayuda a mejorar
+            </span>
+          </span>
+          <ChevronRight size={18} className="shrink-0 text-[var(--color-ink-soft)]" />
+        </motion.a>
+      </div>
     </div>
   );
 }
