@@ -62,7 +62,7 @@ export default function MenuGrid() {
   return (
     <div className="px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-3">
       <div className="gold-hairline w-8" />
-      <p className="mt-1.5 text-xs leading-snug text-[var(--color-ink-soft)]">
+      <p className="mt-1.5 text-[13px] leading-snug text-[var(--color-ink-soft)]">
         Todo lo que necesitas durante tu estadía, a un toque de distancia.
       </p>
 
@@ -80,7 +80,7 @@ export default function MenuGrid() {
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
                 <Icon size={15} strokeWidth={1.75} />
               </span>
-              <span className="text-[10.5px] font-medium leading-tight text-[var(--color-navy)]">
+              <span className="text-[11.5px] font-medium leading-tight text-[var(--color-navy)]">
                 {entry.label}
               </span>
               <span className="h-px w-3 bg-[var(--color-gold)]" />
@@ -104,16 +104,16 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.06 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 rounded-2xl bg-[var(--color-navy)] px-4 py-2.5 shadow-[var(--shadow-card)]"
+          className="flex items-center gap-3 rounded-2xl bg-[var(--color-sand-2)] px-4 py-2.5 shadow-[var(--shadow-card)]"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/15 text-[var(--color-gold-soft)]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-navy)]">
             <MessageCircle size={16} strokeWidth={1.75} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[13px] font-medium text-white">Chatear con recepción</span>
-            <span className="block text-[11px] text-white/60">Estamos para ayudarte</span>
+            <span className="block text-sm font-medium text-[var(--color-navy)]">Chatear con recepción</span>
+            <span className="block text-xs text-[var(--color-ink-soft)]">Estamos para ayudarte</span>
           </span>
-          <ChevronRight size={16} className="shrink-0 text-white/50" />
+          <ChevronRight size={16} className="shrink-0 text-[var(--color-ink-soft)]" />
         </motion.a>
 
         <motion.a
@@ -130,10 +130,10 @@ export default function MenuGrid() {
             <Star size={16} strokeWidth={1.75} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[13px] font-medium text-[var(--color-navy)]">
+            <span className="block text-sm font-medium text-[var(--color-navy)]">
               Calificar experiencia
             </span>
-            <span className="block text-[11px] text-[var(--color-ink-soft)]">
+            <span className="block text-xs text-[var(--color-ink-soft)]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>

@@ -7,7 +7,7 @@ export default function WelcomeHero() {
   return (
     <div
       className="relative w-full overflow-hidden"
-      style={{ height: "calc(230px + env(safe-area-inset-top))" }}
+      style={{ height: "calc(300px + env(safe-area-inset-top))" }}
     >
       <Image
         src="/rooms/habitacion-bienvenida.jpg"
@@ -36,9 +36,9 @@ export default function WelcomeHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-0.5 px-6 pb-4"
-        style={{ paddingTop: "62%" }}
+        style={{ paddingTop: "60%" }}
       >
-        <p className="font-display italic text-xs text-[var(--color-navy)]/70">
+        <p className="font-display italic text-sm text-[var(--color-navy)]/70">
           Bienvenido a
         </p>
         <Image
@@ -46,7 +46,7 @@ export default function WelcomeHero() {
           alt="AMBAR Hotel Boutique"
           width={640}
           height={486}
-          className="h-auto w-[128px]"
+          className="h-auto w-[150px]"
         />
       </motion.div>
     </div>
