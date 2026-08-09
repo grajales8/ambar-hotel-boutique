@@ -60,13 +60,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 
 export default function MenuGrid() {
   return (
-    <div className="px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-3">
-      <div className="gold-hairline w-8" />
-      <p className="mt-1.5 text-[15px] leading-snug text-[var(--color-ink-soft)]">
-        Todo lo que necesitas durante tu estadía, a un toque de distancia.
-      </p>
+    <div className="relative -mt-5 rounded-t-3xl bg-[var(--color-sand)] px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-5">
+      <div className="mx-auto h-1 w-10 rounded-full bg-[var(--color-sand-2)]" />
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-4 grid grid-cols-3 gap-2">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
