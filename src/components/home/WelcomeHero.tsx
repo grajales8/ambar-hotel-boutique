@@ -14,17 +14,22 @@ export default function WelcomeHero() {
         alt="Habitación de AMBAR Hotel Boutique"
         fill
         priority
-        className="object-cover"
+        className="object-cover object-[center_78%]"
       />
 
-      {/* Forma orgánica (una sola curva en "S") que revela el beige de la
-          app sobre la foto, integrando el logo en la transición. */}
+      {/* Forma orgánica en la base (misma curva en "S") y un eco más sutil
+          en la parte superior, para que ambos bordes de la foto compartan
+          el mismo lenguaje visual. */}
       <svg
         className="absolute inset-0 h-full w-full"
         viewBox="0 0 375 500"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
+        <path
+          d="M0,0 C70,35 95,5 160,22 C230,40 265,8 375,30 L375,0 Z"
+          fill="var(--color-sand)"
+        />
         <path
           d="M0,240 C90,210 110,320 195,350 C280,380 300,455 375,478 L375,500 L0,500 Z"
           fill="var(--color-sand)"
