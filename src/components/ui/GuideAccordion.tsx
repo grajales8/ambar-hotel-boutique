@@ -29,8 +29,8 @@ export default function GuideAccordion({
               onClick={() => setOpenId(isOpen ? null : section.id)}
               className="flex w-full items-center gap-3 px-4 py-4 text-left"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-                <Icon size={18} strokeWidth={1.75} />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-gold)]">
+                <Icon className="h-[18px] w-[18px]" />
               </span>
               <span className="flex-1 font-display text-[15px] text-[var(--color-navy)]">
                 {section.title}

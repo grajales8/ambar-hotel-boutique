@@ -67,10 +67,10 @@ export default function ServiceRequestPage() {
                 className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
                   isSent
                     ? "bg-[var(--color-navy)] text-white"
-                    : "bg-[var(--color-sand)] text-[var(--color-navy)]"
+                    : "bg-[var(--color-sand)] text-[var(--color-gold)]"
                 }`}
               >
-                {isSent ? <Check size={20} /> : <Icon size={20} strokeWidth={1.75} />}
+                {isSent ? <Check size={20} /> : <Icon className="h-5 w-5" />}
               </span>
               <span className="text-sm font-medium leading-tight text-[var(--color-navy)]">
                 {isSent ? "Solicitud enviada" : s.name}

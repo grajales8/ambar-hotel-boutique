@@ -1,31 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import type { ComponentType, SVGProps } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import {
-  Hotel,
-  Leaf,
-  Clock,
-  Info,
-  MapPin,
-  Heart,
-  Car,
-  Users,
-  Laptop,
-  Armchair,
-  Droplets,
-  UtensilsCrossed,
-  CigaretteOff,
-  UserCheck,
-  Moon,
-  CreditCard,
-  Building2,
-  Search,
-  BellRing,
-  AlertTriangle,
-  ChevronDown,
-  type LucideIcon,
-} from "lucide-react";
+  HotelIcon,
+  LeafIcon,
+  ClockIcon,
+  InfoIcon,
+  HeartIcon,
+  CarIcon,
+  UsersIcon,
+  LaptopIcon,
+  ArmchairIcon,
+  DropletsIcon,
+  UtensilsIcon,
+  CigaretteOffIcon,
+  UserCheckIcon,
+  MoonIcon,
+  CreditCardIcon,
+  BuildingIcon,
+  SearchIcon,
+  BellRingIcon,
+  AlertTriangleIcon,
+} from "@/components/ui/AppIcons";
+import { DiscoverPinIcon } from "@/components/ui/HomeIcons";
 import {
   hotelIntro,
   hotelSpaces,
@@ -36,27 +36,28 @@ import {
 } from "@/data/hotelGuideContent";
 import PageHeader from "@/components/ui/PageHeader";
 
-const iconMap: Record<string, LucideIcon> = {
-  Car,
-  Users,
-  Laptop,
-  Armchair,
-  Droplets,
-  UtensilsCrossed,
-  CigaretteOff,
-  UserCheck,
-  Moon,
-  CreditCard,
-  Building2,
-  Search,
-  BellRing,
-  AlertTriangle,
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
+const iconMap: Record<string, IconComponent> = {
+  Car: CarIcon,
+  Users: UsersIcon,
+  Laptop: LaptopIcon,
+  Armchair: ArmchairIcon,
+  Droplets: DropletsIcon,
+  UtensilsCrossed: UtensilsIcon,
+  CigaretteOff: CigaretteOffIcon,
+  UserCheck: UserCheckIcon,
+  Moon: MoonIcon,
+  CreditCard: CreditCardIcon,
+  Building2: BuildingIcon,
+  Search: SearchIcon,
+  BellRing: BellRingIcon,
+  AlertTriangle: AlertTriangleIcon,
 };
 
 // Mismo patrón visual de acordeón que usa "Guía de la habitación"
 // (ver /components/ui/GuideAccordion.tsx): encabezado con ícono circular,
 // título y flecha que rota; el contenido se expande/contrae con animación.
-// Se implementa aparte para no tocar esa sección, tal como se pidió.
 function AccordionSection({
   id,
   icon: Icon,
@@ -66,7 +67,7 @@ function AccordionSection({
   children,
 }: {
   id: string;
-  icon: LucideIcon;
+  icon: IconComponent;
   title: string;
   isOpen: boolean;
   onToggle: () => void;
@@ -80,8 +81,8 @@ function AccordionSection({
         aria-expanded={isOpen}
         aria-controls={`section-${id}`}
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-          <Icon size={18} strokeWidth={1.75} />
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-gold)]">
+          <Icon className="h-5 w-5" />
         </span>
         <span className="flex-1 font-display text-[15px] text-[var(--color-navy)]">{title}</span>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
@@ -126,7 +127,7 @@ export default function HotelGuidePage() {
         {/* 1. Sobre AMBAR Hotel Boutique */}
         <AccordionSection
           id="intro"
-          icon={Hotel}
+          icon={HotelIcon}
           title={hotelIntro.title}
           isOpen={openId === "intro"}
           onToggle={() => toggle("intro")}
@@ -143,14 +144,14 @@ export default function HotelGuidePage() {
         {/* 2. Nuestros espacios */}
         <AccordionSection
           id="espacios"
-          icon={Leaf}
+          icon={LeafIcon}
           title="Nuestros espacios"
           isOpen={openId === "espacios"}
           onToggle={() => toggle("espacios")}
         >
           <div className="space-y-3">
             {hotelSpaces.map((space) => {
-              const Icon = iconMap[space.icon] ?? Building2;
+              const Icon = iconMap[space.icon] ?? BuildingIcon;
               return (
                 <div
                   key={space.title}
@@ -158,10 +159,10 @@ export default function HotelGuidePage() {
                 >
                   <span
                     className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      space.disabled ? "bg-[var(--color-sand-2)] text-[var(--color-ink-soft)]" : "bg-white text-[var(--color-navy)]"
+                      space.disabled ? "bg-[var(--color-sand-2)] text-[var(--color-ink-soft)]" : "bg-white text-[var(--color-gold)]"
                     }`}
                   >
-                    <Icon size={15} strokeWidth={1.75} />
+                    <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
                     <p
@@ -189,7 +190,7 @@ export default function HotelGuidePage() {
         {/* 3. Horarios */}
         <AccordionSection
           id="horarios"
-          icon={Clock}
+          icon={ClockIcon}
           title="Horarios"
           isOpen={openId === "horarios"}
           onToggle={() => toggle("horarios")}
@@ -207,21 +208,21 @@ export default function HotelGuidePage() {
         {/* 4. Información importante */}
         <AccordionSection
           id="info"
-          icon={Info}
+          icon={InfoIcon}
           title="Información importante"
           isOpen={openId === "info"}
           onToggle={() => toggle("info")}
         >
           <div className="space-y-3">
             {hotelInfoPoints.map((point) => {
-              const Icon = iconMap[point.icon] ?? Info;
+              const Icon = iconMap[point.icon] ?? InfoIcon;
               return (
                 <div
                   key={point.title}
                   className="flex items-start gap-3 rounded-xl bg-[var(--color-sand)] p-3"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-navy)]">
-                    <Icon size={15} strokeWidth={1.75} />
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-gold)]">
+                    <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[var(--color-navy)]">{point.title}</p>
@@ -238,14 +239,14 @@ export default function HotelGuidePage() {
         {/* 5. Nuestra ubicación */}
         <AccordionSection
           id="ubicacion"
-          icon={MapPin}
+          icon={DiscoverPinIcon}
           title={hotelLocation.title}
           isOpen={openId === "ubicacion"}
           onToggle={() => toggle("ubicacion")}
         >
           <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">{hotelLocation.text}</p>
           <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[var(--color-navy)]">
-            <MapPin size={15} className="mt-0.5 shrink-0 text-[var(--color-gold)]" />
+            <DiscoverPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-gold)]" />
             {hotelLocation.address}
           </p>
 
@@ -255,7 +256,7 @@ export default function HotelGuidePage() {
             rel="noopener noreferrer"
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-3 text-sm font-medium text-white active:scale-[0.98] transition-transform"
           >
-            <MapPin size={15} />
+            <DiscoverPinIcon className="h-4 w-4" />
             Abrir en Google Maps
           </a>
 
@@ -280,7 +281,7 @@ export default function HotelGuidePage() {
         {/* 6. Nuestro compromiso */}
         <AccordionSection
           id="compromiso"
-          icon={Heart}
+          icon={HeartIcon}
           title="Nuestro compromiso"
           isOpen={openId === "compromiso"}
           onToggle={() => toggle("compromiso")}

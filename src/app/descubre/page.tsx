@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Globe } from "lucide-react";
+import { PhoneIcon, GlobeIcon } from "@/components/ui/AppIcons";
+import { DiscoverPinIcon } from "@/components/ui/HomeIcons";
 import { places as defaultPlaces } from "@/data/places";
 import { loadCollection } from "@/lib/storage";
 import { PlaceOfInterest } from "@/lib/types";
@@ -72,7 +73,7 @@ export default function DiscoverPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-[var(--color-navy)] px-4 py-2.5 text-sm font-medium text-white active:scale-95 transition-transform"
                 >
-                  <MapPin size={15} />
+                  <DiscoverPinIcon className="h-4 w-4" />
                   Abrir en Google Maps
                 </a>
                 {place.phone && (
@@ -80,7 +81,7 @@ export default function DiscoverPage() {
                     href={`tel:${place.phone.replace(/\s/g, "")}`}
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
                   >
-                    <Phone size={15} />
+                    <PhoneIcon className="h-4 w-4" />
                     Llamar
                   </a>
                 )}
@@ -91,7 +92,7 @@ export default function DiscoverPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
                   >
-                    <Globe size={15} />
+                    <GlobeIcon className="h-4 w-4" />
                     Sitio web
                   </a>
                 )}
