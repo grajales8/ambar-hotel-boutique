@@ -5,7 +5,6 @@ import type { ComponentType, SVGProps } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import {
-  HotelIcon,
   LeafIcon,
   ClockIcon,
   InfoIcon,
@@ -25,7 +24,7 @@ import {
   BellRingIcon,
   AlertTriangleIcon,
 } from "@/components/ui/AppIcons";
-import { DiscoverPinIcon } from "@/components/ui/HomeIcons";
+import { HotelIcon, DiscoverPinIcon } from "@/components/ui/HomeIcons";
 import {
   hotelIntro,
   hotelSpaces,
