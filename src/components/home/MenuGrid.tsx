@@ -1,22 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import type { SVGProps } from "react";
 import { motion } from "framer-motion";
+import { MessageCircle, Star, ChevronRight } from "lucide-react";
 import {
-  Compass,
-  BookOpenText,
-  BellRing,
-  Wifi,
-  CupSoda,
-  UtensilsCrossed,
-  ShoppingBag,
-  Sparkles,
-  MapPinned,
-  MessageCircle,
-  Star,
-  ChevronRight,
-  type LucideIcon,
-} from "lucide-react";
+  HotelIcon,
+  RoomGuideIcon,
+  ServiceBellIcon,
+  WifiIcon,
+  MinibarIcon,
+  BoutiqueBagIcon,
+  SparkleServiceIcon,
+  DiscoverPinIcon,
+} from "@/components/ui/HomeIcons";
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import { GOOGLE_REVIEW_URL } from "@/lib/config";
 
@@ -25,22 +22,23 @@ type MenuAction = { type: "link"; href: string } | { type: "whatsapp"; message: 
 type MenuEntry = {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<SVGProps<SVGSVGElement>>;
   action: MenuAction;
 };
 
-// Los 9 accesos que forman la grilla 3x3, en el orden solicitado. El hero
-// de bienvenida vive aparte (WelcomeHero).
+// Los 9 accesos que forman la grilla 3x3, en el orden solicitado, con
+// íconos propios en línea fina (ver /components/ui/HomeIcons.tsx) en vez
+// de los genéricos de Lucide. El hero de bienvenida vive aparte.
 const gridEntries: MenuEntry[] = [
-  { id: "hotel", label: "Hotel", icon: Compass, action: { type: "link", href: "/guia-hotel" } },
-  { id: "guia-habitacion", label: "Guía habitación", icon: BookOpenText, action: { type: "link", href: "/guia" } },
-  { id: "servicio", label: "Solicitar servicio", icon: BellRing, action: { type: "link", href: "/servicio" } },
-  { id: "wifi", label: "WiFi", icon: Wifi, action: { type: "link", href: "/wifi" } },
-  { id: "minibar", label: "Minibar", icon: CupSoda, action: { type: "link", href: "/minibar" } },
-  { id: "restaurante", label: "Restaurante", icon: UtensilsCrossed, action: { type: "link", href: "/restaurante" } },
-  { id: "boutique", label: "Boutique", icon: ShoppingBag, action: { type: "link", href: "/boutique" } },
-  { id: "experiencias", label: "Servicios y experiencias", icon: Sparkles, action: { type: "link", href: "/experiencias" } },
-  { id: "descubre", label: "Descubre Cali", icon: MapPinned, action: { type: "link", href: "/descubre" } },
+  { id: "hotel", label: "Hotel", icon: HotelIcon, action: { type: "link", href: "/guia-hotel" } },
+  { id: "guia-habitacion", label: "Guía habitación", icon: RoomGuideIcon, action: { type: "link", href: "/guia" } },
+  { id: "servicio", label: "Solicitar servicio", icon: ServiceBellIcon, action: { type: "link", href: "/servicio" } },
+  { id: "wifi", label: "WiFi", icon: WifiIcon, action: { type: "link", href: "/wifi" } },
+  { id: "minibar", label: "Minibar", icon: MinibarIcon, action: { type: "link", href: "/minibar" } },
+  { id: "restaurante", label: "Restaurante", icon: ServiceBellIcon, action: { type: "link", href: "/restaurante" } },
+  { id: "boutique", label: "Boutique", icon: BoutiqueBagIcon, action: { type: "link", href: "/boutique" } },
+  { id: "experiencias", label: "Servicios y experiencias", icon: SparkleServiceIcon, action: { type: "link", href: "/experiencias" } },
+  { id: "descubre", label: "Descubre Cali", icon: DiscoverPinIcon, action: { type: "link", href: "/descubre" } },
 ];
 
 function renderAction(action: MenuAction, children: React.ReactNode, key: string) {
@@ -72,11 +70,9 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.06 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex h-24 flex-col items-center justify-center gap-1.5 rounded-2xl bg-white px-1.5 py-2.5 text-center shadow-[var(--shadow-card)]"
+              className="flex h-28 flex-col items-center justify-center gap-2 rounded-2xl bg-white px-1.5 py-3 text-center shadow-[var(--shadow-card)]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
-                <Icon size={17} strokeWidth={1.75} />
-              </span>
+              <Icon className="h-10 w-10 text-[var(--color-gold)]" />
               <span className="text-[13px] font-medium leading-tight text-[var(--color-navy)]">
                 {entry.label}
               </span>
