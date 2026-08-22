@@ -3,16 +3,19 @@
 import Link from "next/link";
 import type { SVGProps } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Star, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   HotelIcon,
-  RoomGuideIcon,
+  DoorHangerIcon,
   ServiceBellIcon,
   WifiIcon,
   MinibarIcon,
+  UtensilsCrossedIcon,
   BoutiqueBagIcon,
   SparkleServiceIcon,
   DiscoverPinIcon,
+  ChatBubbleIcon,
+  StarOutlineIcon,
 } from "@/components/ui/HomeIcons";
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import { GOOGLE_REVIEW_URL } from "@/lib/config";
@@ -31,11 +34,11 @@ type MenuEntry = {
 // de los genéricos de Lucide. El hero de bienvenida vive aparte.
 const gridEntries: MenuEntry[] = [
   { id: "hotel", label: "Hotel", icon: HotelIcon, action: { type: "link", href: "/guia-hotel" } },
-  { id: "guia-habitacion", label: "Guía habitación", icon: RoomGuideIcon, action: { type: "link", href: "/guia" } },
+  { id: "guia-habitacion", label: "Guía habitación", icon: DoorHangerIcon, action: { type: "link", href: "/guia" } },
   { id: "servicio", label: "Solicitar servicio", icon: ServiceBellIcon, action: { type: "link", href: "/servicio" } },
   { id: "wifi", label: "WiFi", icon: WifiIcon, action: { type: "link", href: "/wifi" } },
   { id: "minibar", label: "Minibar", icon: MinibarIcon, action: { type: "link", href: "/minibar" } },
-  { id: "restaurante", label: "Restaurante", icon: ServiceBellIcon, action: { type: "link", href: "/restaurante" } },
+  { id: "restaurante", label: "Restaurante", icon: UtensilsCrossedIcon, action: { type: "link", href: "/restaurante" } },
   { id: "boutique", label: "Boutique", icon: BoutiqueBagIcon, action: { type: "link", href: "/boutique" } },
   { id: "experiencias", label: "Servicios y experiencias", icon: SparkleServiceIcon, action: { type: "link", href: "/experiencias" } },
   { id: "descubre", label: "Descubre Cali", icon: DiscoverPinIcon, action: { type: "link", href: "/descubre" } },
@@ -100,7 +103,7 @@ export default function MenuGrid() {
           className="flex items-center gap-3 rounded-2xl bg-[var(--color-gold-soft)] px-4 py-3 shadow-[var(--shadow-card)]"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-navy)]">
-            <MessageCircle size={18} strokeWidth={1.75} />
+            <ChatBubbleIcon className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-base font-semibold text-[var(--color-navy)]">Chatear con recepción</span>
@@ -120,7 +123,7 @@ export default function MenuGrid() {
           className="flex items-center gap-3 rounded-2xl border border-[var(--color-sand-2)] bg-white px-4 py-3"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-gold)]">
-            <Star size={18} strokeWidth={1.75} />
+            <StarOutlineIcon className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-base font-semibold text-[var(--color-navy)]">

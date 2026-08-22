@@ -110,3 +110,53 @@ export function DiscoverPinIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function DoorHangerIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="24" cy="9" r="3" stroke="currentColor" />
+      <path
+        d="M17 13c0-3 3-5 7-5s7 2 7 5l3 25c0 3-6 5-10 5s-10-2-10-5l3-25Z"
+        stroke="currentColor"
+      />
+      <circle cx="24" cy="24" r="3.2" stroke="currentColor" />
+      <path d="M22.5 27.2l1.5 5 1.5-5" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function UtensilsCrossedIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M13 6v9M17.5 6v9M22 6v9" stroke="currentColor" />
+      <path d="M13 15c0 3.2 4.5 5 4.5 5s4.5-1.8 4.5-5" stroke="currentColor" />
+      <path d="M17.5 20 32 42" stroke="currentColor" />
+      <path d="M34 6c2.5 4 1.5 9-2.5 12L16 42" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function ChatBubbleIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M6 24c0-9.9 8.1-18 18-18s18 8.1 18 18-8.1 18-18 18c-2.4 0-4.7-.5-6.8-1.3L8 44l3-9.4C7.9 31.5 6 28 6 24Z"
+        stroke="currentColor"
+      />
+      <circle cx="16" cy="24" r="1.8" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="24" r="1.8" fill="currentColor" stroke="none" />
+      <circle cx="32" cy="24" r="1.8" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function StarOutlineIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M24 6l5.4 11.5L42 19.3l-9 8.9L35 41 24 34.8 13 41l2-12.8-9-8.9 12.6-1.8L24 6Z"
+        stroke="currentColor"
+      />
+    </svg>
+  );
+}
