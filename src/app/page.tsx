@@ -4,7 +4,7 @@ import MenuGrid from "@/components/home/MenuGrid";
 
 export default function HomePage() {
   return (
-    <main className="flex flex-col bg-[var(--color-navy)]">
+    <main className="flex flex-col" style={{ backgroundColor: "#0B0B0C" }}>
       <WelcomeHero />
       <MenuGrid />
       <footer className="flex flex-col items-center gap-2 bg-[var(--color-sand)] px-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-6">

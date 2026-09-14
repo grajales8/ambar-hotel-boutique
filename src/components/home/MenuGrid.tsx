@@ -20,6 +20,8 @@ import {
 import { buildWhatsappLink } from "@/lib/whatsapp";
 import { GOOGLE_REVIEW_URL } from "@/lib/config";
 
+const BRONZE = "#B8935C";
+
 type MenuAction = { type: "link"; href: string } | { type: "whatsapp"; message: string };
 
 type MenuEntry = {
@@ -31,8 +33,8 @@ type MenuEntry = {
 
 // Los 9 accesos que forman la grilla 3x3, en el orden solicitado, con
 // íconos propios en línea fina (ver /components/ui/HomeIcons.tsx). Tema
-// oscuro: tarjetas en azul marino, íconos y detalles en dorado, texto
-// blanco — solo en esta pantalla de inicio.
+// negro mate + bronce: tarjetas en gris carbón, íconos y texto en bronce
+// — solo en esta pantalla de inicio.
 const gridEntries: MenuEntry[] = [
   { id: "hotel", label: "Hotel", icon: HotelIcon, action: { type: "link", href: "/guia-hotel" } },
   { id: "guia-habitacion", label: "Guía habitación", icon: DoorHangerIcon, action: { type: "link", href: "/guia" } },
@@ -62,7 +64,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 
 export default function MenuGrid() {
   return (
-    <div className="bg-[var(--color-navy)] px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-6">
+    <div
+      className="px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-6"
+      style={{ backgroundColor: "#0B0B0C" }}
+    >
       <div className="grid grid-cols-3 gap-2">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
@@ -72,21 +77,21 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.06 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex h-28 flex-col items-center justify-center gap-2 rounded-2xl bg-[var(--color-navy-2)] px-1.5 py-3 text-center"
+              className="flex h-28 flex-col items-center justify-center gap-2 rounded-2xl px-1.5 py-3 text-center"
+              style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <Icon className="h-10 w-10 text-[var(--color-gold)]" />
-              <span className="text-[13px] font-medium leading-tight text-white">
+              <Icon className="h-10 w-10" style={{ color: BRONZE }} />
+              <span className="text-[13px] font-medium leading-tight" style={{ color: BRONZE }}>
                 {entry.label}
               </span>
-              <span className="h-px w-3 bg-[var(--color-gold)]" />
             </motion.div>
           );
           return renderAction(entry.action, card, entry.id);
         })}
       </div>
 
-      {/* Accesos anchos: chatear y calificar, mismo tratamiento oscuro con
-          ícono en círculo de borde dorado (sin relleno). */}
+      {/* Accesos anchos: chatear y calificar, mismo tratamiento (gris
+          carbón + bronce). */}
       <div className="mt-3 space-y-2">
         <motion.a
           href={buildWhatsappLink(
@@ -98,16 +103,24 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.06 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 rounded-2xl bg-[var(--color-navy-2)] px-4 py-3.5"
+          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-gold)] text-[var(--color-gold)]">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+            style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
+          >
             <ChatBubbleIcon className="h-5 w-5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-white">Chatear con recepción</span>
-            <span className="block text-sm text-white/60">Estamos para ayudarte</span>
+            <span className="block text-base font-semibold" style={{ color: BRONZE }}>
+              Chatear con recepción
+            </span>
+            <span className="block text-sm" style={{ color: `${BRONZE}99` }}>
+              Estamos para ayudarte
+            </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-white/50" />
+          <ChevronRight size={18} className="shrink-0" style={{ color: BRONZE }} />
         </motion.a>
 
         <motion.a
@@ -118,20 +131,24 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.06 * gridEntries.length + 0.06 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 rounded-2xl bg-[var(--color-navy-2)] px-4 py-3.5"
+          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-gold)] text-[var(--color-gold)]">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+            style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
+          >
             <StarOutlineIcon className="h-5 w-5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-white">
+            <span className="block text-base font-semibold" style={{ color: BRONZE }}>
               Calificar experiencia
             </span>
-            <span className="block text-sm text-white/60">
+            <span className="block text-sm" style={{ color: `${BRONZE}99` }}>
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-white/50" />
+          <ChevronRight size={18} className="shrink-0" style={{ color: BRONZE }} />
         </motion.a>
       </div>
     </div>
