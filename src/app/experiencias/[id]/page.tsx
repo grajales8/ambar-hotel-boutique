@@ -34,18 +34,18 @@ export default function ExperienceDetailPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[var(--color-sand)]">
+      <main className="min-h-screen bg-[#0B0B0C]">
         <PageHeader title="Servicios & Experiencias" backHref="/experiencias" />
-        <p className="px-5 pt-6 text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+        <p className="px-5 pt-6 text-sm text-[#B8935C]/70">Cargando…</p>
       </main>
     );
   }
 
   if (!service) {
     return (
-      <main className="min-h-screen bg-[var(--color-sand)]">
+      <main className="min-h-screen bg-[#0B0B0C]">
         <PageHeader title="Servicios & Experiencias" backHref="/experiencias" />
-        <p className="px-5 pt-6 text-sm text-[var(--color-ink-soft)]">
+        <p className="px-5 pt-6 text-sm text-[#B8935C]/70">
           No encontramos esta experiencia. Puede que ya no esté disponible.
         </p>
       </main>
@@ -55,7 +55,7 @@ export default function ExperienceDetailPage() {
   const whatsappMessage = `Hola, quisiera más información sobre "${service.name}" en AMBAR Hotel Boutique.`;
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-12">
+    <main className="min-h-screen bg-[#0B0B0C] pb-12">
       <PageHeader title={service.name} subtitle={categoryName} backHref="/experiencias" />
 
       <div className="mx-5 mt-4 overflow-hidden rounded-2xl shadow-[var(--shadow-card)]">
@@ -64,23 +64,23 @@ export default function ExperienceDetailPage() {
 
       <div className="px-5 pt-5">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="font-display text-xl text-[var(--color-navy)]">{service.name}</h1>
-          <span className="shrink-0 font-display text-lg text-[var(--color-navy)]">
+          <h1 className="font-display text-xl text-[#B8935C]">{service.name}</h1>
+          <span className="shrink-0 font-display text-lg text-[#B8935C]">
             {service.price ? formatCOP(service.price) : "Consultar"}
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+        <p className="mt-3 text-sm leading-relaxed text-[#B8935C]/70">
           {service.fullDescription}
         </p>
 
         {service.includes.length > 0 && (
           <div className="mt-5">
-            <h2 className="font-display text-sm text-[var(--color-navy)]">Qué incluye</h2>
+            <h2 className="font-display text-sm text-[#B8935C]">Qué incluye</h2>
             <ul className="mt-2 space-y-1.5">
               {service.includes.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-ink-soft)]">
-                  <Check size={15} className="mt-0.5 shrink-0 text-[var(--color-gold)]" />
+                <li key={i} className="flex items-start gap-2 text-sm text-[#B8935C]/70">
+                  <Check size={15} className="mt-0.5 shrink-0 text-[#B8935C]" />
                   {item}
                 </li>
               ))}
@@ -90,11 +90,11 @@ export default function ExperienceDetailPage() {
 
         {service.benefits.length > 0 && (
           <div className="mt-5">
-            <h2 className="font-display text-sm text-[var(--color-navy)]">Beneficios</h2>
+            <h2 className="font-display text-sm text-[#B8935C]">Beneficios</h2>
             <ul className="mt-2 space-y-1.5">
               {service.benefits.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-ink-soft)]">
-                  <Sparkles size={15} className="mt-0.5 shrink-0 text-[var(--color-gold)]" />
+                <li key={i} className="flex items-start gap-2 text-sm text-[#B8935C]/70">
+                  <Sparkles size={15} className="mt-0.5 shrink-0 text-[#B8935C]" />
                   {item}
                 </li>
               ))}
@@ -106,7 +106,7 @@ export default function ExperienceDetailPage() {
           href={buildWhatsappLink(whatsappMessage)}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-4 font-medium text-white active:scale-[0.98] transition-transform"
+          className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-4 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
         >
           <MessageCircle size={16} />
           Más información

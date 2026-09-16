@@ -22,11 +22,11 @@ export default function RatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="Calificar experiencia" subtitle="Tu opinión nos ayuda a mejorar" />
 
       <div className="flex flex-col items-center px-6 pt-10 text-center">
-        <p className="font-display text-xl text-[var(--color-navy)]">
+        <p className="font-display text-xl text-[#B8935C]">
           ¿Cómo fue tu experiencia?
         </p>
 
@@ -46,8 +46,8 @@ export default function RatePage() {
                 strokeWidth={1.5}
                 className={
                   n <= rating
-                    ? "fill-[var(--color-gold)] text-[var(--color-gold)]"
-                    : "text-[var(--color-sand-2)]"
+                    ? "fill-[#B8935C] text-[#B8935C]"
+                    : "text-[#2A2724]"
                 }
               />
             </motion.button>
@@ -58,16 +58,17 @@ export default function RatePage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 w-full max-w-sm rounded-2xl bg-white p-6 shadow-[var(--shadow-card)]"
+            className="mt-8 w-full max-w-sm rounded-2xl bg-[#1E1C1A] p-6 shadow-[var(--shadow-card)]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
-            <p className="text-sm text-[var(--color-ink-soft)]">
+            <p className="text-sm text-[#B8935C]/70">
               ¡Nos alegra muchísimo! ¿Nos regalas una reseña pública en Google?
             </p>
             <a
               href={hotelInfo.googleReviewUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-3.5 font-medium text-white active:scale-[0.98] transition-transform"
+              className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
             >
               <ExternalLink size={16} />
               Calificar en Google
@@ -79,9 +80,10 @@ export default function RatePage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-8 w-full max-w-sm rounded-2xl bg-white p-6 text-left shadow-[var(--shadow-card)]"
+            className="mt-8 w-full max-w-sm rounded-2xl bg-[#1E1C1A] p-6 text-left shadow-[var(--shadow-card)]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
-            <p className="text-sm text-[var(--color-ink-soft)]">
+            <p className="text-sm text-[#B8935C]/70">
               Lamentamos que tu experiencia no fuera perfecta. Cuéntanos qué podemos mejorar.
             </p>
             <textarea
@@ -89,12 +91,12 @@ export default function RatePage() {
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Escribe tu comentario aquí..."
-              className="mt-4 w-full resize-none rounded-xl border border-[var(--color-sand-2)] bg-[var(--color-sand)] p-3 text-sm text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+              className="mt-4 w-full resize-none rounded-xl border border-[#0B0B0C] bg-[#0B0B0C] p-3 text-sm text-[#B8935C] placeholder-[#B8935C]/40 outline-none focus:border-[#B8935C]"
             />
             <button
               onClick={handleSendFeedback}
               disabled={sent}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-3.5 font-medium text-white active:scale-[0.98] transition-transform disabled:opacity-70"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform disabled:opacity-70"
             >
               {sent ? "¡Gracias por tu comentario!" : (
                 <>

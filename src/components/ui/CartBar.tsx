@@ -50,7 +50,7 @@ export default function CartBar({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         onClick={() => setOpen(true)}
-        className="fixed inset-x-5 bottom-[calc(env(safe-area-inset-bottom)+1.25rem)] z-40 flex items-center justify-between rounded-full bg-[var(--color-navy)] px-5 py-4 text-white shadow-[var(--shadow-card-hover)] active:scale-[0.98] transition-transform"
+        className="fixed inset-x-5 bottom-[calc(env(safe-area-inset-bottom)+1.25rem)] z-40 flex items-center justify-between rounded-full bg-[#B8935C] px-5 py-4 text-[#0B0B0C] shadow-[var(--shadow-card-hover)] active:scale-[0.98] transition-transform"
       >
         <span className="flex items-center gap-2 text-sm font-medium">
           <ShoppingBag size={18} />
@@ -62,7 +62,7 @@ export default function CartBar({
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-end bg-[var(--color-ink)]/40"
+            className="fixed inset-0 z-50 flex items-end bg-black/60"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -74,15 +74,16 @@ export default function CartBar({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
-              className="max-h-[85vh] w-full overflow-y-auto rounded-t-3xl bg-white p-6 pb-[calc(env(safe-area-inset-bottom)+1.5rem)]"
+              className="max-h-[85vh] w-full overflow-y-auto rounded-t-3xl bg-[#1E1C1A] p-6 pb-[calc(env(safe-area-inset-bottom)+1.5rem)]"
+              style={{ borderTop: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[var(--color-sand-2)]" />
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[#0B0B0C]" />
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-lg text-[var(--color-navy)]">
+                <h2 className="font-display text-lg text-[#B8935C]">
                   Tu pedido — {moduleLabel}
                 </h2>
                 <button onClick={() => setOpen(false)} aria-label="Cerrar">
-                  <X size={20} className="text-[var(--color-ink-soft)]" />
+                  <X size={20} className="text-[#B8935C]/70" />
                 </button>
               </div>
 
@@ -90,26 +91,28 @@ export default function CartBar({
                 {lines.map((l) => (
                   <div key={l.item.id} className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-[var(--color-navy)]">
+                      <p className="truncate text-sm font-medium text-[#B8935C]">
                         {l.item.name}
                       </p>
-                      <p className="text-xs text-[var(--color-ink-soft)]">
+                      <p className="text-xs text-[#B8935C]/70">
                         {formatCOP(l.item.price)} c/u
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 rounded-full bg-[var(--color-sand-2)] px-2 py-1">
+                    <div className="flex items-center gap-3 rounded-full bg-[#0B0B0C] px-2 py-1">
                       <button
                         onClick={() => decrement(l.item.id)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[var(--color-navy)]"
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C]"
+                        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                       >
                         −
                       </button>
-                      <span className="w-4 text-center text-sm font-semibold text-[var(--color-navy)]">
+                      <span className="w-4 text-center text-sm font-semibold text-[#B8935C]">
                         {l.quantity}
                       </span>
                       <button
                         onClick={() => addItem(l.item)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[var(--color-navy)]"
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C]"
+                        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                       >
                         +
                       </button>
@@ -120,7 +123,7 @@ export default function CartBar({
 
               <div className="gold-hairline my-5" />
 
-              <label className="mb-2 block text-sm font-medium text-[var(--color-navy)]">
+              <label className="mb-2 block text-sm font-medium text-[#B8935C]">
                 {roomPlaceholder}
               </label>
               <input
@@ -128,12 +131,12 @@ export default function CartBar({
                 onChange={(e) => setRoom(e.target.value)}
                 placeholder="Ej. 204"
                 inputMode="numeric"
-                className="w-full rounded-xl border border-[var(--color-sand-2)] bg-[var(--color-sand)] px-4 py-3 text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                className="w-full rounded-xl border border-[#0B0B0C] bg-[#0B0B0C] px-4 py-3 text-[#B8935C] placeholder-[#B8935C]/40 outline-none focus:border-[#B8935C]"
               />
 
               <div className="mt-5 flex items-center justify-between text-base">
-                <span className="text-[var(--color-ink-soft)]">Total</span>
-                <span className="font-display text-xl text-[var(--color-navy)]">
+                <span className="text-[#B8935C]/70">Total</span>
+                <span className="font-display text-xl text-[#B8935C]">
                   {formatCOP(totalPrice)}
                 </span>
               </div>
@@ -141,7 +144,7 @@ export default function CartBar({
               <button
                 onClick={handleSend}
                 disabled={sent}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-4 font-medium text-white active:scale-[0.98] transition-transform disabled:opacity-70"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-4 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform disabled:opacity-70"
               >
                 {sent ? (
                   "¡Pedido enviado!"
@@ -152,7 +155,7 @@ export default function CartBar({
                   </>
                 )}
               </button>
-              <p className="mt-3 text-center text-xs text-[var(--color-ink-soft)]">
+              <p className="mt-3 text-center text-xs text-[#B8935C]/70">
                 Tu pedido se enviará directamente a recepción por WhatsApp.
               </p>
             </motion.div>

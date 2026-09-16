@@ -21,9 +21,10 @@ export default function CategoryTabs({
             onClick={() => onChange(c.id)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-[var(--color-navy)] text-white"
-                : "bg-white text-[var(--color-ink-soft)] shadow-[var(--shadow-card)]"
+                ? "bg-[#B8935C] text-[#0B0B0C]"
+                : "bg-[#1E1C1A] text-[#B8935C]/80 shadow-[var(--shadow-card)]"
             }`}
+            style={!isActive ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
           >
             {c.name}
           </button>

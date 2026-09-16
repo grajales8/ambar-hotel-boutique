@@ -32,10 +32,10 @@ export default function RestaurantPage() {
   const filtered = restaurantItems.filter((i) => i.categoryId === category);
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="Restaurante" subtitle="Nuestro menú" />
 
-      <div className="sticky top-[86px] z-20 bg-[var(--color-sand)]/90 backdrop-blur-md py-3">
+      <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3">
         <CategoryTabs
           categories={restaurantCategories}
           active={category}
@@ -48,7 +48,7 @@ export default function RestaurantPage() {
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
         {loading && (
-          <p className="col-span-2 pt-4 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+          <p className="col-span-2 pt-4 text-center text-sm text-[#B8935C]/70">Cargando…</p>
         )}
         {!loading && filtered.map((item) => (
           <ProductCardReadOnly

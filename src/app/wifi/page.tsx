@@ -39,16 +39,16 @@ export default function WifiPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="WiFi" subtitle="Conéctate en segundos" />
 
       <div className="flex flex-col items-center gap-4 px-6 pt-8">
         {loading && (
-          <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+          <p className="mt-6 text-center text-sm text-[#B8935C]/70">Cargando…</p>
         )}
 
         {!loading && activeNetworks.length === 0 && (
-          <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">
+          <p className="mt-6 text-center text-sm text-[#B8935C]/70">
             No hay redes WiFi disponibles en este momento.
           </p>
         )}
@@ -59,30 +59,31 @@ export default function WifiPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.06 * i }}
-            className="w-full max-w-sm rounded-2xl bg-white p-6 text-left shadow-[var(--shadow-card)]"
+            className="w-full max-w-sm rounded-2xl bg-[#1E1C1A] p-6 text-left shadow-[var(--shadow-card)]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
             <div className="mb-4 flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C]">
                 <WifiIcon size={16} strokeWidth={1.75} />
               </span>
               {network.description && (
-                <span className="text-xs text-[var(--color-ink-soft)]">{network.description}</span>
+                <span className="text-xs text-[#B8935C]/70">{network.description}</span>
               )}
             </div>
 
-            <p className="text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">Red</p>
-            <p className="font-display text-lg text-[var(--color-navy)]">{network.ssid}</p>
+            <p className="text-xs uppercase tracking-wide text-[#B8935C]/60">Red</p>
+            <p className="font-display text-lg text-[#B8935C]">{network.ssid}</p>
 
             <div className="gold-hairline my-4" />
 
-            <p className="text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">Contraseña</p>
-            <p className="font-display text-lg tracking-wide text-[var(--color-navy)]">
+            <p className="text-xs uppercase tracking-wide text-[#B8935C]/60">Contraseña</p>
+            <p className="font-display text-lg tracking-wide text-[#B8935C]">
               {network.password}
             </p>
 
             <button
               onClick={() => handleCopy(network)}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-3.5 font-medium text-white active:scale-[0.98] transition-transform"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
             >
               {copiedId === network.id ? <Check size={16} /> : <Copy size={16} />}
               {copiedId === network.id ? "Contraseña copiada" : "Copiar contraseña"}

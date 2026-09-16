@@ -33,11 +33,11 @@ export default function ServiceRequestPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="Solicitar servicio" subtitle="Recepción atenderá tu solicitud enseguida" />
 
       <div className="px-5 pt-4">
-        <label className="mb-2 block text-sm font-medium text-[var(--color-navy)]">
+        <label className="mb-2 block text-sm font-medium text-[#B8935C]">
           Número de habitación
         </label>
         <input
@@ -45,7 +45,8 @@ export default function ServiceRequestPage() {
           onChange={(e) => setRoom(e.target.value)}
           placeholder="Ej. 204"
           inputMode="numeric"
-          className="w-full rounded-xl border border-[var(--color-sand-2)] bg-white px-4 py-3 text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+          className="w-full rounded-xl border border-[#1E1C1A] bg-[#1E1C1A] px-4 py-3 text-[#B8935C] placeholder-[#B8935C]/40 outline-none focus:border-[#B8935C]"
+          style={{ border: "1px solid rgba(184,147,92,0.22)" }}
         />
       </div>
 
@@ -61,18 +62,20 @@ export default function ServiceRequestPage() {
               transition={{ duration: 0.35, delay: 0.04 * i }}
               whileTap={{ scale: 0.96 }}
               onClick={() => handleRequest(s.name, s.id)}
-              className="flex h-32 flex-col items-center justify-center gap-2.5 rounded-2xl bg-white p-4 text-center shadow-[var(--shadow-card)]"
+              className="flex h-32 flex-col items-center justify-center gap-2.5 rounded-2xl bg-[#1E1C1A] p-4 text-center shadow-[var(--shadow-card)]"
+              style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <span
                 className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
                   isSent
-                    ? "bg-[var(--color-navy)] text-white"
-                    : "bg-[var(--color-sand)] text-[var(--color-gold)]"
+                    ? "bg-[#B8935C] text-[#0B0B0C]"
+                    : "bg-[#0B0B0C] text-[#B8935C]"
                 }`}
+                style={!isSent ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
               >
                 {isSent ? <Check size={20} /> : <Icon className="h-5 w-5" />}
               </span>
-              <span className="text-sm font-medium leading-tight text-[var(--color-navy)]">
+              <span className="text-sm font-medium leading-tight text-[#B8935C]">
                 {isSent ? "Solicitud enviada" : s.name}
               </span>
             </motion.button>

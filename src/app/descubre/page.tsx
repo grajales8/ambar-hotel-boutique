@@ -29,12 +29,12 @@ export default function DiscoverPage() {
   const activePlaces = places.filter((p) => p.active);
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="Descubre Cali" subtitle="Recomendaciones cerca de AMBAR" />
 
       <div className="space-y-4 px-5 pt-4">
         {loading && (
-          <p className="pt-4 text-center text-sm text-[var(--color-ink-soft)]">Cargando…</p>
+          <p className="pt-4 text-center text-sm text-[#B8935C]/70">Cargando…</p>
         )}
         {!loading && activePlaces.map((place, i) => (
           <motion.div
@@ -42,7 +42,8 @@ export default function DiscoverPage() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.06 * i }}
-            className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]"
+            className="overflow-hidden rounded-2xl bg-[#1E1C1A] shadow-[var(--shadow-card)]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
             <div className="relative h-44 w-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,17 +52,17 @@ export default function DiscoverPage() {
                 alt={place.name}
                 className="h-full w-full object-cover"
               />
-              <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-[var(--color-navy)]">
+              <span className="absolute left-3 top-3 rounded-full bg-[#1E1C1A]/90 px-3 py-1 text-xs font-medium text-[#B8935C]">
                 {place.category}
               </span>
             </div>
             <div className="p-4">
-              <h3 className="font-display text-lg text-[var(--color-navy)]">{place.name}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-[var(--color-ink-soft)]">
+              <h3 className="font-display text-lg text-[#B8935C]">{place.name}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#B8935C]/70">
                 {place.description}
               </p>
 
-              <div className="mt-3 space-y-1 text-xs text-[var(--color-ink-soft)]">
+              <div className="mt-3 space-y-1 text-xs text-[#B8935C]/70">
                 {place.address && <p>{place.address}</p>}
                 {place.hours && <p>{place.hours}</p>}
               </div>
@@ -71,7 +72,7 @@ export default function DiscoverPage() {
                   href={place.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-[var(--color-navy)] px-4 py-2.5 text-sm font-medium text-white active:scale-95 transition-transform"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#B8935C] px-4 py-2.5 text-sm font-medium text-[#0B0B0C] active:scale-95 transition-transform"
                 >
                   <DiscoverPinIcon className="h-4 w-4" />
                   Abrir en Google Maps
@@ -79,7 +80,8 @@ export default function DiscoverPage() {
                 {place.phone && (
                   <a
                     href={`tel:${place.phone.replace(/\s/g, "")}`}
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#B8935C]"
+                    style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                   >
                     <PhoneIcon className="h-4 w-4" />
                     Llamar
@@ -90,7 +92,8 @@ export default function DiscoverPage() {
                     href={place.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--color-sand-2)] px-4 py-2.5 text-sm font-medium text-[var(--color-navy)]"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#B8935C]"
+                    style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                   >
                     <GlobeIcon className="h-4 w-4" />
                     Sitio web

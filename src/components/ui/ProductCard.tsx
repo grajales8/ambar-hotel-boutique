@@ -42,14 +42,15 @@ export default function ProductCard({
         }
       }}
       aria-expanded={isOpen}
-      className="cursor-pointer overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]"
+      className="cursor-pointer overflow-hidden rounded-2xl bg-[#1E1C1A] shadow-[var(--shadow-card)]"
+      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
     >
       <div className="relative h-36 w-full">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
         {!item.available && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[var(--color-navy)]">
+            <span className="rounded-full bg-[#1E1C1A]/90 px-3 py-1 text-xs font-semibold text-[#B8935C]">
               No disponible
             </span>
           </div>
@@ -58,11 +59,11 @@ export default function ProductCard({
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-base text-[var(--color-navy)]">{item.name}</h3>
+          <h3 className="font-display text-base text-[#B8935C]">{item.name}</h3>
           <motion.span
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.25 }}
-            className="mt-1 shrink-0 text-[var(--color-ink-soft)]"
+            className="mt-1 shrink-0 text-[#B8935C]/70"
             aria-hidden="true"
           >
             <ChevronDown size={16} />
@@ -78,7 +79,7 @@ export default function ProductCard({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <p className="pt-2 text-sm leading-snug text-[var(--color-ink-soft)]">
+              <p className="pt-2 text-sm leading-snug text-[#B8935C]/70">
                 {item.description}
               </p>
             </motion.div>
@@ -86,7 +87,7 @@ export default function ProductCard({
         </AnimatePresence>
 
         <div className="mt-2">
-          <span className="font-semibold text-[var(--color-navy)]">{formatCOP(item.price)}</span>
+          <span className="font-semibold text-[#B8935C]">{formatCOP(item.price)}</span>
         </div>
 
         <AnimatePresence initial={false}>
@@ -106,7 +107,7 @@ export default function ProductCard({
                       onAdd();
                     }}
                     disabled={!item.available}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[var(--color-navy)] py-2.5 text-sm font-medium text-white active:scale-95 transition-transform disabled:opacity-40"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-sm font-medium text-[#0B0B0C] active:scale-95 transition-transform disabled:opacity-40"
                   >
                     <Plus size={14} />
                     Agregar
@@ -114,20 +115,22 @@ export default function ProductCard({
                 ) : (
                   <div
                     onClick={(e) => e.stopPropagation()}
-                    className="flex w-full items-center justify-center gap-5 rounded-full bg-[var(--color-sand-2)] px-2 py-2"
+                    className="flex w-full items-center justify-center gap-5 rounded-full bg-[#0B0B0C] px-2 py-2"
                   >
                     <button
                       onClick={onRemove}
                       aria-label="Quitar uno"
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[var(--color-navy)] active:scale-90 transition-transform"
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] active:scale-90 transition-transform"
+                      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                     >
                       <Minus size={14} />
                     </button>
-                    <span className="text-sm font-semibold text-[var(--color-navy)]">{quantity}</span>
+                    <span className="text-sm font-semibold text-[#B8935C]">{quantity}</span>
                     <button
                       onClick={onAdd}
                       aria-label="Agregar uno más"
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[var(--color-navy)] active:scale-90 transition-transform"
+                      className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] active:scale-90 transition-transform"
+                      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                     >
                       <Plus size={14} />
                     </button>

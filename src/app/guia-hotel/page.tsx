@@ -73,19 +73,19 @@ function AccordionSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-card)]">
+    <div className="overflow-hidden rounded-2xl bg-[#1E1C1A] shadow-[var(--shadow-card)]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
       <button
         onClick={onToggle}
         className="flex w-full items-center gap-3 px-4 py-4 text-left"
         aria-expanded={isOpen}
         aria-controls={`section-${id}`}
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-gold)]">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C]">
           <Icon className="h-5 w-5" />
         </span>
-        <span className="flex-1 font-display text-[15px] text-[var(--color-navy)]">{title}</span>
+        <span className="flex-1 font-display text-[15px] text-[#B8935C]">{title}</span>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
-          <ChevronDown size={18} className="text-[var(--color-ink-soft)]" />
+          <ChevronDown size={18} className="text-[#B8935C]/70" />
         </motion.span>
       </button>
 
@@ -119,7 +119,7 @@ export default function HotelGuidePage() {
   const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-10">
+    <main className="min-h-screen bg-[#0B0B0C] pb-10">
       <PageHeader title="Guía del Hotel" subtitle="Todo sobre AMBAR, en un solo lugar" />
 
       <div className="space-y-3 px-5 pt-4">
@@ -133,7 +133,7 @@ export default function HotelGuidePage() {
         >
           <div className="space-y-2.5">
             {hotelIntro.paragraphs.map((p, i) => (
-              <p key={i} className="text-sm leading-relaxed text-[var(--color-ink-soft)]">
+              <p key={i} className="text-sm leading-relaxed text-[#B8935C]/75">
                 {p}
               </p>
             ))}
@@ -154,29 +154,30 @@ export default function HotelGuidePage() {
               return (
                 <div
                   key={space.title}
-                  className="flex items-start gap-3 rounded-xl bg-[var(--color-sand)] p-3"
+                  className="flex items-start gap-3 rounded-xl bg-[#0B0B0C] p-3"
                 >
                   <span
                     className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      space.disabled ? "bg-[var(--color-sand-2)] text-[var(--color-ink-soft)]" : "bg-white text-[var(--color-gold)]"
+                      space.disabled ? "bg-[#2A2724] text-[#B8935C]/40" : "bg-[#1E1C1A] text-[#B8935C]"
                     }`}
+                    style={!space.disabled ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
                   >
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
                     <p
                       className={`text-sm font-medium ${
-                        space.disabled ? "text-[var(--color-ink-soft)]" : "text-[var(--color-navy)]"
+                        space.disabled ? "text-[#B8935C]/40" : "text-[#B8935C]"
                       }`}
                     >
                       {space.title}
                       {space.disabled && (
-                        <span className="ml-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-[var(--color-ink-soft)]">
+                        <span className="ml-2 rounded-full bg-[#1E1C1A] px-2 py-0.5 text-[10px] font-medium text-[#B8935C]/60" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
                           Fuera de servicio
                         </span>
                       )}
                     </p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-soft)]">
+                    <p className="mt-0.5 text-xs leading-relaxed text-[#B8935C]/65">
                       {space.text}
                     </p>
                   </div>
@@ -194,11 +195,11 @@ export default function HotelGuidePage() {
           isOpen={openId === "horarios"}
           onToggle={() => toggle("horarios")}
         >
-          <div className="divide-y divide-[var(--color-sand-2)] overflow-hidden rounded-xl bg-[var(--color-sand)]">
+          <div className="divide-y divide-[#0B0B0C] overflow-hidden rounded-xl bg-[#0B0B0C]">
             {hotelSchedules.map((s) => (
               <div key={s.label} className="flex items-center justify-between px-4 py-3 text-sm">
-                <span className="font-medium text-[var(--color-navy)]">{s.label}</span>
-                <span className="text-right text-[var(--color-ink-soft)]">{s.value}</span>
+                <span className="font-medium text-[#B8935C]">{s.label}</span>
+                <span className="text-right text-[#B8935C]/70">{s.value}</span>
               </div>
             ))}
           </div>
@@ -218,14 +219,14 @@ export default function HotelGuidePage() {
               return (
                 <div
                   key={point.title}
-                  className="flex items-start gap-3 rounded-xl bg-[var(--color-sand)] p-3"
+                  className="flex items-start gap-3 rounded-xl bg-[#0B0B0C] p-3"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[var(--color-gold)]">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-[var(--color-navy)]">{point.title}</p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-[var(--color-ink-soft)]">
+                    <p className="text-sm font-medium text-[#B8935C]">{point.title}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-[#B8935C]/65">
                       {point.text}
                     </p>
                   </div>
@@ -243,9 +244,9 @@ export default function HotelGuidePage() {
           isOpen={openId === "ubicacion"}
           onToggle={() => toggle("ubicacion")}
         >
-          <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">{hotelLocation.text}</p>
-          <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[var(--color-navy)]">
-            <DiscoverPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-gold)]" />
+          <p className="text-sm leading-relaxed text-[#B8935C]/70">{hotelLocation.text}</p>
+          <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[#B8935C]">
+            <DiscoverPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#B8935C]" />
             {hotelLocation.address}
           </p>
 
@@ -253,7 +254,7 @@ export default function HotelGuidePage() {
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--color-navy)] py-3 text-sm font-medium text-white active:scale-[0.98] transition-transform"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3 text-sm font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
           >
             <DiscoverPinIcon className="h-4 w-4" />
             Abrir en Google Maps
@@ -285,7 +286,7 @@ export default function HotelGuidePage() {
           isOpen={openId === "compromiso"}
           onToggle={() => toggle("compromiso")}
         >
-          <p className="text-sm leading-relaxed text-[var(--color-ink-soft)]">
+          <p className="text-sm leading-relaxed text-[#B8935C]/70">
             {hotelCommitment}
           </p>
         </AccordionSection>

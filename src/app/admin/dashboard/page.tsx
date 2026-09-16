@@ -41,19 +41,20 @@ export default function AdminDashboardPage() {
   if (!ready) return null;
 
   return (
-    <main className="min-h-screen bg-[var(--color-sand)] pb-16">
-      <header className="sticky top-0 z-20 bg-[var(--color-sand)]/90 px-5 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 backdrop-blur-md">
+    <main className="min-h-screen bg-[#0B0B0C] pb-16">
+      <header className="sticky top-0 z-20 bg-[#0B0B0C]/90 px-5 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-display text-xl text-[var(--color-navy)]">Panel administrativo</h1>
-            <p className="text-xs text-[var(--color-ink-soft)]">AMBAR Hotel Boutique</p>
+            <h1 className="font-display text-xl text-[#B8935C]">Panel administrativo</h1>
+            <p className="text-xs text-[#B8935C]/60">AMBAR Hotel Boutique</p>
           </div>
           <button
             onClick={() => {
               setAdminSession(false);
               router.push("/admin");
             }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[var(--color-navy)] shadow-[var(--shadow-card)]"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] shadow-[var(--shadow-card)]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             aria-label="Cerrar sesión"
           >
             <LogOut size={16} />
@@ -67,9 +68,10 @@ export default function AdminDashboardPage() {
               onClick={() => setTab(t.id)}
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 tab === t.id
-                  ? "bg-[var(--color-navy)] text-white"
-                  : "bg-white text-[var(--color-ink-soft)] shadow-[var(--shadow-card)]"
+                  ? "bg-[#B8935C] text-[#0B0B0C]"
+                  : "bg-[#1E1C1A] text-[#B8935C]/80 shadow-[var(--shadow-card)]"
               }`}
+              style={tab !== t.id ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
             >
               {t.label}
             </button>
