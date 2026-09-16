@@ -65,10 +65,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 export default function MenuGrid() {
   return (
     <div
-      className="h-full flex min-h-0 flex-col justify-between px-4 py-2 pb-[max(env(safe-area-inset-bottom),4px)]"
+      className="h-full flex min-h-0 flex-col justify-between px-4 py-1 pb-[max(env(safe-area-inset-bottom),2px)]"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid flex-1 min-h-0 grid-cols-3 gap-3 py-2 content-evenly">
+      <div className="grid flex-1 min-h-0 grid-cols-3 gap-2 py-1 content-evenly">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
@@ -77,11 +77,11 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-2xl px-1 py-2 text-center"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-2 text-center min-h-[76px]"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <Icon className="h-[34px] w-[34px]" style={{ color: BRONZE }} strokeWidth={2} />
-              <span className="text-[14px] font-medium leading-tight text-center text-[#F5EFE6]">
+              <Icon className="h-[30px] w-[30px]" style={{ color: BRONZE }} strokeWidth={2} />
+              <span className="text-[12.5px] font-medium leading-tight text-center text-[#F5EFE6]">
                 {entry.label}
               </span>
             </motion.div>
@@ -90,7 +90,7 @@ export default function MenuGrid() {
         })}
       </div>
 
-      <div className="mt-4 mb-1 space-y-3 flex-shrink-0">
+      <div className="mt-1.5 mb-1 space-y-2 flex-shrink-0">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
@@ -101,23 +101,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5"
+          className="flex items-center gap-2.5 rounded-2xl px-3 py-2.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <ChatBubbleIcon className="h-[22px] w-[22px]" strokeWidth={2} />
+            <ChatBubbleIcon className="h-5 w-5" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[18px] font-semibold text-[#F5EFE6]">
+            <span className="block text-base font-semibold text-[#F5EFE6]">
               Chatear con recepción
             </span>
-            <span className="block text-[14px] text-[#D4CCBF]">
+            <span className="block text-[12px] text-[#D4CCBF]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={20} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
         </motion.a>
 
         <motion.a
@@ -128,23 +128,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5"
+          className="flex items-center gap-2.5 rounded-2xl px-3 py-2.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <StarOutlineIcon className="h-[22px] w-[22px]" strokeWidth={2} />
+            <StarOutlineIcon className="h-5 w-5" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[18px] font-semibold text-[#F5EFE6]">
+            <span className="block text-base font-semibold text-[#F5EFE6]">
               Calificar experiencia
             </span>
-            <span className="block text-[14px] text-[#D4CCBF]">
+            <span className="block text-[12px] text-[#D4CCBF]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={20} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
         </motion.a>
       </div>
     </div>
