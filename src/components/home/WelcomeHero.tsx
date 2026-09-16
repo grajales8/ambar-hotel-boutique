@@ -28,20 +28,20 @@ export default function WelcomeHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-3 text-center pt-[max(env(safe-area-inset-top),4px)]"
+        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2.5 px-8 pb-4 text-center pt-[max(env(safe-area-inset-top),4px)]"
       >
         <Image
           src="/brand/logo-dorado.png"
           alt="AMBAR Hotel Boutique"
           width={640}
           height={486}
-          className="h-auto w-[clamp(115px,18svw,145px)]"
+          className="h-auto w-[clamp(120px,19svw,155px)]"
         />
 
-        <p className="text-[17px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
+        <p className="text-[18px] font-semibold tracking-[0.12em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p className="max-w-[290px] text-[13px] leading-snug text-[#D4CCBF]">
+        <p className="max-w-[310px] text-[14px] leading-snug text-[#D4CCBF]">
           Disfruta de una experiencia única y memorable
         </p>
       </motion.div>
