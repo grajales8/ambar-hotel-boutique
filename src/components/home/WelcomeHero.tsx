@@ -7,7 +7,7 @@ export default function WelcomeHero() {
   return (
     <div
       className="relative w-full overflow-hidden shrink-0"
-      style={{ height: "clamp(180px, 28svh, 230px)" }}
+      style={{ height: "clamp(190px, 29svh, 240px)" }}
     >
       <Image
         src="/rooms/habitacion-bienvenida.jpg"
@@ -38,10 +38,10 @@ export default function WelcomeHero() {
           className="h-auto w-[clamp(115px,18svw,145px)]"
         />
 
-        <p className="text-[16px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
+        <p className="text-[17px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p className="max-w-[280px] text-[12.5px] leading-snug text-[#D4CCBF]">
+        <p className="max-w-[290px] text-[13px] leading-snug text-[#D4CCBF]">
           Disfruta de una experiencia única y memorable
         </p>
       </motion.div>

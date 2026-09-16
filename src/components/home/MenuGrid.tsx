@@ -68,7 +68,7 @@ export default function MenuGrid() {
       className="h-full flex min-h-0 flex-col justify-between px-4 py-1 pb-[max(env(safe-area-inset-bottom),0px)]"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid flex-1 min-h-0 grid-cols-3 gap-1.5 py-1 content-evenly">
+      <div className="grid flex-1 min-h-0 grid-cols-3 gap-2 py-1 content-evenly">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
@@ -77,7 +77,7 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex min-h-[80px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center"
+              className="flex min-h-[84px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <Icon className="h-8 w-8" style={{ color: BRONZE }} strokeWidth={2} />
@@ -90,7 +90,7 @@ export default function MenuGrid() {
         })}
       </div>
 
-      <div className="mt-1 mb-1 space-y-2 flex-shrink-0">
+      <div className="mt-1.5 mb-1 space-y-2.5 flex-shrink-0">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
@@ -101,7 +101,7 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5"
+          className="flex items-center gap-2.5 rounded-xl px-3 py-3"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
@@ -128,7 +128,7 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5"
+          className="flex items-center gap-2.5 rounded-xl px-3 py-3"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
