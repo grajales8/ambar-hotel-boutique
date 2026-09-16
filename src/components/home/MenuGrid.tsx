@@ -65,23 +65,23 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 export default function MenuGrid() {
   return (
     <div
-      className="px-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-6"
+      className="px-4 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] pt-3"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
             <motion.div
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.06 * i, ease: "easeOut" }}
+              transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex h-28 flex-col items-center justify-center gap-2 rounded-2xl px-1.5 py-3 text-center"
+              className="flex h-20 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <Icon className="h-10 w-10" style={{ color: BRONZE }} />
-              <span className="text-[13px] font-medium leading-tight" style={{ color: BRONZE }}>
+              <Icon className="h-7 w-7" style={{ color: BRONZE }} />
+              <span className="text-[11px] font-medium leading-tight" style={{ color: BRONZE }}>
                 {entry.label}
               </span>
             </motion.div>
@@ -90,65 +90,63 @@ export default function MenuGrid() {
         })}
       </div>
 
-      {/* Accesos anchos: chatear y calificar, mismo tratamiento (gris
-          carbón + bronce). */}
-      <div className="mt-3 space-y-2">
+      <div className="mt-2.5 space-y-1.5">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
           )}
           target="_blank"
           rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.06 * gridEntries.length }}
+          transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
           >
-            <ChatBubbleIcon className="h-5 w-5" />
+            <ChatBubbleIcon className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold" style={{ color: BRONZE }}>
+            <span className="block text-sm font-semibold" style={{ color: BRONZE }}>
               Chatear con recepción
             </span>
-            <span className="block text-sm" style={{ color: `${BRONZE}99` }}>
+            <span className="block text-[11px]" style={{ color: `${BRONZE}99` }}>
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0" style={{ color: BRONZE }} />
+          <ChevronRight size={16} className="shrink-0" style={{ color: BRONZE }} />
         </motion.a>
 
         <motion.a
           href={GOOGLE_REVIEW_URL}
           target="_blank"
           rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.06 * gridEntries.length + 0.06 }}
+          transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
           >
-            <StarOutlineIcon className="h-5 w-5" />
+            <StarOutlineIcon className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold" style={{ color: BRONZE }}>
+            <span className="block text-sm font-semibold" style={{ color: BRONZE }}>
               Calificar experiencia
             </span>
-            <span className="block text-sm" style={{ color: `${BRONZE}99` }}>
+            <span className="block text-[11px]" style={{ color: `${BRONZE}99` }}>
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0" style={{ color: BRONZE }} />
+          <ChevronRight size={16} className="shrink-0" style={{ color: BRONZE }} />
         </motion.a>
       </div>
     </div>
