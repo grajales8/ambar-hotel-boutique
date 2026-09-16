@@ -50,9 +50,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#0B0B0C] text-[var(--color-ink)] antialiased">
-        <SplashScreen />
-        {children}
+      <body className="min-h-full bg-[#070708] text-[var(--color-ink)] antialiased">
+        <div className="relative mx-auto min-h-screen w-full max-w-[430px] bg-[#0B0B0C] md:shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+          <SplashScreen />
+          {children}
+        </div>
         <ServiceWorkerRegister />
       </body>
     </html>
