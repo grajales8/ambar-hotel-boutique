@@ -45,19 +45,18 @@ export default function AdminDashboardPage() {
       <header className="sticky top-0 z-20 bg-[#0B0B0C]/90 px-5 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-display text-xl text-[#B8935C]">Panel administrativo</h1>
-            <p className="text-xs text-[#B8935C]/60">AMBAR Hotel Boutique</p>
+            <h1 className="font-display text-xl text-[#F5EFE6]">Panel administrativo</h1>
+            <p className="text-xs text-[#D4CCBF]">AMBAR Hotel Boutique</p>
           </div>
           <button
             onClick={() => {
               setAdminSession(false);
               router.push("/admin");
             }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] shadow-[var(--shadow-card)]"
-            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+            className="flex h-10 w-10 items-center justify-center -mr-2 rounded-full text-[#B8935C] active:scale-95 transition-transform"
             aria-label="Cerrar sesión"
           >
-            <LogOut size={16} />
+            <LogOut size={20} strokeWidth={2} />
           </button>
         </div>
 
@@ -69,7 +68,7 @@ export default function AdminDashboardPage() {
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 tab === t.id
                   ? "bg-[#B8935C] text-[#0B0B0C]"
-                  : "bg-[#1E1C1A] text-[#B8935C]/80 shadow-[var(--shadow-card)]"
+                  : "bg-[#1E1C1A] text-[#F5EFE6] shadow-[var(--shadow-card)]"
               }`}
               style={tab !== t.id ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
             >

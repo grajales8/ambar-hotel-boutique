@@ -80,12 +80,12 @@ function AccordionSection({
         aria-expanded={isOpen}
         aria-controls={`section-${id}`}
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C]">
-          <Icon className="h-5 w-5" />
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center -ml-1 text-[#B8935C]">
+          <Icon className="h-5 w-5" strokeWidth={2} />
         </span>
-        <span className="flex-1 font-display text-[15px] text-[#B8935C]">{title}</span>
+        <span className="flex-1 font-display text-[15px] text-[#F5EFE6]">{title}</span>
         <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
-          <ChevronDown size={18} className="text-[#B8935C]/70" />
+          <ChevronDown size={18} className="text-[#D4CCBF]" />
         </motion.span>
       </button>
 
@@ -133,7 +133,7 @@ export default function HotelGuidePage() {
         >
           <div className="space-y-2.5">
             {hotelIntro.paragraphs.map((p, i) => (
-              <p key={i} className="text-sm leading-relaxed text-[#B8935C]/75">
+              <p key={i} className="text-sm leading-relaxed text-[#D4CCBF]">
                 {p}
               </p>
             ))}
@@ -157,27 +157,26 @@ export default function HotelGuidePage() {
                   className="flex items-start gap-3 rounded-xl bg-[#0B0B0C] p-3"
                 >
                   <span
-                    className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                      space.disabled ? "bg-[#2A2724] text-[#B8935C]/40" : "bg-[#1E1C1A] text-[#B8935C]"
+                    className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center -ml-1 ${
+                      space.disabled ? "text-[#B8935C]/40" : "text-[#B8935C]"
                     }`}
-                    style={!space.disabled ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
                   <div className="min-w-0">
                     <p
                       className={`text-sm font-medium ${
-                        space.disabled ? "text-[#B8935C]/40" : "text-[#B8935C]"
+                        space.disabled ? "text-[#D4CCBF]/50" : "text-[#F5EFE6]"
                       }`}
                     >
                       {space.title}
                       {space.disabled && (
-                        <span className="ml-2 rounded-full bg-[#1E1C1A] px-2 py-0.5 text-[10px] font-medium text-[#B8935C]/60" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
+                        <span className="ml-2 rounded-full bg-[#1E1C1A] px-2 py-0.5 text-[10px] font-medium text-[#D4CCBF]/70" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
                           Fuera de servicio
                         </span>
                       )}
                     </p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-[#B8935C]/65">
+                    <p className="mt-0.5 text-xs leading-relaxed text-[#D4CCBF]">
                       {space.text}
                     </p>
                   </div>
@@ -195,11 +194,11 @@ export default function HotelGuidePage() {
           isOpen={openId === "horarios"}
           onToggle={() => toggle("horarios")}
         >
-          <div className="divide-y divide-[#0B0B0C] overflow-hidden rounded-xl bg-[#0B0B0C]">
+          <div className="divide-y divide-[#1E1C1A] overflow-hidden rounded-xl bg-[#0B0B0C]">
             {hotelSchedules.map((s) => (
               <div key={s.label} className="flex items-center justify-between px-4 py-3 text-sm">
-                <span className="font-medium text-[#B8935C]">{s.label}</span>
-                <span className="text-right text-[#B8935C]/70">{s.value}</span>
+                <span className="font-medium text-[#F5EFE6]">{s.label}</span>
+                <span className="text-right text-[#D4CCBF]">{s.value}</span>
               </div>
             ))}
           </div>
@@ -221,12 +220,12 @@ export default function HotelGuidePage() {
                   key={point.title}
                   className="flex items-start gap-3 rounded-xl bg-[#0B0B0C] p-3"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
-                    <Icon className="h-4 w-4" />
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center -ml-1 text-[#B8935C]">
+                    <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#B8935C]">{point.title}</p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-[#B8935C]/65">
+                    <p className="text-sm font-medium text-[#F5EFE6]">{point.title}</p>
+                    <p className="mt-0.5 text-xs leading-relaxed text-[#D4CCBF]">
                       {point.text}
                     </p>
                   </div>
@@ -244,9 +243,9 @@ export default function HotelGuidePage() {
           isOpen={openId === "ubicacion"}
           onToggle={() => toggle("ubicacion")}
         >
-          <p className="text-sm leading-relaxed text-[#B8935C]/70">{hotelLocation.text}</p>
-          <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[#B8935C]">
-            <DiscoverPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#B8935C]" />
+          <p className="text-sm leading-relaxed text-[#D4CCBF]">{hotelLocation.text}</p>
+          <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-[#F5EFE6]">
+            <DiscoverPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#B8935C]" strokeWidth={2} />
             {hotelLocation.address}
           </p>
 
@@ -286,7 +285,7 @@ export default function HotelGuidePage() {
           isOpen={openId === "compromiso"}
           onToggle={() => toggle("compromiso")}
         >
-          <p className="text-sm leading-relaxed text-[#B8935C]/70">
+          <p className="text-sm leading-relaxed text-[#D4CCBF]">
             {hotelCommitment}
           </p>
         </AccordionSection>

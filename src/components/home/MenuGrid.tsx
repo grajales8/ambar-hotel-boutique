@@ -80,8 +80,8 @@ export default function MenuGrid() {
               className="flex h-20 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <Icon className="h-7 w-7" style={{ color: BRONZE }} />
-              <span className="text-[11px] font-medium leading-tight" style={{ color: BRONZE }}>
+              <Icon className="h-7 w-7" style={{ color: BRONZE }} strokeWidth={2} />
+              <span className="text-[11px] font-medium leading-tight text-[#F5EFE6]">
                 {entry.label}
               </span>
             </motion.div>
@@ -105,20 +105,19 @@ export default function MenuGrid() {
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-            style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
+            className="flex h-9 w-9 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <ChatBubbleIcon className="h-4 w-4" />
+            <ChatBubbleIcon className="h-5 w-5" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold" style={{ color: BRONZE }}>
+            <span className="block text-sm font-semibold text-[#F5EFE6]">
               Chatear con recepción
             </span>
-            <span className="block text-[11px]" style={{ color: `${BRONZE}99` }}>
+            <span className="block text-[11px] text-[#D4CCBF]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={16} className="shrink-0" style={{ color: BRONZE }} />
+          <ChevronRight size={16} className="shrink-0 text-[#B8935C]" />
         </motion.a>
 
         <motion.a
@@ -133,20 +132,19 @@ export default function MenuGrid() {
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-            style={{ border: `1px solid ${BRONZE}`, color: BRONZE }}
+            className="flex h-9 w-9 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <StarOutlineIcon className="h-4 w-4" />
+            <StarOutlineIcon className="h-5 w-5" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-semibold" style={{ color: BRONZE }}>
+            <span className="block text-sm font-semibold text-[#F5EFE6]">
               Calificar experiencia
             </span>
-            <span className="block text-[11px]" style={{ color: `${BRONZE}99` }}>
+            <span className="block text-[11px] text-[#D4CCBF]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={16} className="shrink-0" style={{ color: BRONZE }} />
+          <ChevronRight size={16} className="shrink-0 text-[#B8935C]" />
         </motion.a>
       </div>
     </div>

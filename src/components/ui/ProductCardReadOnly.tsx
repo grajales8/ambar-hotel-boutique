@@ -50,11 +50,11 @@ export default function ProductCardReadOnly({
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-base text-[#B8935C]">{item.name}</h3>
+          <h3 className="font-display text-base text-[#F5EFE6]">{item.name}</h3>
           <motion.span
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.25 }}
-            className="mt-1 shrink-0 text-[#B8935C]/70"
+            className="mt-1 shrink-0 text-[#B8935C]"
             aria-hidden="true"
           >
             <ChevronDown size={16} />
@@ -70,7 +70,7 @@ export default function ProductCardReadOnly({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <p className="pt-2 text-sm leading-snug text-[#B8935C]/70">
+              <p className="pt-2 text-sm leading-snug text-[#D4CCBF]">
                 {item.description}
               </p>
             </motion.div>
@@ -78,7 +78,7 @@ export default function ProductCardReadOnly({
         </AnimatePresence>
 
         <div className="mt-2">
-          <span className="font-semibold text-[#B8935C]">{formatCOP(item.price)}</span>
+          <span className="font-semibold text-[#F5EFE6]">{formatCOP(item.price)}</span>
         </div>
       </div>
     </motion.div>

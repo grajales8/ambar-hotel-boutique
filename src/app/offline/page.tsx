@@ -12,8 +12,8 @@ export default function OfflinePage() {
           className="h-full w-full object-contain"
         />
       </div>
-      <h1 className="font-display mt-6 text-xl text-[#B8935C]">Sin conexión</h1>
-      <p className="mt-2 max-w-xs text-sm text-[#B8935C]/70">
+      <h1 className="font-display mt-6 text-xl text-[#F5EFE6]">Sin conexión</h1>
+      <p className="mt-2 max-w-xs text-sm text-[#D4CCBF]">
         Parece que no tienes conexión a internet en este momento. Vuelve a
         intentarlo cuando recuperes la señal WiFi del hotel.
       </p>

@@ -37,7 +37,7 @@ export default function ServiceRequestPage() {
       <PageHeader title="Solicitar servicio" subtitle="Recepción atenderá tu solicitud enseguida" />
 
       <div className="px-5 pt-4">
-        <label className="mb-2 block text-sm font-medium text-[#B8935C]">
+        <label className="mb-2 block text-sm font-medium text-[#F5EFE6]">
           Número de habitación
         </label>
         <input
@@ -45,7 +45,7 @@ export default function ServiceRequestPage() {
           onChange={(e) => setRoom(e.target.value)}
           placeholder="Ej. 204"
           inputMode="numeric"
-          className="w-full rounded-xl border border-[#1E1C1A] bg-[#1E1C1A] px-4 py-3 text-[#B8935C] placeholder-[#B8935C]/40 outline-none focus:border-[#B8935C]"
+          className="w-full rounded-xl bg-[#1E1C1A] px-4 py-3 text-[#F5EFE6] placeholder-[#D4CCBF]/60 outline-none focus:ring-0"
           style={{ border: "1px solid rgba(184,147,92,0.22)" }}
         />
       </div>
@@ -66,16 +66,15 @@ export default function ServiceRequestPage() {
               style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <span
-                className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
+                className={`flex h-11 w-11 items-center justify-center transition-colors ${
                   isSent
-                    ? "bg-[#B8935C] text-[#0B0B0C]"
-                    : "bg-[#0B0B0C] text-[#B8935C]"
+                    ? "rounded-full bg-[#B8935C] text-[#0B0B0C]"
+                    : "text-[#B8935C]"
                 }`}
-                style={!isSent ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
               >
-                {isSent ? <Check size={20} /> : <Icon className="h-5 w-5" />}
+                {isSent ? <Check size={22} strokeWidth={2.5} /> : <Icon className="h-7 w-7" strokeWidth={2} />}
               </span>
-              <span className="text-sm font-medium leading-tight text-[#B8935C]">
+              <span className="text-sm font-medium leading-tight text-[#F5EFE6]">
                 {isSent ? "Solicitud enviada" : s.name}
               </span>
             </motion.button>

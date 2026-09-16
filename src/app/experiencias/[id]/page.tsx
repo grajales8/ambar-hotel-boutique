@@ -36,7 +36,7 @@ export default function ExperienceDetailPage() {
     return (
       <main className="min-h-screen bg-[#0B0B0C]">
         <PageHeader title="Servicios & Experiencias" backHref="/experiencias" />
-        <p className="px-5 pt-6 text-sm text-[#B8935C]/70">Cargando…</p>
+        <p className="px-5 pt-6 text-sm text-[#D4CCBF]">Cargando…</p>
       </main>
     );
   }
@@ -45,7 +45,7 @@ export default function ExperienceDetailPage() {
     return (
       <main className="min-h-screen bg-[#0B0B0C]">
         <PageHeader title="Servicios & Experiencias" backHref="/experiencias" />
-        <p className="px-5 pt-6 text-sm text-[#B8935C]/70">
+        <p className="px-5 pt-6 text-sm text-[#D4CCBF]">
           No encontramos esta experiencia. Puede que ya no esté disponible.
         </p>
       </main>
@@ -64,23 +64,23 @@ export default function ExperienceDetailPage() {
 
       <div className="px-5 pt-5">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="font-display text-xl text-[#B8935C]">{service.name}</h1>
-          <span className="shrink-0 font-display text-lg text-[#B8935C]">
+          <h1 className="font-display text-xl text-[#F5EFE6]">{service.name}</h1>
+          <span className="shrink-0 font-display text-lg text-[#F5EFE6]">
             {service.price ? formatCOP(service.price) : "Consultar"}
           </span>
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-[#B8935C]/70">
+        <p className="mt-3 text-sm leading-relaxed text-[#D4CCBF]">
           {service.fullDescription}
         </p>
 
         {service.includes.length > 0 && (
           <div className="mt-5">
-            <h2 className="font-display text-sm text-[#B8935C]">Qué incluye</h2>
+            <h2 className="font-display text-sm text-[#F5EFE6]">Qué incluye</h2>
             <ul className="mt-2 space-y-1.5">
               {service.includes.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[#B8935C]/70">
-                  <Check size={15} className="mt-0.5 shrink-0 text-[#B8935C]" />
+                <li key={i} className="flex items-start gap-2 text-sm text-[#D4CCBF]">
+                  <Check size={15} className="mt-0.5 shrink-0 text-[#B8935C]" strokeWidth={2.25} />
                   {item}
                 </li>
               ))}
@@ -90,11 +90,11 @@ export default function ExperienceDetailPage() {
 
         {service.benefits.length > 0 && (
           <div className="mt-5">
-            <h2 className="font-display text-sm text-[#B8935C]">Beneficios</h2>
+            <h2 className="font-display text-sm text-[#F5EFE6]">Beneficios</h2>
             <ul className="mt-2 space-y-1.5">
               {service.benefits.map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-[#B8935C]/70">
-                  <Sparkles size={15} className="mt-0.5 shrink-0 text-[#B8935C]" />
+                <li key={i} className="flex items-start gap-2 text-sm text-[#D4CCBF]">
+                  <Sparkles size={15} className="mt-0.5 shrink-0 text-[#B8935C]" strokeWidth={2} />
                   {item}
                 </li>
               ))}
@@ -108,7 +108,7 @@ export default function ExperienceDetailPage() {
           rel="noopener noreferrer"
           className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-4 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
         >
-          <MessageCircle size={16} />
+          <MessageCircle size={16} strokeWidth={2} />
           Más información
         </a>
       </div>

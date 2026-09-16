@@ -59,11 +59,11 @@ export default function ProductCard({
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-base text-[#B8935C]">{item.name}</h3>
+          <h3 className="font-display text-base text-[#F5EFE6]">{item.name}</h3>
           <motion.span
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.25 }}
-            className="mt-1 shrink-0 text-[#B8935C]/70"
+            className="mt-1 shrink-0 text-[#B8935C]"
             aria-hidden="true"
           >
             <ChevronDown size={16} />
@@ -79,7 +79,7 @@ export default function ProductCard({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <p className="pt-2 text-sm leading-snug text-[#B8935C]/70">
+              <p className="pt-2 text-sm leading-snug text-[#D4CCBF]">
                 {item.description}
               </p>
             </motion.div>
@@ -87,7 +87,7 @@ export default function ProductCard({
         </AnimatePresence>
 
         <div className="mt-2">
-          <span className="font-semibold text-[#B8935C]">{formatCOP(item.price)}</span>
+          <span className="font-semibold text-[#F5EFE6]">{formatCOP(item.price)}</span>
         </div>
 
         <AnimatePresence initial={false}>
@@ -109,7 +109,7 @@ export default function ProductCard({
                     disabled={!item.available}
                     className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-sm font-medium text-[#0B0B0C] active:scale-95 transition-transform disabled:opacity-40"
                   >
-                    <Plus size={14} />
+                    <Plus size={14} strokeWidth={2.5} />
                     Agregar
                   </button>
                 ) : (
@@ -120,19 +120,17 @@ export default function ProductCard({
                     <button
                       onClick={onRemove}
                       aria-label="Quitar uno"
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] active:scale-90 transition-transform"
-                      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+                      className="flex h-7 w-7 items-center justify-center text-[#B8935C] active:scale-90 transition-transform"
                     >
-                      <Minus size={14} />
+                      <Minus size={18} strokeWidth={2.5} />
                     </button>
-                    <span className="text-sm font-semibold text-[#B8935C]">{quantity}</span>
+                    <span className="text-sm font-semibold text-[#F5EFE6]">{quantity}</span>
                     <button
                       onClick={onAdd}
                       aria-label="Agregar uno más"
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E1C1A] text-[#B8935C] active:scale-90 transition-transform"
-                      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+                      className="flex h-7 w-7 items-center justify-center text-[#B8935C] active:scale-90 transition-transform"
                     >
-                      <Plus size={14} />
+                      <Plus size={18} strokeWidth={2.5} />
                     </button>
                   </div>
                 )}

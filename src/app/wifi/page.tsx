@@ -44,11 +44,11 @@ export default function WifiPage() {
 
       <div className="flex flex-col items-center gap-4 px-6 pt-8">
         {loading && (
-          <p className="mt-6 text-center text-sm text-[#B8935C]/70">Cargando…</p>
+          <p className="mt-6 text-center text-sm text-[#D4CCBF]">Cargando…</p>
         )}
 
         {!loading && activeNetworks.length === 0 && (
-          <p className="mt-6 text-center text-sm text-[#B8935C]/70">
+          <p className="mt-6 text-center text-sm text-[#D4CCBF]">
             No hay redes WiFi disponibles en este momento.
           </p>
         )}
@@ -63,21 +63,21 @@ export default function WifiPage() {
             style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
             <div className="mb-4 flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C]">
-                <WifiIcon size={16} strokeWidth={1.75} />
+              <span className="flex h-9 w-9 items-center justify-center -ml-1 text-[#B8935C]">
+                <WifiIcon size={20} strokeWidth={2} />
               </span>
               {network.description && (
-                <span className="text-xs text-[#B8935C]/70">{network.description}</span>
+                <span className="text-xs text-[#D4CCBF]">{network.description}</span>
               )}
             </div>
 
-            <p className="text-xs uppercase tracking-wide text-[#B8935C]/60">Red</p>
-            <p className="font-display text-lg text-[#B8935C]">{network.ssid}</p>
+            <p className="text-xs uppercase tracking-wide text-[#D4CCBF]">Red</p>
+            <p className="font-display text-lg text-[#F5EFE6]">{network.ssid}</p>
 
             <div className="gold-hairline my-4" />
 
-            <p className="text-xs uppercase tracking-wide text-[#B8935C]/60">Contraseña</p>
-            <p className="font-display text-lg tracking-wide text-[#B8935C]">
+            <p className="text-xs uppercase tracking-wide text-[#D4CCBF]">Contraseña</p>
+            <p className="font-display text-lg tracking-wide text-[#F5EFE6]">
               {network.password}
             </p>
 
@@ -85,7 +85,7 @@ export default function WifiPage() {
               onClick={() => handleCopy(network)}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
             >
-              {copiedId === network.id ? <Check size={16} /> : <Copy size={16} />}
+              {copiedId === network.id ? <Check size={16} strokeWidth={2.25} /> : <Copy size={16} strokeWidth={2} />}
               {copiedId === network.id ? "Contraseña copiada" : "Copiar contraseña"}
             </button>
           </motion.div>

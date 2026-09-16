@@ -2,11 +2,12 @@
 
 /*
   Sistema de tokens — AMBAR Hotel Boutique
-  Identidad visual unificada (tema Home):
-  Fondo negro mate:   #0B0B0C
-  Tarjetas gris carbón: #1E1C1A
-  Bronce (acento/texto): #B8935C
-  Blanco suave (texto secundario): #EAE4DB
+  Identidad visual unificada (legibilidad móvil):
+  Fondo negro mate:      #0B0B0C
+  Tarjetas gris carbón:  #1E1C1A
+  Bronce (solo ÍCONOS):  #B8935C   (los íconos NO tienen fondo circular)
+  Blanco hueso (texto):  #F5EFE6   (AAA 14:1 sobre negro)
+  Texto secundario:      #D4CCBF   (AAA 9:1 sobre negro)
 */
 :root {
   --color-navy: #1E1C1A;
@@ -16,8 +17,8 @@
   --color-white: #1E1C1A;
   --color-gold: #B8935C;
   --color-gold-soft: #D4B07D;
-  --color-ink: #EAE4DB;
-  --color-ink-soft: #B0A899;
+  --color-ink: #F5EFE6;
+  --color-ink-soft: #D4CCBF;
 
   --font-display: "Fraunces", serif;
   --font-body: "Manrope", sans-serif;

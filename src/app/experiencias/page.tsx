@@ -41,7 +41,7 @@ export default function ExperiencesPage() {
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
         {loading && (
-          <p className="col-span-2 pt-6 text-center text-sm text-[#B8935C]/70">Cargando…</p>
+          <p className="col-span-2 pt-6 text-center text-sm text-[#D4CCBF]">Cargando…</p>
         )}
         {!loading && filtered.map((service, i) => (
           <motion.div
@@ -65,12 +65,12 @@ export default function ExperiencesPage() {
               </span>
             </div>
             <div className="p-4">
-              <h3 className="font-display text-base text-[#B8935C]">{service.name}</h3>
-              <p className="mt-1 text-xs leading-snug text-[#B8935C]/70 line-clamp-2">
+              <h3 className="font-display text-base text-[#F5EFE6]">{service.name}</h3>
+              <p className="mt-1 text-xs leading-snug text-[#D4CCBF] line-clamp-2">
                 {service.shortDescription}
               </p>
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-xs font-medium text-[#B8935C]/70">
+                <span className="text-xs font-medium text-[#D4CCBF]">
                   {service.price ? formatCOP(service.price) : "Consultar"}
                 </span>
                 <Link
@@ -78,7 +78,7 @@ export default function ExperiencesPage() {
                   className="flex items-center gap-1 text-xs font-medium text-[#B8935C]"
                 >
                   Ver más
-                  <ArrowRight size={12} />
+                  <ArrowRight size={12} strokeWidth={2.25} />
                 </Link>
               </div>
             </div>
@@ -86,7 +86,7 @@ export default function ExperiencesPage() {
         ))}
 
         {!loading && filtered.length === 0 && (
-          <p className="col-span-2 pt-6 text-center text-sm text-[#B8935C]/70">
+          <p className="col-span-2 pt-6 text-center text-sm text-[#D4CCBF]">
             Próximamente más experiencias en esta categoría.
           </p>
         )}

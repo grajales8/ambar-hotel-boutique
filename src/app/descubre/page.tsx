@@ -34,7 +34,7 @@ export default function DiscoverPage() {
 
       <div className="space-y-4 px-5 pt-4">
         {loading && (
-          <p className="pt-4 text-center text-sm text-[#B8935C]/70">Cargando…</p>
+          <p className="pt-4 text-center text-sm text-[#D4CCBF]">Cargando…</p>
         )}
         {!loading && activePlaces.map((place, i) => (
           <motion.div
@@ -57,12 +57,12 @@ export default function DiscoverPage() {
               </span>
             </div>
             <div className="p-4">
-              <h3 className="font-display text-lg text-[#B8935C]">{place.name}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-[#B8935C]/70">
+              <h3 className="font-display text-lg text-[#F5EFE6]">{place.name}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#D4CCBF]">
                 {place.description}
               </p>
 
-              <div className="mt-3 space-y-1 text-xs text-[#B8935C]/70">
+              <div className="mt-3 space-y-1 text-xs text-[#D4CCBF]">
                 {place.address && <p>{place.address}</p>}
                 {place.hours && <p>{place.hours}</p>}
               </div>
@@ -74,16 +74,16 @@ export default function DiscoverPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-[#B8935C] px-4 py-2.5 text-sm font-medium text-[#0B0B0C] active:scale-95 transition-transform"
                 >
-                  <DiscoverPinIcon className="h-4 w-4" />
+                  <DiscoverPinIcon className="h-4 w-4" strokeWidth={2} />
                   Abrir en Google Maps
                 </a>
                 {place.phone && (
                   <a
                     href={`tel:${place.phone.replace(/\s/g, "")}`}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#B8935C]"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#F5EFE6]"
                     style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                   >
-                    <PhoneIcon className="h-4 w-4" />
+                    <PhoneIcon className="h-4 w-4 text-[#B8935C]" strokeWidth={2} />
                     Llamar
                   </a>
                 )}
@@ -92,10 +92,10 @@ export default function DiscoverPage() {
                     href={place.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#B8935C]"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0B0B0C] px-4 py-2.5 text-sm font-medium text-[#F5EFE6]"
                     style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                   >
-                    <GlobeIcon className="h-4 w-4" />
+                    <GlobeIcon className="h-4 w-4 text-[#B8935C]" strokeWidth={2} />
                     Sitio web
                   </a>
                 )}

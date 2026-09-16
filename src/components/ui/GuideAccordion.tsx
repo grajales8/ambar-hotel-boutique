@@ -29,14 +29,14 @@ export default function GuideAccordion({
               onClick={() => setOpenId(isOpen ? null : section.id)}
               className="flex w-full items-center gap-3 px-4 py-4 text-left"
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C]">
-                <Icon className="h-[18px] w-[18px]" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center -ml-1 text-[#B8935C]">
+                <Icon className="h-5 w-5" strokeWidth={2} />
               </span>
-              <span className="flex-1 font-display text-[15px] text-[#B8935C]">
+              <span className="flex-1 font-display text-[15px] text-[#F5EFE6]">
                 {section.title}
               </span>
               <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
-                <ChevronDown size={18} className="text-[#B8935C]/70" />
+                <ChevronDown size={18} className="text-[#D4CCBF]" />
               </motion.span>
             </button>
 
@@ -70,26 +70,26 @@ export default function GuideAccordion({
                     </div>
 
                     {section.id === "horarios" && (
-                      <div className="mt-3 divide-y divide-[#0B0B0C] rounded-xl bg-[#0B0B0C]">
+                      <div className="mt-3 divide-y divide-[#1E1C1A] rounded-xl bg-[#0B0B0C]">
                         {schedules.map((s) => (
                           <div key={s.id} className="flex items-center justify-between px-4 py-3 text-sm">
-                            <span className="font-medium text-[#B8935C]">{s.label}</span>
-                            <span className="text-[#B8935C]/70">{s.hours}</span>
+                            <span className="font-medium text-[#F5EFE6]">{s.label}</span>
+                            <span className="text-[#D4CCBF]">{s.hours}</span>
                           </div>
                         ))}
                       </div>
                     )}
 
                     {section.id === "emergencias" && (
-                      <div className="mt-3 divide-y divide-[#0B0B0C] rounded-xl bg-[#0B0B0C]">
+                      <div className="mt-3 divide-y divide-[#1E1C1A] rounded-xl bg-[#0B0B0C]">
                         {hotelInfo.emergencyNumbers.map((e) => (
                           <a
                             key={e.label}
                             href={`tel:${e.number.replace(/\s/g, "")}`}
                             className="flex items-center justify-between px-4 py-3 text-sm"
                           >
-                            <span className="font-medium text-[#B8935C]">{e.label}</span>
-                            <span className="text-[#B8935C]">{e.number}</span>
+                            <span className="font-medium text-[#F5EFE6]">{e.label}</span>
+                            <span className="text-[#B8935C] font-medium">{e.number}</span>
                           </a>
                         ))}
                       </div>

@@ -26,7 +26,7 @@ export default function RatePage() {
       <PageHeader title="Calificar experiencia" subtitle="Tu opinión nos ayuda a mejorar" />
 
       <div className="flex flex-col items-center px-6 pt-10 text-center">
-        <p className="font-display text-xl text-[#B8935C]">
+        <p className="font-display text-xl text-[#F5EFE6]">
           ¿Cómo fue tu experiencia?
         </p>
 
@@ -42,8 +42,8 @@ export default function RatePage() {
               aria-label={`${n} estrellas`}
             >
               <Star
-                size={34}
-                strokeWidth={1.5}
+                size={36}
+                strokeWidth={1.75}
                 className={
                   n <= rating
                     ? "fill-[#B8935C] text-[#B8935C]"
@@ -61,7 +61,7 @@ export default function RatePage() {
             className="mt-8 w-full max-w-sm rounded-2xl bg-[#1E1C1A] p-6 shadow-[var(--shadow-card)]"
             style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
-            <p className="text-sm text-[#B8935C]/70">
+            <p className="text-sm text-[#D4CCBF]">
               ¡Nos alegra muchísimo! ¿Nos regalas una reseña pública en Google?
             </p>
             <a
@@ -70,7 +70,7 @@ export default function RatePage() {
               rel="noopener noreferrer"
               className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 font-medium text-[#0B0B0C] active:scale-[0.98] transition-transform"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={16} strokeWidth={2} />
               Calificar en Google
             </a>
           </motion.div>
@@ -83,7 +83,7 @@ export default function RatePage() {
             className="mt-8 w-full max-w-sm rounded-2xl bg-[#1E1C1A] p-6 text-left shadow-[var(--shadow-card)]"
             style={{ border: "1px solid rgba(184,147,92,0.22)" }}
           >
-            <p className="text-sm text-[#B8935C]/70">
+            <p className="text-sm text-[#D4CCBF]">
               Lamentamos que tu experiencia no fuera perfecta. Cuéntanos qué podemos mejorar.
             </p>
             <textarea
@@ -91,7 +91,8 @@ export default function RatePage() {
               onChange={(e) => setComment(e.target.value)}
               rows={4}
               placeholder="Escribe tu comentario aquí..."
-              className="mt-4 w-full resize-none rounded-xl border border-[#0B0B0C] bg-[#0B0B0C] p-3 text-sm text-[#B8935C] placeholder-[#B8935C]/40 outline-none focus:border-[#B8935C]"
+              className="mt-4 w-full resize-none rounded-xl bg-[#0B0B0C] p-3 text-sm text-[#F5EFE6] placeholder-[#D4CCBF]/60 outline-none"
+              style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             />
             <button
               onClick={handleSendFeedback}
@@ -100,7 +101,7 @@ export default function RatePage() {
             >
               {sent ? "¡Gracias por tu comentario!" : (
                 <>
-                  <Send size={16} />
+                  <Send size={16} strokeWidth={2} />
                   Enviar comentario
                 </>
               )}

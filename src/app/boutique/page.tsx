@@ -53,7 +53,7 @@ function BoutiqueContent() {
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">
         {loading && (
-          <p className="col-span-2 pt-4 text-center text-sm text-[#B8935C]/70">Cargando…</p>
+          <p className="col-span-2 pt-4 text-center text-sm text-[#D4CCBF]">Cargando…</p>
         )}
         {!loading && filtered.map((item) => (
           <ProductCard

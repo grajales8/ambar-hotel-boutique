@@ -48,10 +48,10 @@ export default function WelcomeHero() {
           />
         </svg>
 
-        <p className="text-[15px] font-semibold tracking-[0.08em] text-[#B8935C]">
+        <p className="text-[15px] font-semibold tracking-[0.08em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p className="max-w-[240px] text-[11px] leading-snug text-[#B8935C]/80">
+        <p className="max-w-[240px] text-[11px] leading-snug text-[#D4CCBF]">
           Disfruta de una experiencia única y memorable
         </p>
       </motion.div>
