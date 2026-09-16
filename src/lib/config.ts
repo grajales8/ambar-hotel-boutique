@@ -13,8 +13,8 @@ export const siteConfig = {
   shortName: "AMBAR",
   tagline: "Bienvenido a AMBAR Hotel Boutique",
   city: "Cali",
-  themeColor: "#05244F",
-  backgroundColor: "#F8EEE2",
+  themeColor: "#0B0B0C",
+  backgroundColor: "#0B0B0C",
 };
 
 // Número de WhatsApp de recepción, formato internacional sin "+".

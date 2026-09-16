@@ -50,7 +50,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[var(--color-sand)] text-[var(--color-ink)] antialiased">
+      <body className="min-h-full flex flex-col bg-[#0B0B0C] text-[var(--color-ink)] antialiased">
         <SplashScreen />
         {children}
         <ServiceWorkerRegister />

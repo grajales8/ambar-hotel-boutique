@@ -45,6 +45,7 @@
 
 html, body {
   overscroll-behavior-y: none;
+  background-color: #0B0B0C;
 }
 
 body {
