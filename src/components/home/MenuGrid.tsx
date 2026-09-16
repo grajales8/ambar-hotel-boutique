@@ -31,10 +31,6 @@ type MenuEntry = {
   action: MenuAction;
 };
 
-// Los 9 accesos que forman la grilla 3x3, en el orden solicitado, con
-// íconos propios en línea fina (ver /components/ui/HomeIcons.tsx). Tema
-// negro mate + bronce: tarjetas en gris carbón, íconos y texto en bronce
-// — solo en esta pantalla de inicio.
 const gridEntries: MenuEntry[] = [
   { id: "hotel", label: "Hotel", icon: HotelIcon, action: { type: "link", href: "/guia-hotel" } },
   { id: "guia-habitacion", label: "Guía habitación", icon: DoorHangerIcon, action: { type: "link", href: "/guia" } },
@@ -65,10 +61,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 export default function MenuGrid() {
   return (
     <div
-      className="h-full flex min-h-0 flex-col justify-between px-4 py-1.5 pb-[max(env(safe-area-inset-bottom),2px)]"
+      className="h-full flex min-h-0 flex-col justify-between px-4 py-2 pb-[max(env(safe-area-inset-bottom),4px)]"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid flex-1 min-h-0 grid-cols-3 gap-3 py-1 content-evenly">
+      <div className="grid flex-1 min-h-0 grid-cols-3 gap-3 py-2 content-evenly">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
@@ -77,7 +73,7 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex aspect-square flex-col items-center justify-center gap-2.5 rounded-2xl px-1 py-2.5 text-center"
+              className="flex aspect-square flex-col items-center justify-center gap-2 rounded-2xl px-1 py-2 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <Icon className="h-[34px] w-[34px]" style={{ color: BRONZE }} strokeWidth={2} />
@@ -90,7 +86,7 @@ export default function MenuGrid() {
         })}
       </div>
 
-      <div className="mt-2 mb-1 space-y-2 flex-shrink-0">
+      <div className="mt-4 mb-1 space-y-3 flex-shrink-0">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
@@ -101,23 +97,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-2xl px-3 py-2.5"
+          className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <ChatBubbleIcon className="h-5 w-5" strokeWidth={2} />
+            <ChatBubbleIcon className="h-[22px] w-[22px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-[#F5EFE6]">
-              Chatear con recepción
+            <span className="block text-[18px] font-semibold text-[#F5EFE6]">
+              Chatear con recepcion
             </span>
-            <span className="block text-[12px] text-[#D4CCBF]">
+            <span className="block text-[14px] text-[#D4CCBF]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight size={20} className="shrink-0 text-[#B8935C]" />
         </motion.a>
 
         <motion.a
@@ -128,23 +124,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-2xl px-3 py-2.5"
+          className="flex items-center gap-2.5 rounded-2xl px-4 py-3.5"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <StarOutlineIcon className="h-5 w-5" strokeWidth={2} />
+            <StarOutlineIcon className="h-[22px] w-[22px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-[#F5EFE6]">
+            <span className="block text-[18px] font-semibold text-[#F5EFE6]">
               Calificar experiencia
             </span>
-            <span className="block text-[12px] text-[#D4CCBF]">
+            <span className="block text-[14px] text-[#D4CCBF]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight size={20} className="shrink-0 text-[#B8935C]" />
         </motion.a>
       </div>
     </div>
