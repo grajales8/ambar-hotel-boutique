@@ -28,7 +28,7 @@ export default function WelcomeHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-4 md:pb-6 text-center"
+        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 px-8 pb-2.5 md:pb-4 text-center"
       >
         <Image
           src="/brand/logo-dorado.png"
