@@ -28,7 +28,7 @@ export default function WelcomeHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 px-8 pb-2.5 md:pb-4 text-center"
+        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 px-8 pb-1.5 md:pb-3 text-center"
       >
         <Image
           src="/brand/logo-dorado.png"
@@ -38,7 +38,7 @@ export default function WelcomeHero() {
           className="h-auto w-[145px] md:w-[175px]"
         />
 
-        <p className="text-[19px] md:text-[22px] font-semibold tracking-[0.12em] text-[#F5EFE6]">
+        <p className="text-[20.5px] md:text-[23.5px] font-semibold tracking-[0.12em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
         <p className="max-w-[300px] md:max-w-[350px] text-[15px] md:text-[17px] leading-snug text-[#D4CCBF]">
