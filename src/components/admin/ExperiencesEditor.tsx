@@ -126,21 +126,21 @@ export default function ExperiencesEditor() {
 
       <div className="space-y-4">
         {services.map((service, index) => (
-          <div key={service.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)] space-y-3">
+          <div key={service.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)] space-y-3" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
             <div className="flex gap-2">
               <input
                 value={service.name}
                 onChange={(e) => update(service.id, { name: e.target.value })}
                 placeholder="Nombre del servicio"
-                className="flex-1 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm font-medium text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
               />
               <select
                 value={service.categoryId}
                 onChange={(e) => update(service.id, { categoryId: e.target.value })}
-                className="w-40 rounded-lg border border-[var(--color-sand-2)] px-2 py-2 text-xs text-[var(--color-navy)] outline-none"
+                className="w-40 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
               >
                 {experienceCategories.map((c) => (
-                  <option key={c.id} value={c.id}>
+                  <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
                     {c.name}
                   </option>
                 ))}
@@ -152,7 +152,7 @@ export default function ExperiencesEditor() {
               onChange={(e) => update(service.id, { shortDescription: e.target.value })}
               rows={2}
               placeholder="Descripción corta (para la tarjeta del catálogo)"
-              className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+              className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
             />
 
             <textarea
@@ -160,11 +160,11 @@ export default function ExperiencesEditor() {
               onChange={(e) => update(service.id, { fullDescription: e.target.value })}
               rows={3}
               placeholder="Descripción completa (para la página de detalle)"
-              className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+              className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
             />
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">
+              <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
                 Qué incluye (una línea por ítem)
               </label>
               <textarea
@@ -176,12 +176,12 @@ export default function ExperiencesEditor() {
                 }
                 rows={3}
                 placeholder={"Pétalos de rosa\nVelas decorativas\nBotella de vino"}
-                className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">
+              <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
                 Beneficios (una línea por ítem, opcional)
               </label>
               <textarea
@@ -192,12 +192,12 @@ export default function ExperiencesEditor() {
                   })
                 }
                 rows={2}
-                className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
               />
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-[var(--color-ink-soft)]">Precio (deja vacío para &quot;Consultar&quot;)</span>
+              <span className="text-xs text-[#D4CCBF]">Precio (deja vacío para &quot;Consultar&quot;)</span>
               <input
                 type="number"
                 value={service.price ?? ""}
@@ -206,13 +206,13 @@ export default function ExperiencesEditor() {
                     price: e.target.value === "" ? undefined : Number(e.target.value),
                   })
                 }
-                className="w-32 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
               />
             </div>
 
             {/* Galería de imágenes */}
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-[var(--color-ink-soft)]">
+              <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
                 Galería de fotos ({service.images.length})
               </label>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -222,8 +222,8 @@ export default function ExperiencesEditor() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img} alt="" className="h-full w-full object-cover" />
                       {i === 0 && (
-                        <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[var(--color-navy)] px-1.5 py-0.5 text-[9px] font-medium text-white">
-                          <Star size={9} className="fill-white" />
+                        <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.35)" }}>
+                          <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
                           Portada
                         </span>
                       )}
@@ -232,35 +232,39 @@ export default function ExperiencesEditor() {
                       {i !== 0 && (
                         <button
                           onClick={() => makeCover(service.id, i)}
-                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)]"
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                           aria-label="Usar como portada"
                           title="Usar como portada"
                         >
-                          <Star size={12} />
+                          <Star size={12} strokeWidth={2} />
                         </button>
                       )}
                       <button
                         onClick={() => moveImage(service.id, i, "up")}
                         disabled={i === 0}
-                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                         aria-label="Mover antes"
                       >
-                        <ChevronUp size={12} />
+                        <ChevronUp size={12} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => moveImage(service.id, i, "down")}
                         disabled={i === service.images.length - 1}
-                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                         aria-label="Mover después"
                       >
-                        <ChevronDown size={12} />
+                        <ChevronDown size={12} strokeWidth={2.5} />
                       </button>
                       <button
                         onClick={() => removeImage(service.id, i)}
-                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-50 text-red-500"
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                        style={{ border: "1px solid rgba(248,113,113,0.25)" }}
                         aria-label="Eliminar foto"
                       >
-                        <Trash2 size={12} />
+                        <Trash2 size={12} strokeWidth={2} />
                       </button>
                     </div>
                   </div>
@@ -271,15 +275,15 @@ export default function ExperiencesEditor() {
                 </div>
               </div>
               {service.images.length === 0 && (
-                <p className="mt-1 flex items-center gap-1 text-xs text-[var(--color-ink-soft)]">
-                  <ImagePlus size={12} />
+                <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
+                  <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
                   Agrega al menos una foto para que se muestre en el catálogo.
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 border-t border-[var(--color-sand-2)] pt-3">
-              <label className="flex items-center gap-1.5 text-xs text-[var(--color-ink-soft)]">
+            <div className="flex flex-wrap items-center gap-2 border-t border-[rgba(184,147,92,0.18)] pt-3">
+              <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
                 <input
                   type="checkbox"
                   checked={service.active}
@@ -292,25 +296,28 @@ export default function ExperiencesEditor() {
                 <button
                   onClick={() => move(service.id, "up")}
                   disabled={index === 0}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                   aria-label="Subir en el orden"
                 >
-                  <ChevronUp size={14} />
+                  <ChevronUp size={14} strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={() => move(service.id, "down")}
                   disabled={index === services.length - 1}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                   aria-label="Bajar en el orden"
                 >
-                  <ChevronDown size={14} />
+                  <ChevronDown size={14} strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={() => remove(service.id)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-500"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                  style={{ border: "1px solid rgba(248,113,113,0.25)" }}
                   aria-label="Eliminar servicio"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={14} strokeWidth={2} />
                 </button>
               </div>
             </div>
@@ -320,9 +327,9 @@ export default function ExperiencesEditor() {
 
       <button
         onClick={add}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[var(--color-gold)] py-3 text-sm font-medium text-[var(--color-navy)]"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[#B8935C] py-3 text-sm font-medium text-[#F5EFE6]"
       >
-        <Plus size={16} />
+        <Plus size={16} className="text-[#B8935C]" strokeWidth={2} />
         Añadir servicio
       </button>
     </div>

@@ -77,28 +77,28 @@ export default function WifiEditor() {
 
       <div className="space-y-3">
         {networks.map((network) => (
-          <div key={network.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)] space-y-2">
+          <div key={network.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)] space-y-2" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
             <input
               value={network.ssid}
               onChange={(e) => updateNetwork(network.id, { ssid: e.target.value })}
               placeholder="Nombre de la red (SSID)"
-              className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm font-medium text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+              className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
             />
             <input
               value={network.password}
               onChange={(e) => updateNetwork(network.id, { password: e.target.value })}
               placeholder="Contraseña"
-              className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+              className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
             />
             <input
               value={network.description ?? ""}
               onChange={(e) => updateNetwork(network.id, { description: e.target.value || undefined })}
               placeholder="Descripción (opcional, ej. 'Piso 2 y 3')"
-              className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+              className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
             />
 
             <div className="flex items-center gap-2 pt-1">
-              <label className="flex items-center gap-1.5 text-xs text-[var(--color-ink-soft)]">
+              <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
                 <input
                   type="checkbox"
                   checked={network.active}
@@ -109,10 +109,11 @@ export default function WifiEditor() {
 
               <button
                 onClick={() => removeNetwork(network.id)}
-                className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-500"
+                className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                style={{ border: "1px solid rgba(248,113,113,0.25)" }}
                 aria-label="Eliminar red"
               >
-                <Trash2 size={14} />
+                <Trash2 size={14} strokeWidth={2} />
               </button>
             </div>
           </div>
@@ -121,9 +122,9 @@ export default function WifiEditor() {
 
       <button
         onClick={addNetwork}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[var(--color-gold)] py-3 text-sm font-medium text-[var(--color-navy)]"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[#B8935C] py-3 text-sm font-medium text-[#F5EFE6]"
       >
-        <Plus size={16} />
+        <Plus size={16} className="text-[#B8935C]" strokeWidth={2} />
         Añadir red
       </button>
     </div>

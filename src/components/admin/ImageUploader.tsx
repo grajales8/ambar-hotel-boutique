@@ -156,7 +156,7 @@ export default function ImageUploader({
         onDragLeave={() => setDragActive(false)}
         onDrop={handleDrop}
         className={`relative overflow-hidden rounded-xl border-2 border-dashed transition-colors ${
-          dragActive ? "border-[var(--color-gold)] bg-[var(--color-sand)]" : "border-[var(--color-sand-2)]"
+          dragActive ? "border-[#B8935C] bg-[#141210]" : "border-[rgba(184,147,92,0.22)] bg-[#141210]"
         }`}
       >
         {displayImage ? (
@@ -168,7 +168,7 @@ export default function ImageUploader({
                 type="button"
                 onClick={handleRemove}
                 aria-label="Eliminar imagen"
-                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[var(--color-navy)] shadow-[var(--shadow-card)]"
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] shadow-[0_2px_8px_rgba(0,0,0,0.4)]" style={{ border: "1px solid rgba(184,147,92,0.28)" }}
               >
                 <X size={14} />
               </button>
@@ -183,16 +183,16 @@ export default function ImageUploader({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex h-32 w-full flex-col items-center justify-center gap-2 text-[var(--color-ink-soft)]"
+            className="flex h-32 w-full flex-col items-center justify-center gap-2 text-[#D4CCBF]"
           >
             {status === "loading" ? (
-              <Loader2 size={22} className="animate-spin text-[var(--color-navy)]" />
+              <Loader2 size={22} className="animate-spin text-[#B8935C]" />
             ) : (
-              <ImagePlus size={22} className="text-[var(--color-navy)]" />
+              <ImagePlus size={22} className="text-[#B8935C]" strokeWidth={2} />
             )}
             <span className="text-xs">Arrastra una imagen aquí o</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-navy)] px-3 py-1.5 text-xs font-medium text-white">
-              <Upload size={12} />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-2 text-xs font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.28)" }}>
+              <Upload size={12} className="text-[#B8935C]" strokeWidth={2} />
               Subir imagen
             </span>
           </button>
@@ -203,9 +203,10 @@ export default function ImageUploader({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-sand)] px-3 py-1.5 text-xs font-medium text-[var(--color-navy)]"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-2 text-xs font-medium text-[#F5EFE6]"
+          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
         >
-          <Upload size={12} />
+          <Upload size={12} className="text-[#B8935C]" strokeWidth={2} />
           Cambiar imagen
         </button>
       )}

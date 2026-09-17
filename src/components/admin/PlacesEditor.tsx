@@ -96,7 +96,7 @@ export default function PlacesEditor() {
 
       <div className="space-y-3">
         {places.map((place, index) => (
-          <div key={place.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)]">
+          <div key={place.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
               <div className="w-full sm:w-40">
                 <ImageUploader
@@ -111,13 +111,13 @@ export default function PlacesEditor() {
                     value={place.name}
                     onChange={(e) => updatePlace(place.id, { name: e.target.value })}
                     placeholder="Nombre"
-                    className="flex-1 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm font-medium text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                    className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                   <input
                     value={place.category}
                     onChange={(e) => updatePlace(place.id, { category: e.target.value })}
                     placeholder="Categoría"
-                    className="w-32 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                    className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                 </div>
 
@@ -126,7 +126,7 @@ export default function PlacesEditor() {
                   onChange={(e) => updatePlace(place.id, { description: e.target.value })}
                   rows={2}
                   placeholder="Descripción"
-                  className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                  className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                 />
 
                 <div className="flex gap-2">
@@ -134,13 +134,13 @@ export default function PlacesEditor() {
                     value={place.address}
                     onChange={(e) => updatePlace(place.id, { address: e.target.value })}
                     placeholder="Dirección"
-                    className="flex-1 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                    className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                   <input
                     value={place.hours}
                     onChange={(e) => updatePlace(place.id, { hours: e.target.value })}
                     placeholder="Horario"
-                    className="w-32 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                    className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                 </div>
 
@@ -149,13 +149,13 @@ export default function PlacesEditor() {
                     value={place.phone ?? ""}
                     onChange={(e) => updatePlace(place.id, { phone: e.target.value || undefined })}
                     placeholder="Teléfono (opcional)"
-                    className="flex-1 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                    className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                   <input
                     value={place.website ?? ""}
                     onChange={(e) => updatePlace(place.id, { website: e.target.value || undefined })}
                     placeholder="Sitio web (opcional)"
-                    className="flex-1 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                    className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   />
                 </div>
 
@@ -163,11 +163,11 @@ export default function PlacesEditor() {
                   value={place.mapsUrl}
                   onChange={(e) => updatePlace(place.id, { mapsUrl: e.target.value })}
                   placeholder="Enlace de Google Maps"
-                  className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                  className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                 />
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <label className="flex items-center gap-1.5 text-xs text-[var(--color-ink-soft)]">
+                  <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
                     <input
                       type="checkbox"
                       checked={place.active}
@@ -180,25 +180,28 @@ export default function PlacesEditor() {
                     <button
                       onClick={() => move(place.id, "up")}
                       disabled={index === 0}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                       aria-label="Subir"
                     >
-                      <ChevronUp size={14} />
+                      <ChevronUp size={14} strokeWidth={2.5} />
                     </button>
                     <button
                       onClick={() => move(place.id, "down")}
                       disabled={index === places.length - 1}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-sand)] text-[var(--color-navy)] disabled:opacity-30"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                       aria-label="Bajar"
                     >
-                      <ChevronDown size={14} />
+                      <ChevronDown size={14} strokeWidth={2.5} />
                     </button>
                     <button
                       onClick={() => removePlace(place.id)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-500"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                      style={{ border: "1px solid rgba(248,113,113,0.25)" }}
                       aria-label="Eliminar lugar"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={14} strokeWidth={2} />
                     </button>
                   </div>
                 </div>
@@ -210,9 +213,9 @@ export default function PlacesEditor() {
 
       <button
         onClick={addPlace}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[var(--color-gold)] py-3 text-sm font-medium text-[var(--color-navy)]"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[#B8935C] py-3 text-sm font-medium text-[#F5EFE6]"
       >
-        <Plus size={16} />
+        <Plus size={16} className="text-[#B8935C]" strokeWidth={2} />
         Añadir lugar
       </button>
     </div>

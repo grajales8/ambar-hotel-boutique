@@ -90,7 +90,7 @@ export default function CatalogEditor({
 
       <div className="space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="rounded-2xl bg-white p-4 shadow-[var(--shadow-card)]">
+          <div key={item.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
               <div className="w-full sm:w-40">
                 <ImageUploader
@@ -102,14 +102,14 @@ export default function CatalogEditor({
                 <input
                   value={item.name}
                   onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                  className="w-full rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm font-medium text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                  className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   placeholder="Nombre"
                 />
                 <textarea
                   value={item.description}
                   onChange={(e) => updateItem(item.id, { description: e.target.value })}
                   rows={2}
-                  className="w-full resize-none rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-xs text-[var(--color-ink-soft)] outline-none focus:border-[var(--color-gold)]"
+                  className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
                   placeholder="Descripción"
                 />
 
@@ -118,23 +118,23 @@ export default function CatalogEditor({
                     type="number"
                     value={item.price}
                     onChange={(e) => updateItem(item.id, { price: Number(e.target.value) })}
-                    className="w-28 rounded-lg border border-[var(--color-sand-2)] px-3 py-2 text-sm text-[var(--color-navy)] outline-none focus:border-[var(--color-gold)]"
+                    className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
                   />
                   <span className="text-xs text-[var(--color-ink-soft)]">{formatCOP(item.price)}</span>
 
                   <select
                     value={item.categoryId}
                     onChange={(e) => updateItem(item.id, { categoryId: e.target.value })}
-                    className="rounded-lg border border-[var(--color-sand-2)] px-2 py-2 text-xs text-[var(--color-navy)] outline-none"
+                    className="rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
                   >
                     {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
+                      <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
                         {c.name}
                       </option>
                     ))}
                   </select>
 
-                  <label className="flex items-center gap-1.5 text-xs text-[var(--color-ink-soft)]">
+                  <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
                     <input
                       type="checkbox"
                       checked={item.available}
@@ -145,10 +145,11 @@ export default function CatalogEditor({
 
                   <button
                     onClick={() => removeItem(item.id)}
-                    className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-500"
+                    className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
                     aria-label="Eliminar producto"
+                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
                   >
-                    <Trash2 size={14} />
+                    <Trash2 size={14} strokeWidth={2} />
                   </button>
                 </div>
               </div>
@@ -159,9 +160,9 @@ export default function CatalogEditor({
 
       <button
         onClick={addItem}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[var(--color-gold)] py-3 text-sm font-medium text-[var(--color-navy)]"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[#B8935C] py-3 text-sm font-medium text-[#F5EFE6]"
       >
-        <Plus size={16} />
+        <Plus size={16} className="text-[#B8935C]" strokeWidth={2} />
         Añadir producto
       </button>
     </div>
