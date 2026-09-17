@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ComponentType, SVGProps } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -28,11 +28,13 @@ import { HotelIcon, DiscoverPinIcon } from "@/components/ui/HomeIcons";
 import {
   hotelIntro,
   hotelSpaces,
-  hotelSchedules,
   hotelInfoPoints,
   hotelLocation,
   hotelCommitment,
 } from "@/data/hotelGuideContent";
+import { hotelInfo as defaultHotelInfo } from "@/data/hotelInfo";
+import { loadSingleton } from "@/lib/storage";
+import type { HotelInfo } from "@/lib/types";
 import PageHeader from "@/components/ui/PageHeader";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
@@ -109,6 +111,17 @@ function AccordionSection({
 
 export default function HotelGuidePage() {
   const [openId, setOpenId] = useState<string | null>("intro");
+  const [hotelInfo, setHotelInfo] = useState<HotelInfo>(defaultHotelInfo);
+
+  useEffect(() => {
+    let active = true;
+    loadSingleton<HotelInfo>("hotelInfo", "main", defaultHotelInfo).then((data) => {
+      if (active) setHotelInfo(data);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function toggle(id: string) {
     setOpenId((cur) => (cur === id ? null : id));
@@ -195,8 +208,8 @@ export default function HotelGuidePage() {
           onToggle={() => toggle("horarios")}
         >
           <div className="divide-y divide-[#1E1C1A] overflow-hidden rounded-xl bg-[#0B0B0C]">
-            {hotelSchedules.map((s) => (
-              <div key={s.label} className="flex items-center justify-between px-4 py-3 text-sm">
+            {(hotelInfo.schedules ?? []).map((s, i) => (
+              <div key={`${s.label}-${i}`} className="flex items-center justify-between px-4 py-3 text-sm">
                 <span className="font-medium text-[#F5EFE6]">{s.label}</span>
                 <span className="text-right text-[#D4CCBF]">{s.value}</span>
               </div>

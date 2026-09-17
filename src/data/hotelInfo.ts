@@ -13,4 +13,12 @@ export const hotelInfo: HotelInfo = {
   ],
   checkOutTime: "1:00 p.m.",
   googleReviewUrl: GOOGLE_REVIEW_URL,
+  schedules: [
+    { label: "Recepción", value: "Disponible las 24 horas" },
+    { label: "Check-in", value: "A partir de las 3:00 p.m." },
+    { label: "Check-out", value: "Hasta la 1:00 p.m." },
+    { label: "Desayuno", value: "6:30 a.m. – 10:00 a.m." },
+    { label: "Restaurante & Bar", value: "6:30 a.m. – 3:00 p.m." },
+    { label: "Room Service", value: "Disponible las 24 horas" },
+  ],
 };

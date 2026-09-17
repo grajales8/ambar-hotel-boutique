@@ -94,4 +94,5 @@ export type HotelInfo = {
   emergencyNumbers: { label: string; number: string }[];
   checkOutTime: string;
   googleReviewUrl: string;
+  schedules: { label: string; value: string }[];
 };
