@@ -7,11 +7,11 @@ export default function WelcomeHero() {
   return (
     <div
       className="relative w-full overflow-hidden shrink-0"
-      style={{ height: "clamp(185px, 27svh, 225px)" }}
+      style={{ height: "calc(260px + env(safe-area-inset-top))" }}
     >
       <Image
         src="/rooms/habitacion-bienvenida.jpg"
-        alt="Habitacion de AMBAR Hotel Boutique"
+        alt="Habitación de AMBAR Hotel Boutique"
         fill
         priority
         className="object-cover object-[center_55%]"
@@ -28,21 +28,21 @@ export default function WelcomeHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-3 text-center pt-[max(env(safe-area-inset-top),4px)]"
+        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-4 text-center"
       >
         <Image
           src="/brand/logo-dorado.png"
           alt="AMBAR Hotel Boutique"
           width={640}
           height={486}
-          className="h-auto w-[clamp(118px,18svw,145px)]"
+          className="h-auto w-[145px]"
         />
 
-        <p className="text-[17px] font-semibold tracking-[0.11em] text-[#F5EFE6]">
+        <p className="text-[17px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p className="max-w-[300px] text-[13.5px] leading-snug text-[#D4CCBF]">
-          Disfruta de una experiencia unica y memorable
+        <p className="max-w-[280px] text-[13px] leading-snug text-[#D4CCBF]">
+          Disfruta de una experiencia única y memorable
         </p>
       </motion.div>
     </div>
