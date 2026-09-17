@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 export default function WelcomeHero() {
   return (
     <div
-      className="relative w-full overflow-hidden shrink-0"
-      style={{ height: "calc(clamp(260px, 33svh, 340px) + env(safe-area-inset-top))" }}
+      className="relative w-full overflow-hidden shrink-0 h-[calc(260px+env(safe-area-inset-top))] md:h-[340px]"
+      style={{ backgroundColor: "#0B0B0C" }}
     >
       <Image
         src="/rooms/habitacion-bienvenida.jpg"
@@ -28,21 +28,20 @@ export default function WelcomeHero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-4 text-center"
+        className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-2 px-8 pb-4 md:pb-6 text-center"
       >
         <Image
           src="/brand/logo-dorado.png"
           alt="AMBAR Hotel Boutique"
           width={640}
           height={486}
-          className="h-auto"
-          style={{ width: "clamp(135px, 22svw, 175px)" }}
+          className="h-auto w-[145px] md:w-[175px]"
         />
 
-        <p style={{ fontSize: "clamp(16px, 2.3svh, 19px)" }} className="font-semibold tracking-[0.10em] text-[#F5EFE6]">
+        <p className="text-[17px] md:text-[19px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p style={{ fontSize: "clamp(12px, 1.75svh, 14px)", maxWidth: "310px" }} className="leading-snug text-[#D4CCBF]">
+        <p className="max-w-[280px] md:max-w-[310px] text-[13px] md:text-[14px] leading-snug text-[#D4CCBF]">
           Disfruta de una experiencia única y memorable
         </p>
       </motion.div>
