@@ -63,11 +63,6 @@ export default function HotelInfoEditor() {
           onChange={(v) => persist({ ...info, whatsappNumber: v })}
         />
         <Field
-          label="Hora de check-out"
-          value={info.checkOutTime}
-          onChange={(v) => persist({ ...info, checkOutTime: v })}
-        />
-        <Field
           label="Link de reseña de Google"
           value={info.googleReviewUrl}
           onChange={(v) => persist({ ...info, googleReviewUrl: v })}
