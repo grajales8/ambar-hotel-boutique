@@ -65,10 +65,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 export default function MenuGrid() {
   return (
     <div
-      className="h-full flex flex-col justify-between px-4 py-1 pb-[calc(env(safe-area-inset-bottom)+0.25rem)]"
+      className="h-full flex flex-col justify-between px-4 py-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)]"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid flex-1 grid-cols-3 gap-2 py-2 min-h-0 content-evenly">
+      <div className="grid flex-1 grid-cols-3 gap-2 min-h-0 content-evenly">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
@@ -77,11 +77,11 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex min-h-[88px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center"
+              className="flex aspect-[4/3.4] min-h-[88px] w-full flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
-              <Icon className="h-8 w-8" style={{ color: BRONZE }} strokeWidth={2} />
-              <span className="text-[13px] font-medium leading-tight text-[#F5EFE6]">
+              <Icon style={{ color: BRONZE, height: "clamp(28px, 4.2svh, 36px)", width: "clamp(28px, 4.2svh, 36px)" }} strokeWidth={2} />
+              <span style={{ fontSize: "clamp(12px, 1.65svh, 14px)" }} className="font-medium leading-tight text-[#F5EFE6]">
                 {entry.label}
               </span>
             </motion.div>
@@ -90,7 +90,7 @@ export default function MenuGrid() {
         })}
       </div>
 
-      <div className="mt-1 mb-1 space-y-2 flex-shrink-0">
+      <div className="mt-2 mb-1 space-y-2.5 flex-shrink-0">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
@@ -101,23 +101,27 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-xl px-3 py-3"
-          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
+          className="flex items-center gap-3 rounded-xl"
+          style={{
+            backgroundColor: "#1E1C1A",
+            border: "1px solid rgba(184,147,92,0.22)",
+            padding: "clamp(10px, 1.7svh, 16px) clamp(12px, 2svw, 16px)",
+          }}
         >
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <ChatBubbleIcon className="h-5 w-5" strokeWidth={2} />
+            <ChatBubbleIcon style={{ height: "clamp(18px, 2.6svh, 22px)", width: "clamp(18px, 2.6svh, 22px)" }} strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-[#F5EFE6]">
+            <span style={{ fontSize: "clamp(15px, 2.1svh, 18px)" }} className="block font-semibold text-[#F5EFE6]">
               Chatear con recepción
             </span>
-            <span className="block text-[12px] text-[#D4CCBF]">
+            <span style={{ fontSize: "clamp(11px, 1.55svh, 13px)" }} className="block text-[#D4CCBF]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight style={{ height: "clamp(16px, 2.3svh, 20px)", width: "clamp(16px, 2.3svh, 20px)" }} className="shrink-0 text-[#B8935C]" />
         </motion.a>
 
         <motion.a
@@ -128,23 +132,27 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 rounded-xl px-3 py-3"
-          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
+          className="flex items-center gap-3 rounded-xl"
+          style={{
+            backgroundColor: "#1E1C1A",
+            border: "1px solid rgba(184,147,92,0.22)",
+            padding: "clamp(10px, 1.7svh, 16px) clamp(12px, 2svw, 16px)",
+          }}
         >
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <StarOutlineIcon className="h-5 w-5" strokeWidth={2} />
+            <StarOutlineIcon style={{ height: "clamp(18px, 2.6svh, 22px)", width: "clamp(18px, 2.6svh, 22px)" }} strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base font-semibold text-[#F5EFE6]">
+            <span style={{ fontSize: "clamp(15px, 2.1svh, 18px)" }} className="block font-semibold text-[#F5EFE6]">
               Calificar experiencia
             </span>
-            <span className="block text-[12px] text-[#D4CCBF]">
+            <span style={{ fontSize: "clamp(11px, 1.55svh, 13px)" }} className="block text-[#D4CCBF]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="shrink-0 text-[#B8935C]" />
+          <ChevronRight style={{ height: "clamp(16px, 2.3svh, 20px)", width: "clamp(16px, 2.3svh, 20px)" }} className="shrink-0 text-[#B8935C]" />
         </motion.a>
       </div>
     </div>

@@ -41,34 +41,38 @@ export default function AdminDashboardPage() {
   if (!ready) return null;
 
   return (
-    <main className="min-h-screen bg-[#0B0B0C] pb-16">
-      <header className="sticky top-0 z-20 bg-[#0B0B0C]/90 px-5 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 backdrop-blur-md">
-        <div className="flex items-center justify-between">
+    <main className="min-h-screen bg-[#0B0B0C] pb-20 text-[#F5EFE6]">
+      <header className="sticky top-0 z-20 bg-[#0B0B0C]/90 px-6 md:px-12 lg:px-16 pt-[max(env(safe-area-inset-top),1.25rem)] pb-6 backdrop-blur-md border-b border-[rgba(184,147,92,0.12)]">
+        <div className="flex items-center justify-between max-w-[1400px] mx-auto">
           <div>
-            <h1 className="font-display text-xl text-[#F5EFE6]">Panel administrativo</h1>
-            <p className="text-xs text-[#D4CCBF]">AMBAR Hotel Boutique</p>
+            <h1 className="font-display text-2xl md:text-3xl text-[#F5EFE6]">Panel administrativo</h1>
+            <p className="text-sm text-[#D4CCBF]">AMBAR Hotel Boutique</p>
           </div>
           <button
             onClick={() => {
               setAdminSession(false);
               router.push("/admin");
             }}
-            className="flex h-10 w-10 items-center justify-center -mr-2 rounded-full text-[#B8935C] active:scale-95 transition-transform"
+            className="flex items-center gap-2 h-11 px-4 rounded-xl text-[#F5EFE6] bg-[#1E1C1A] active:scale-95 transition-colors hover:bg-[#2A2724]"
+            style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             aria-label="Cerrar sesión"
           >
-            <LogOut size={20} strokeWidth={2} />
+            <span className="-ml-1 text-[#B8935C]">
+              <LogOut size={18} strokeWidth={2} />
+            </span>
+            <span className="text-sm font-medium hidden sm:inline">Cerrar sesión</span>
           </button>
         </div>
 
-        <div className="scrollbar-thin mt-4 flex gap-2 overflow-x-auto pb-1">
+        <div className="max-w-[1400px] mx-auto mt-5 flex flex-wrap gap-2.5">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              className={`shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
                 tab === t.id
-                  ? "bg-[#B8935C] text-[#0B0B0C]"
-                  : "bg-[#1E1C1A] text-[#F5EFE6] shadow-[var(--shadow-card)]"
+                  ? "bg-[#B8935C] text-[#0B0B0C] shadow-[0_4px_14px_rgba(184,147,92,0.25)]"
+                  : "bg-[#1E1C1A] text-[#F5EFE6] shadow-[var(--shadow-card)] hover:bg-[#2A2724]"
               }`}
               style={tab !== t.id ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
             >
@@ -78,7 +82,7 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="px-5 pt-4">
+      <div className="px-6 md:px-12 lg:px-16 pt-6 max-w-[1400px] mx-auto">
         {tab === "restaurante" && (
           <CatalogEditor
             storageKey="restaurantItems"
