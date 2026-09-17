@@ -38,10 +38,10 @@ export default function WelcomeHero() {
           className="h-auto w-[145px] md:w-[175px]"
         />
 
-        <p className="text-[17px] md:text-[19px] font-semibold tracking-[0.10em] text-[#F5EFE6]">
+        <p className="text-[19px] md:text-[22px] font-semibold tracking-[0.12em] text-[#F5EFE6]">
           BIENVENIDO
         </p>
-        <p className="max-w-[280px] md:max-w-[310px] text-[13px] md:text-[14px] leading-snug text-[#D4CCBF]">
+        <p className="max-w-[300px] md:max-w-[350px] text-[15px] md:text-[17px] leading-snug text-[#D4CCBF]">
           Disfruta de una experiencia única y memorable
         </p>
       </motion.div>
