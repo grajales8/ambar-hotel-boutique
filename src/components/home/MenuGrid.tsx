@@ -107,7 +107,7 @@ export default function MenuGrid() {
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <ChatBubbleIcon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} />
+            <ChatBubbleIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-base md:text-[18px] font-semibold text-[#F5EFE6]">
@@ -134,7 +134,7 @@ export default function MenuGrid() {
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
-            <StarOutlineIcon className="h-5 w-5 md:h-[22px] md:w-[22px]" strokeWidth={2} />
+            <StarOutlineIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-base md:text-[18px] font-semibold text-[#F5EFE6]">
