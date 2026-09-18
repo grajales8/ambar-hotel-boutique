@@ -151,7 +151,7 @@ function MinibarContent() {
                   }`}
                   style={!active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
                 >
-                  {subLabel(sid, activeCategory)}
+                  {subLabel(sid, activeCategory).toLowerCase()}
                 </button>
               );
             })}
@@ -175,7 +175,7 @@ function MinibarContent() {
                   <div className="flex items-center gap-2 pt-1">
                     <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
                     <h3 className="text-[13px] md:text-sm font-semibold tracking-[0.16em] uppercase text-[#B8935C] shrink-0">
-                      {group.label}
+                      {group.label.toUpperCase()}
                     </h3>
                     <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
                   </div>

@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, Plus, ChevronUp, ChevronDown, Package, Tags, FolderTree } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  Package,
+  Tags,
+  FolderTree,
+  GripVertical,
+} from "lucide-react";
 import { MenuItem, MenuCategory, Subcategory } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { formatCOP } from "@/lib/cart-context";
@@ -22,6 +31,13 @@ function normalizeSubcategoryFromLegacy(
   return undefined;
 }
 
+function reorderInPlace<T>(list: T[], fromIndex: number, toIndex: number): T[] {
+  const next = [...list];
+  const [moved] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, moved);
+  return next;
+}
+
 export default function CatalogEditor({
   storageKey,
   categoriesStorageKey,
@@ -38,6 +54,56 @@ export default function CatalogEditor({
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
+
+  const [dragCatId, setDragCatId] = useState<string | null>(null);
+  const [dragSubId, setDragSubId] = useState<string | null>(null);
+  const [dragItemId, setDragItemId] = useState<string | null>(null);
+
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
+  const filteredItems = items.filter((it) => it.categoryId === activeCategoryId);
+
+  function onDropCategory(dropTargetId: string) {
+    if (!dragCatId || dragCatId === dropTargetId) return;
+    const from = categories.findIndex((c) => c.id === dragCatId);
+    const to = categories.findIndex((c) => c.id === dropTargetId);
+    if (from < 0 || to < 0) return;
+    persistCategories(reorderInPlace(categories, from, to));
+  }
+
+  function onDropSubcategory(dropTargetId: string) {
+    if (!dragSubId || dragSubId === dropTargetId || !activeCategory) return;
+    const subs = activeCategory.subcategories;
+    const from = subs.findIndex((s) => s.id === dragSubId);
+    const to = subs.findIndex((s) => s.id === dropTargetId);
+    if (from < 0 || to < 0) return;
+    const nextSubs = reorderInPlace(subs, from, to);
+    persistCategories(
+      categories.map((c) => (c.id === activeCategory.id ? { ...c, subcategories: nextSubs } : c))
+    );
+  }
+
+  function onDropItem(dropTargetId: string) {
+    if (!dragItemId || dragItemId === dropTargetId) return;
+    const pool = filteredItems;
+    const fromPool = pool.findIndex((i) => i.id === dragItemId);
+    const toPool = pool.findIndex((i) => i.id === dropTargetId);
+    if (fromPool < 0 || toPool < 0) return;
+    const nextPool = reorderInPlace(pool, fromPool, toPool);
+    const srcCat = activeCategoryId;
+    const out: MenuItem[] = [];
+    const byCat = new Map<string, MenuItem[]>();
+    for (const it of items) {
+      if (!byCat.has(it.categoryId)) byCat.set(it.categoryId, []);
+      if (it.categoryId === srcCat) continue;
+      byCat.get(it.categoryId)!.push(it);
+    }
+    byCat.set(srcCat, nextPool);
+    for (const c of categories) {
+      const lst = byCat.get(c.id);
+      if (lst) out.push(...lst);
+    }
+    persistItems(out);
+  }
 
   useEffect(() => {
     let active = true;
@@ -236,9 +302,6 @@ export default function CatalogEditor({
     persistItems([...items, next]);
   }
 
-  const activeCategory = categories.find((c) => c.id === activeCategoryId);
-  const filteredItems = items.filter((it) => it.categoryId === activeCategoryId);
-
   if (loading) {
     return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
@@ -262,7 +325,7 @@ export default function CatalogEditor({
             <FolderTree size={18} className="text-[#B8935C]" />
             <h3 className="text-[#F5EFE6] text-lg font-semibold">Categorías</h3>
             <span className="text-xs text-[#D4CCBF]">
-              (son los botones grandes del menú)
+              (agarrar del ico ⋮⋮ para arrastrar y soltar)
             </span>
           </div>
           <button
@@ -278,18 +341,43 @@ export default function CatalogEditor({
         <div className="space-y-2.5">
           {categories.map((cat, idx) => {
             const isActive = cat.id === activeCategoryId;
+            const isDragging = dragCatId === cat.id;
             return (
               <div
                 key={cat.id}
                 onClick={() => setActiveCategoryId(cat.id)}
-                className={`rounded-xl px-3.5 py-3 cursor-pointer transition-colors ${
+                draggable
+                onDragStart={(e) => {
+                  setDragCatId(cat.id);
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", cat.id);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  onDropCategory(cat.id);
+                  setDragCatId(null);
+                }}
+                onDragEnd={() => setDragCatId(null)}
+                className={`rounded-xl px-3.5 py-3 cursor-pointer transition-all ${
                   isActive
                     ? "bg-[#2A2724]"
                     : "bg-[#161414] hover:bg-[#1f1c1a]"
-                }`}
+                } ${isDragging ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""}`}
                 style={{ border: isActive ? "1px solid rgba(184,147,92,0.45)" : "1px solid rgba(184,147,92,0.15)" }}
               >
                 <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className="flex h-8 w-6 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+                    onClick={(e) => e.stopPropagation()}
+                    draggable={false}
+                    title="Agarrar para arrastrar y reordenar"
+                  >
+                    <GripVertical size={18} strokeWidth={2} />
+                  </span>
                   <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
                     #{idx + 1}
                   </span>
@@ -375,52 +463,79 @@ export default function CatalogEditor({
           </p>
         ) : (
           <div className="space-y-2">
-            {orderByOrder(activeCategory.subcategories).map((sub, idx, arr) => (
-              <div
-                key={sub.id}
-                className="flex flex-wrap items-center gap-2 rounded-xl bg-[#161414] px-3.5 py-2.5"
-                style={{ border: "1px solid rgba(184,147,92,0.15)" }}
-              >
-                <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
-                  #{idx + 1}
-                </span>
-                <input
-                  value={sub.label}
-                  onChange={(e) =>
-                    updateSubcategory(activeCategory.id, sub.id, { label: e.target.value })
-                  }
-                  className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                />
-                <div className="ml-auto flex items-center gap-1.5">
-                  <button
-                    onClick={() => moveSubcategory(activeCategory.id, sub.id, "up")}
-                    disabled={idx === 0}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                    aria-label="Subir subcategoría"
+            {orderByOrder(activeCategory.subcategories).map((sub, idx, arr) => {
+              const isDragging = dragSubId === sub.id;
+              return (
+                <div
+                  key={sub.id}
+                  draggable
+                  onDragStart={(e) => {
+                    setDragSubId(sub.id);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/plain", sub.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    onDropSubcategory(sub.id);
+                    setDragSubId(null);
+                  }}
+                  onDragEnd={() => setDragSubId(null)}
+                  className={`flex flex-wrap items-center gap-2 rounded-xl bg-[#161414] px-3.5 py-2.5 transition-all ${
+                    isDragging ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""
+                  }`}
+                  style={{ border: "1px solid rgba(184,147,92,0.15)" }}
+                >
+                  <span
+                    className="flex h-8 w-6 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+                    title="Agarrar para arrastrar y reordenar"
                   >
-                    <ChevronUp size={16} strokeWidth={2} />
-                  </button>
-                  <button
-                    onClick={() => moveSubcategory(activeCategory.id, sub.id, "down")}
-                    disabled={idx === arr.length - 1}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                    aria-label="Bajar subcategoría"
-                  >
-                    <ChevronDown size={16} strokeWidth={2} />
-                  </button>
-                  <button
-                    onClick={() => removeSubcategory(activeCategory.id, sub.id)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                    aria-label="Eliminar subcategoría"
-                  >
-                    <Trash2 size={14} strokeWidth={2} />
-                  </button>
+                    <GripVertical size={18} strokeWidth={2} />
+                  </span>
+                  <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
+                    #{idx + 1}
+                  </span>
+                  <input
+                    value={sub.label}
+                    onChange={(e) =>
+                      updateSubcategory(activeCategory.id, sub.id, { label: e.target.value })
+                    }
+                    className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                  />
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <button
+                      onClick={() => moveSubcategory(activeCategory.id, sub.id, "up")}
+                      disabled={idx === 0}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                      aria-label="Subir subcategoría"
+                    >
+                      <ChevronUp size={16} strokeWidth={2} />
+                    </button>
+                    <button
+                      onClick={() => moveSubcategory(activeCategory.id, sub.id, "down")}
+                      disabled={idx === arr.length - 1}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                      aria-label="Bajar subcategoría"
+                    >
+                      <ChevronDown size={16} strokeWidth={2} />
+                    </button>
+                    <button
+                      onClick={() => removeSubcategory(activeCategory.id, sub.id)}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                      style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                      aria-label="Eliminar subcategoría"
+                    >
+                      <Trash2 size={14} strokeWidth={2} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
@@ -458,18 +573,52 @@ export default function CatalogEditor({
           <div className="space-y-3">
             {filteredItems.map((item, idx, arr) => {
               const subs = activeCategory?.subcategories ?? [];
+              const isDragging = dragItemId === item.id;
               return (
                 <div
                   key={item.id}
-                  className="rounded-xl bg-[#161414] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
+                  draggable
+                  onDragStart={(e) => {
+                    setDragItemId(item.id);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/plain", item.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    onDropItem(item.id);
+                    setDragItemId(null);
+                  }}
+                  onDragEnd={() => setDragItemId(null)}
+                  className={`rounded-xl bg-[#161414] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+                    isDragging ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
+                  }`}
                   style={{ border: "1px solid rgba(184,147,92,0.22)" }}
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                    <div className="w-full sm:w-40">
-                      <ImageUploader
-                        value={item.image}
-                        onChange={(url) => updateItem(item.id, { image: url })}
-                      />
+                    <div className="w-full sm:w-40 flex sm:block items-start gap-2">
+                      <span
+                        className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+                        title="Agarrar para arrastrar y reordenar"
+                      >
+                        <GripVertical size={18} strokeWidth={2} />
+                      </span>
+                      <span
+                        className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
+                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                        title="Agarrar para arrastrar y reordenar"
+                      >
+                        <GripVertical size={18} strokeWidth={2} />
+                      </span>
+                      <div className="flex-1 sm:flex-none">
+                        <ImageUploader
+                          value={item.image}
+                          onChange={(url) => updateItem(item.id, { image: url })}
+                        />
+                      </div>
                     </div>
                     <div className="min-w-0 flex-1 space-y-2">
                       <div className="flex flex-col sm:flex-row sm:gap-2">
