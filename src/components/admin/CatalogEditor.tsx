@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Trash2,
   Plus,
-  ChevronUp,
   ChevronDown,
   Package,
   Tags,
@@ -54,6 +53,7 @@ export default function CatalogEditor({
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
+  const [expandedCatId, setExpandedCatId] = useState<string | null>(initialCategories[0]?.id ?? null);
 
   const [dragCatId, setDragCatId] = useState<string | null>(null);
   const [dragSubId, setDragSubId] = useState<string | null>(null);
@@ -70,40 +70,60 @@ export default function CatalogEditor({
     persistCategories(reorderInPlace(categories, from, to));
   }
 
-  function onDropSubcategory(dropTargetId: string) {
-    if (!dragSubId || dragSubId === dropTargetId || !activeCategory) return;
-    const subs = activeCategory.subcategories;
+  function onDropSubcategoryWithin(categoryId: string, dropTargetId: string) {
+    if (!dragSubId || dragSubId === dropTargetId) return;
+    const cat = categories.find((c) => c.id === categoryId);
+    if (!cat) return;
+    const subs = cat.subcategories;
     const from = subs.findIndex((s) => s.id === dragSubId);
     const to = subs.findIndex((s) => s.id === dropTargetId);
     if (from < 0 || to < 0) return;
     const nextSubs = reorderInPlace(subs, from, to);
     persistCategories(
-      categories.map((c) => (c.id === activeCategory.id ? { ...c, subcategories: nextSubs } : c))
+      categories.map((c) => (c.id === categoryId ? { ...c, subcategories: nextSubs } : c))
     );
   }
 
-  function onDropItem(dropTargetId: string) {
+  function onDropItemWithin(categoryId: string, dropTargetId: string) {
     if (!dragItemId || dragItemId === dropTargetId) return;
-    const pool = filteredItems;
+    const pool = items.filter((it) => it.categoryId === categoryId);
     const fromPool = pool.findIndex((i) => i.id === dragItemId);
     const toPool = pool.findIndex((i) => i.id === dropTargetId);
     if (fromPool < 0 || toPool < 0) return;
     const nextPool = reorderInPlace(pool, fromPool, toPool);
-    const srcCat = activeCategoryId;
     const out: MenuItem[] = [];
     const byCat = new Map<string, MenuItem[]>();
     for (const it of items) {
       if (!byCat.has(it.categoryId)) byCat.set(it.categoryId, []);
-      if (it.categoryId === srcCat) continue;
+      if (it.categoryId === categoryId) continue;
       byCat.get(it.categoryId)!.push(it);
     }
-    byCat.set(srcCat, nextPool);
+    byCat.set(categoryId, nextPool);
     for (const c of categories) {
       const lst = byCat.get(c.id);
       if (lst) out.push(...lst);
     }
     persistItems(out);
   }
+
+  function addItemInto(categoryId: string) {
+    const id = `${storageKey}-${Date.now()}`;
+    const next: MenuItem = {
+      id,
+      categoryId,
+      subcategory: undefined,
+      name: "Nuevo producto",
+      description: "",
+      price: 0,
+      image:
+        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
+      available: true,
+    };
+    persistItems([...items, next]);
+  }
+
+  const onDropSubcategory = onDropSubcategoryWithin.bind(null, activeCategoryId);
+  const onDropItem = onDropItemWithin.bind(null, activeCategoryId);
 
   useEffect(() => {
     let active = true;
@@ -315,17 +335,17 @@ export default function CatalogEditor({
         {saved && <span className="text-xs font-medium text-emerald-500">Guardado ✓</span>}
       </div>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES (ACORDEÓN: cada categoría expandible muestra sus subcats + sus productos) */}
       <section
         className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
         style={{ border: "1px solid rgba(184,147,92,0.22)" }}
       >
         <header className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <FolderTree size={18} className="text-[#B8935C]" />
             <h3 className="text-[#F5EFE6] text-lg font-semibold">Categorías</h3>
             <span className="text-xs text-[#D4CCBF]">
-              (agarrar del ico ⋮⋮ para arrastrar y soltar)
+              (agarrar ⋮⋮ para reordenar · flecha ↓ para desplegar)
             </span>
           </div>
           <button
@@ -338,14 +358,15 @@ export default function CatalogEditor({
           </button>
         </header>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {categories.map((cat, idx) => {
             const isActive = cat.id === activeCategoryId;
             const isDragging = dragCatId === cat.id;
+            const isExpanded = expandedCatId === cat.id;
+            const catItems = items.filter((it) => it.categoryId === cat.id);
             return (
               <div
                 key={cat.id}
-                onClick={() => setActiveCategoryId(cat.id)}
                 draggable
                 onDragStart={(e) => {
                   setDragCatId(cat.id);
@@ -362,14 +383,21 @@ export default function CatalogEditor({
                   setDragCatId(null);
                 }}
                 onDragEnd={() => setDragCatId(null)}
-                className={`rounded-xl px-3.5 py-3 cursor-pointer transition-all ${
-                  isActive
-                    ? "bg-[#2A2724]"
-                    : "bg-[#161414] hover:bg-[#1f1c1a]"
-                } ${isDragging ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""}`}
-                style={{ border: isActive ? "1px solid rgba(184,147,92,0.45)" : "1px solid rgba(184,147,92,0.15)" }}
+                className={`rounded-xl transition-all ${
+                  isDragging ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""
+                }`}
+                style={{
+                  border: isActive
+                    ? "1px solid rgba(184,147,92,0.45)"
+                    : "1px solid rgba(184,147,92,0.15)",
+                  background: isActive ? "#2A2724" : "#161414",
+                }}
               >
-                <div className="flex flex-wrap items-center gap-2">
+                {/* HEADER DE LA CATEGORÍA (fila principal) */}
+                <div
+                  className="flex flex-wrap items-center gap-2 px-3.5 py-3"
+                  onClick={() => setActiveCategoryId(cat.id)}
+                >
                   <span
                     className="flex h-8 w-6 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
                     onClick={(e) => e.stopPropagation()}
@@ -388,9 +416,26 @@ export default function CatalogEditor({
                     className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
                   />
                   <div
-                    onClick={(e) => e.stopPropagation()}
                     className="ml-auto flex items-center gap-1.5"
+                    onClick={(e) => e.stopPropagation()}
                   >
+                    <button
+                      onClick={() =>
+                        setExpandedCatId((prev) => (prev === cat.id ? null : cat.id))
+                      }
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] active:scale-95 transition-transform"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                      title={isExpanded ? "Cerrar (colapsar)" : "Desplegar subcategorías y productos"}
+                      aria-label={isExpanded ? "Colapsar categoría" : "Expandir categoría"}
+                    >
+                      <ChevronDown
+                        size={17}
+                        strokeWidth={2.3}
+                        className={`transition-transform duration-200 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
                     <button
                       onClick={() => removeCategory(cat.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
@@ -401,279 +446,256 @@ export default function CatalogEditor({
                     </button>
                   </div>
                 </div>
+
+                {/* CUERPO ACORDEÓN: Subcategorías + Productos inline */}
+                {isExpanded && (
+                  <div
+                    className="border-t px-3.5 pt-4 pb-4 space-y-5 animate-[fadeIn_.18s_ease]"
+                    style={{
+                      borderTopColor: "rgba(184,147,92,0.18)",
+                      backgroundColor: "rgba(11,11,12,0.35)",
+                      borderBottomLeftRadius: "inherit",
+                      borderBottomRightRadius: "inherit",
+                    }}
+                  >
+                    {/* BLOQUE SUBCATEGORÍAS */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Tags size={16} className="text-[#B8935C] shrink-0" />
+                          <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
+                            Subcategorías de <span className="text-[#B8935C]">{cat.name}</span>
+                          </h4>
+                          <span className="text-xs text-[#D4CCBF]">
+                            ({cat.subcategories.length})
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => addSubcategory(cat.id)}
+                          className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                        >
+                          <Plus size={13} className="text-[#B8935C]" />
+                          Nueva
+                        </button>
+                      </div>
+
+                      {cat.subcategories.length === 0 ? (
+                        <p className="text-xs text-[#D4CCBF]/70 py-2">
+                          Aún no hay subcategorías. Crea una con el botón, luego asígnasela al producto.
+                        </p>
+                      ) : (
+                        <div className="space-y-2">
+                          {orderByOrder(cat.subcategories).map((sub, sIdx) => {
+                            const isSubDrag = dragSubId === sub.id;
+                            return (
+                              <div
+                                key={sub.id}
+                                draggable
+                                onDragStart={(e) => {
+                                  setDragSubId(sub.id);
+                                  e.dataTransfer.effectAllowed = "move";
+                                  e.dataTransfer.setData("text/plain", sub.id);
+                                }}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.dataTransfer.dropEffect = "move";
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  onDropSubcategoryWithin(cat.id, sub.id);
+                                  setDragSubId(null);
+                                }}
+                                onDragEnd={() => setDragSubId(null)}
+                                className={`flex flex-wrap items-center gap-2 rounded-xl bg-[#161414] px-3 py-2 transition-all ${
+                                  isSubDrag ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""
+                                }`}
+                                style={{ border: "1px solid rgba(184,147,92,0.15)" }}
+                              >
+                                <span
+                                  className="flex h-7 w-6 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+                                  title="Agarrar para arrastrar y reordenar"
+                                >
+                                  <GripVertical size={17} strokeWidth={2} />
+                                </span>
+                                <span className="text-[10px] font-medium text-[#B8935C] tracking-widest uppercase w-7">
+                                  #{sIdx + 1}
+                                </span>
+                                <input
+                                  value={sub.label}
+                                  onChange={(e) =>
+                                    updateSubcategory(cat.id, sub.id, { label: e.target.value })
+                                  }
+                                  className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                                />
+                                <button
+                                  onClick={() => removeSubcategory(cat.id, sub.id)}
+                                  className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                                  style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                                  aria-label="Eliminar subcategoría"
+                                >
+                                  <Trash2 size={14} strokeWidth={2} />
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* BLOQUE PRODUCTOS */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Package size={16} className="text-[#B8935C] shrink-0" />
+                          <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
+                            Productos
+                          </h4>
+                          <span className="text-xs text-[#D4CCBF]">
+                            ({catItems.length})
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => addItemInto(cat.id)}
+                          className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                        >
+                          <Plus size={13} className="text-[#B8935C]" />
+                          Añadir
+                        </button>
+                      </div>
+
+                      {catItems.length === 0 ? (
+                        <p className="text-xs text-[#D4CCBF]/70 py-2 text-center">
+                          Esta categoría aún no tiene productos.
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {orderByOrder(catItems).map((item, iIdx) => {
+                            const isItemDrag = dragItemId === item.id;
+                            return (
+                              <div
+                                key={item.id}
+                                draggable
+                                onDragStart={(e) => {
+                                  setDragItemId(item.id);
+                                  e.dataTransfer.effectAllowed = "move";
+                                  e.dataTransfer.setData("text/plain", item.id);
+                                }}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.dataTransfer.dropEffect = "move";
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  onDropItemWithin(cat.id, item.id);
+                                  setDragItemId(null);
+                                }}
+                                onDragEnd={() => setDragItemId(null)}
+                                className={`rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+                                  isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
+                                }`}
+                                style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+                              >
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                                  <div className="w-full sm:w-40 flex sm:block items-start gap-2">
+                                    <span
+                                      className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+                                      title="Agarrar para arrastrar y reordenar"
+                                    >
+                                      <GripVertical size={18} strokeWidth={2} />
+                                    </span>
+                                    <span
+                                      className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
+                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                      title="Agarrar para arrastrar y reordenar"
+                                    >
+                                      <GripVertical size={18} strokeWidth={2} />
+                                    </span>
+                                    <div className="flex-1 sm:flex-none">
+                                      <ImageUploader
+                                        value={item.image}
+                                        onChange={(url) => updateItem(item.id, { image: url })}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="min-w-0 flex-1 space-y-2">
+                                    <div className="flex flex-col sm:flex-row sm:gap-2">
+                                      <input
+                                        value={item.name}
+                                        onChange={(e) => updateItem(item.id, { name: e.target.value })}
+                                        className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                                        placeholder="Nombre del producto"
+                                      />
+                                      <select
+                                        value={item.subcategory ?? ""}
+                                        onChange={(e) =>
+                                          updateItem(item.id, {
+                                            subcategory: e.target.value ? e.target.value : undefined,
+                                          })
+                                        }
+                                        className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                                      >
+                                        <option value="">(Sin subcategoría)</option>
+                                        {orderByOrder(cat.subcategories).map((s) => (
+                                          <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
+                                            {s.label}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                    <textarea
+                                      value={item.description}
+                                      onChange={(e) => updateItem(item.id, { description: e.target.value })}
+                                      rows={2}
+                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                                      placeholder="Descripción"
+                                    />
+                                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                                      <input
+                                        type="number"
+                                        value={item.price}
+                                        onChange={(e) =>
+                                          updateItem(item.id, { price: Number(e.target.value) })
+                                        }
+                                        className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                                      />
+                                      <span className="text-xs text-[#D4CCBF]">{formatCOP(item.price)}</span>
+                                      <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
+                                        <input
+                                          type="checkbox"
+                                          checked={item.available}
+                                          onChange={(e) =>
+                                            updateItem(item.id, { available: e.target.checked })
+                                          }
+                                        />
+                                        Disponible
+                                      </label>
+                                      <div className="ml-auto">
+                                        <button
+                                          onClick={() => removeItem(item.id)}
+                                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                                          aria-label="Eliminar producto"
+                                        >
+                                          <Trash2 size={14} strokeWidth={2} />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-      </section>
-
-      {/* SUBCATEGORIES */}
-      <section
-        className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
-        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-      >
-        <header className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Tags size={18} className="text-[#B8935C]" />
-            <h3 className="text-[#F5EFE6] text-lg font-semibold">
-              Subcategorías de{" "}
-              <span className="text-[#B8935C]">{activeCategory?.name ?? "Selecciona"}</span>
-            </h3>
-            <span className="text-xs text-[#D4CCBF]">
-              (son los botones pequeños que aparecen debajo de la categoría)
-            </span>
-          </div>
-          {activeCategory && (
-            <button
-              onClick={() => addSubcategory(activeCategory.id)}
-              className="flex items-center gap-2 rounded-full bg-[#2A2724] px-4 py-2 text-sm text-[#F5EFE6] active:scale-95"
-              style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-            >
-              <Plus size={15} className="text-[#B8935C]" />
-              Nueva subcategoría
-            </button>
-          )}
-        </header>
-        {!activeCategory ? (
-          <p className="text-sm text-[#D4CCBF]/70 py-4">
-            Selecciona una categoría primero para gestionar sus subcategorías.
-          </p>
-        ) : activeCategory.subcategories.length === 0 ? (
-          <p className="text-sm text-[#D4CCBF]/70 py-4">
-            Aún no hay subcategorías para esta sección. Puedes crear una arriba y luego desde
-            la ficha de cada producto elegirla del desplegable.
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {orderByOrder(activeCategory.subcategories).map((sub, idx, arr) => {
-              const isDragging = dragSubId === sub.id;
-              return (
-                <div
-                  key={sub.id}
-                  draggable
-                  onDragStart={(e) => {
-                    setDragSubId(sub.id);
-                    e.dataTransfer.effectAllowed = "move";
-                    e.dataTransfer.setData("text/plain", sub.id);
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "move";
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    onDropSubcategory(sub.id);
-                    setDragSubId(null);
-                  }}
-                  onDragEnd={() => setDragSubId(null)}
-                  className={`flex flex-wrap items-center gap-2 rounded-xl bg-[#161414] px-3.5 py-2.5 transition-all ${
-                    isDragging ? "opacity-60 scale-[0.99] ring-2 ring-[#B8935C]/60" : ""
-                  }`}
-                  style={{ border: "1px solid rgba(184,147,92,0.15)" }}
-                >
-                  <span
-                    className="flex h-8 w-6 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                    title="Agarrar para arrastrar y reordenar"
-                  >
-                    <GripVertical size={18} strokeWidth={2} />
-                  </span>
-                  <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
-                    #{idx + 1}
-                  </span>
-                  <input
-                    value={sub.label}
-                    onChange={(e) =>
-                      updateSubcategory(activeCategory.id, sub.id, { label: e.target.value })
-                    }
-                    className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                  />
-                  <div className="ml-auto flex items-center gap-1.5">
-                    <button
-                      onClick={() => removeSubcategory(activeCategory.id, sub.id)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                      style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                      aria-label="Eliminar subcategoría"
-                    >
-                      <Trash2 size={14} strokeWidth={2} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* PRODUCTS */}
-      <section
-        className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
-        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-      >
-        <header className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Package size={18} className="text-[#B8935C]" />
-            <h3 className="text-[#F5EFE6] text-lg font-semibold">
-              Productos · {activeCategory?.name ?? ""}
-            </h3>
-            <span className="text-xs text-[#D4CCBF]">
-              ({filteredItems.length} en esta categoría)
-            </span>
-          </div>
-          <button
-            onClick={addItem}
-            className="flex items-center gap-2 rounded-full bg-[#2A2724] px-4 py-2 text-sm text-[#F5EFE6] active:scale-95"
-            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-          >
-            <Plus size={15} className="text-[#B8935C]" />
-            Añadir producto
-          </button>
-        </header>
-
-        {filteredItems.length === 0 ? (
-          <p className="text-sm text-[#D4CCBF]/70 py-4 text-center">
-            Esta categoría aún no tiene productos. Añade uno con el botón de arriba.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {filteredItems.map((item, idx, arr) => {
-              const subs = activeCategory?.subcategories ?? [];
-              const isDragging = dragItemId === item.id;
-              return (
-                <div
-                  key={item.id}
-                  draggable
-                  onDragStart={(e) => {
-                    setDragItemId(item.id);
-                    e.dataTransfer.effectAllowed = "move";
-                    e.dataTransfer.setData("text/plain", item.id);
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "move";
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    onDropItem(item.id);
-                    setDragItemId(null);
-                  }}
-                  onDragEnd={() => setDragItemId(null)}
-                  className={`rounded-xl bg-[#161414] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
-                    isDragging ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
-                  }`}
-                  style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-                >
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                    <div className="w-full sm:w-40 flex sm:block items-start gap-2">
-                      <span
-                        className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                        title="Agarrar para arrastrar y reordenar"
-                      >
-                        <GripVertical size={18} strokeWidth={2} />
-                      </span>
-                      <span
-                        className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
-                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                        title="Agarrar para arrastrar y reordenar"
-                      >
-                        <GripVertical size={18} strokeWidth={2} />
-                      </span>
-                      <div className="flex-1 sm:flex-none">
-                        <ImageUploader
-                          value={item.image}
-                          onChange={(url) => updateItem(item.id, { image: url })}
-                        />
-                      </div>
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-2">
-                      <div className="flex flex-col sm:flex-row sm:gap-2">
-                        <input
-                          value={item.name}
-                          onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                          className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                          placeholder="Nombre del producto"
-                        />
-                        <select
-                          value={item.subcategory ?? ""}
-                          onChange={(e) =>
-                            updateItem(item.id, {
-                              subcategory: e.target.value ? e.target.value : undefined,
-                            })
-                          }
-                          className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                        >
-                          <option value="">(Sin subcategoría)</option>
-                          {orderByOrder(subs).map((s) => (
-                            <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
-                              {s.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <textarea
-                        value={item.description}
-                        onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                        rows={2}
-                        className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                        placeholder="Descripción"
-                      />
-
-                      <div className="flex flex-wrap items-center gap-2 pt-1">
-                        <input
-                          type="number"
-                          value={item.price}
-                          onChange={(e) =>
-                            updateItem(item.id, { price: Number(e.target.value) })
-                          }
-                          className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                        />
-                        <span className="text-xs text-[#D4CCBF]">{formatCOP(item.price)}</span>
-
-                        <select
-                          value={item.categoryId}
-                          onChange={(e) =>
-                            updateItem(item.id, {
-                              categoryId: e.target.value,
-                              subcategory: undefined,
-                            })
-                          }
-                          className="rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                        >
-                          {orderByOrder(categories).map((c) => (
-                            <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-
-                        <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
-                          <input
-                            type="checkbox"
-                            checked={item.available}
-                            onChange={(e) =>
-                              updateItem(item.id, { available: e.target.checked })
-                            }
-                          />
-                          Disponible
-                        </label>
-
-                        <div className="ml-auto flex items-center gap-1.5">
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                            style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                            aria-label="Eliminar producto"
-                          >
-                            <Trash2 size={14} strokeWidth={2} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
       </section>
     </div>
   );
