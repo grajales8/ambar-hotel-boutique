@@ -106,19 +106,20 @@ export default function RestaurantPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <PageHeader title="Restaurante" subtitle="Nuestro menú" />
+      <div className="sticky top-0 z-30 bg-[#0B0B0C] backdrop-blur-md">
+        <PageHeader sticky={false} title="Restaurante" subtitle="Nuestro menú" />
 
-      <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3 space-y-2.5">
-        <CategoryTabs
-          categories={categories}
-          active={category}
-          onChange={(c) => {
-            setCategory(c);
-            setOpenId(null);
-          }}
-        />
-        {hasAnySubcategory && (
-          <div className="scrollbar-thin flex gap-1.5 overflow-x-auto px-5">
+        <div className="py-3 space-y-2.5">
+          <CategoryTabs
+            categories={categories}
+            active={category}
+            onChange={(c) => {
+              setCategory(c);
+              setOpenId(null);
+            }}
+          />
+          {hasAnySubcategory && (
+            <div className="scrollbar-thin flex gap-1.5 overflow-x-auto px-5">
             <button
               onClick={() => setSub("all")}
               className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
@@ -147,6 +148,7 @@ export default function RestaurantPage() {
             })}
           </div>
         )}
+      </div>
       </div>
 
       <div className="px-5 pt-4 pb-2 space-y-6">

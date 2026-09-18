@@ -7,13 +7,19 @@ export default function PageHeader({
   title,
   subtitle,
   backHref = "/",
+  sticky = true,
 }: {
   title: string;
   subtitle?: string;
   backHref?: string;
+  sticky?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-30 bg-[#0B0B0C]/90 backdrop-blur-md">
+    <header
+      className={`${
+        sticky ? "sticky top-0 z-30" : ""
+      } bg-[#0B0B0C]/90 backdrop-blur-md`}
+    >
       <div className="flex items-center gap-2 px-5 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4">
         <Link
           href={backHref}
