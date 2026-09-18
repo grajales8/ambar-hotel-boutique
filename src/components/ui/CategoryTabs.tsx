@@ -1,13 +1,13 @@
 "use client";
 
-import { MenuCategory } from "@/lib/types";
+type TabCategory = { id: string; name: string };
 
 export default function CategoryTabs({
   categories,
   active,
   onChange,
 }: {
-  categories: MenuCategory[];
+  categories: TabCategory[];
   active: string;
   onChange: (id: string) => void;
 }) {

@@ -1,42 +1,73 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
-import { MenuItem, MenuCategory } from "@/lib/types";
+import { Trash2, Plus, ChevronUp, ChevronDown, Package, Tags, FolderTree } from "lucide-react";
+import { MenuItem, MenuCategory, Subcategory } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { formatCOP } from "@/lib/cart-context";
 import ImageUploader from "@/components/admin/ImageUploader";
 
+function orderByOrder<T extends { order?: number; id: string }>(list: T[]): T[] {
+  return [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(a.id).localeCompare(String(b.id)));
+}
+
+function normalizeSubcategoryFromLegacy(
+  input: string | undefined,
+  subcategories: Subcategory[]
+): string | undefined {
+  if (!input) return undefined;
+  if (subcategories.some((s) => s.id === input)) return input;
+  const found = subcategories.find((s) => s.label.trim().toLowerCase() === input.trim().toLowerCase());
+  if (found) return found.id;
+  return undefined;
+}
+
 export default function CatalogEditor({
   storageKey,
-  categories,
+  categoriesStorageKey,
+  initialCategories,
   initialItems,
 }: {
   storageKey: string;
-  categories: MenuCategory[];
+  categoriesStorageKey: string;
+  initialCategories: MenuCategory[];
   initialItems: MenuItem[];
 }) {
   const [items, setItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
 
   useEffect(() => {
     let active = true;
-    loadCollection<MenuItem>(storageKey, initialItems).then((data) => {
-      if (active) {
-        setItems(data);
-        setLoading(false);
-      }
+    Promise.all([
+      loadCollection<MenuCategory>(categoriesStorageKey, initialCategories),
+      loadCollection<MenuItem>(storageKey, initialItems),
+    ]).then(([cats, its]) => {
+      if (!active) return;
+      const sortedCats = orderByOrder(cats);
+      const mappedItems = its.map((it) => {
+        const cat = sortedCats.find((c) => c.id === it.categoryId);
+        if (!cat) return it;
+        const newSub = normalizeSubcategoryFromLegacy(it.subcategory, cat.subcategories);
+        if (newSub === it.subcategory) return it;
+        return { ...it, subcategory: newSub };
+      });
+      setCategories(sortedCats);
+      setItems(mappedItems);
+      setActiveCategoryId((prev) =>
+        sortedCats.some((c) => c.id === prev) ? prev : sortedCats[0]?.id ?? prev
+      );
+      setLoading(false);
     });
     return () => {
       active = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storageKey]);
+  }, [storageKey, categoriesStorageKey]);
 
-  // Escritura diferida: espera a que dejes de escribir antes de mandar el
-  // guardado a Firestore, para no disparar una escritura por cada tecla.
-  const debouncedSave = useMemo(
+  const debouncedSaveItems = useMemo(
     () =>
       debounce((next: MenuItem[]) => {
         saveCollection(storageKey, next).then(() => {
@@ -47,19 +78,38 @@ export default function CatalogEditor({
     [storageKey]
   );
 
-  function persist(next: MenuItem[]) {
+  const debouncedSaveCategories = useMemo(
+    () =>
+      debounce((next: MenuCategory[]) => {
+        saveCollection(categoriesStorageKey, next).then(() => {
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1200);
+        });
+      }, 700),
+    [categoriesStorageKey]
+  );
+
+  function persistItems(next: MenuItem[]) {
     setItems(next);
-    debouncedSave(next);
+    debouncedSaveItems(next);
+  }
+
+  function persistCategories(next: MenuCategory[]) {
+    const reordered = next.map((c, i) => ({
+      ...c,
+      order: i + 1,
+      subcategories: (c.subcategories ?? []).map((s, j) => ({ ...s, order: j + 1 })),
+    }));
+    setCategories(reordered);
+    debouncedSaveCategories(reordered);
   }
 
   function updateItem(id: string, patch: Partial<MenuItem>) {
-    persist(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+    persistItems(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   }
-
   function removeItem(id: string) {
-    persist(items.filter((it) => it.id !== id));
+    persistItems(items.filter((it) => it.id !== id));
   }
-
   function moveItem(id: string, direction: "up" | "down") {
     const idx = items.findIndex((it) => it.id === id);
     if (idx < 0) return;
@@ -68,14 +118,114 @@ export default function CatalogEditor({
     const next = [...items];
     const swapIdx = direction === "up" ? idx - 1 : idx + 1;
     [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
-    persist(next);
+    persistItems(next);
+  }
+
+  function addCategory() {
+    const id = `${categoriesStorageKey}-cat-${Date.now()}`;
+    const nextCat: MenuCategory = {
+      id,
+      name: `Nueva categoría ${categories.length + 1}`,
+      order: categories.length + 1,
+      subcategories: [],
+    };
+    persistCategories([...categories, nextCat]);
+    setActiveCategoryId(id);
+  }
+
+  function updateCategory(id: string, patch: Partial<MenuCategory>) {
+    persistCategories(
+      categories.map((c) => (c.id === id ? { ...c, ...patch } : c))
+    );
+  }
+
+  function removeCategory(id: string) {
+    const next = categories.filter((c) => c.id !== id);
+    persistCategories(next);
+    persistItems(items.map((it) => (it.categoryId === id ? { ...it, categoryId: next[0]?.id ?? "" } : it)));
+    if (activeCategoryId === id) {
+      setActiveCategoryId(next[0]?.id ?? "");
+    }
+  }
+
+  function moveCategory(id: string, direction: "up" | "down") {
+    const idx = categories.findIndex((c) => c.id === id);
+    if (idx < 0) return;
+    if (direction === "up" && idx === 0) return;
+    if (direction === "down" && idx === categories.length - 1) return;
+    const next = [...categories];
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+    persistCategories(next);
+  }
+
+  function addSubcategory(categoryId: string) {
+    const cat = categories.find((c) => c.id === categoryId);
+    if (!cat) return;
+    const id = `${categoryId}-sub-${Date.now()}`;
+    const newSub: Subcategory = {
+      id,
+      label: `Subcategoría ${cat.subcategories.length + 1}`,
+      order: cat.subcategories.length + 1,
+    };
+    persistCategories(
+      categories.map((c) =>
+        c.id === categoryId ? { ...c, subcategories: [...c.subcategories, newSub] } : c
+      )
+    );
+  }
+
+  function updateSubcategory(categoryId: string, subId: string, patch: Partial<Subcategory>) {
+    persistCategories(
+      categories.map((c) =>
+        c.id === categoryId
+          ? {
+              ...c,
+              subcategories: c.subcategories.map((s) => (s.id === subId ? { ...s, ...patch } : s)),
+            }
+          : c
+      )
+    );
+  }
+
+  function removeSubcategory(categoryId: string, subId: string) {
+    persistCategories(
+      categories.map((c) =>
+        c.id === categoryId
+          ? { ...c, subcategories: c.subcategories.filter((s) => s.id !== subId) }
+          : c
+      )
+    );
+    persistItems(
+      items.map((it) =>
+        it.categoryId === categoryId && it.subcategory === subId
+          ? { ...it, subcategory: undefined }
+          : it
+      )
+    );
+  }
+
+  function moveSubcategory(categoryId: string, subId: string, direction: "up" | "down") {
+    const cat = categories.find((c) => c.id === categoryId);
+    if (!cat) return;
+    const idx = cat.subcategories.findIndex((s) => s.id === subId);
+    if (idx < 0) return;
+    if (direction === "up" && idx === 0) return;
+    if (direction === "down" && idx === cat.subcategories.length - 1) return;
+    const subs = [...cat.subcategories];
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    [subs[idx], subs[swapIdx]] = [subs[swapIdx], subs[idx]];
+    persistCategories(
+      categories.map((c) => (c.id === categoryId ? { ...c, subcategories: subs } : c))
+    );
   }
 
   function addItem() {
     const id = `${storageKey}-${Date.now()}`;
     const next: MenuItem = {
       id,
-      categoryId: categories[0]?.id ?? "",
+      categoryId: activeCategoryId || categories[0]?.id || "",
+      subcategory: undefined,
       name: "Nuevo producto",
       description: "",
       price: 0,
@@ -83,131 +233,353 @@ export default function CatalogEditor({
         "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
       available: true,
     };
-    persist([...items, next]);
+    persistItems([...items, next]);
   }
+
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
+  const filteredItems = items.filter((it) => it.categoryId === activeCategoryId);
 
   if (loading) {
     return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-[var(--color-ink-soft)]">
-          {items.length} productos · los cambios se guardan automáticamente
+    <div className="space-y-8">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-sm text-[#D4CCBF]">
+          {items.length} productos · {categories.length} categorías · cambios guardados automáticamente
         </p>
-        {saved && <span className="text-xs font-medium text-emerald-600">Guardado ✓</span>}
+        {saved && <span className="text-xs font-medium text-emerald-500">Guardado ✓</span>}
       </div>
 
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div key={item.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)]" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <div className="w-full sm:w-40">
-                <ImageUploader
-                  value={item.image}
-                  onChange={(url) => updateItem(item.id, { image: url })}
-                />
-              </div>
-              <div className="min-w-0 flex-1 space-y-2">
-                <div className="flex flex-col sm:flex-row sm:gap-2">
-                  <input
-                    value={item.name}
-                    onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                    className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                    placeholder="Nombre del producto"
-                  />
-                  <input
-                    value={item.subcategory ?? ""}
-                    onChange={(e) =>
-                      updateItem(item.id, {
-                        subcategory: e.target.value.trim() ? e.target.value : undefined,
-                      })
-                    }
-                    className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                    placeholder="Subcategoría (ej: Aguas, Gaseosas)"
-                  />
-                </div>
-                <textarea
-                  value={item.description}
-                  onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                  rows={2}
-                  className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                  placeholder="Descripción"
-                />
+      {/* CATEGORIES */}
+      <section
+        className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+      >
+        <header className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FolderTree size={18} className="text-[#B8935C]" />
+            <h3 className="text-[#F5EFE6] text-lg font-semibold">Categorías</h3>
+            <span className="text-xs text-[#D4CCBF]">
+              (son los botones grandes del menú)
+            </span>
+          </div>
+          <button
+            onClick={addCategory}
+            className="flex items-center gap-2 rounded-full bg-[#2A2724] px-4 py-2 text-sm text-[#F5EFE6] active:scale-95"
+            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+          >
+            <Plus size={15} className="text-[#B8935C]" />
+            Nueva categoría
+          </button>
+        </header>
 
-                <div className="flex flex-wrap items-center gap-2 pt-1">
+        <div className="space-y-2.5">
+          {categories.map((cat, idx) => {
+            const isActive = cat.id === activeCategoryId;
+            return (
+              <div
+                key={cat.id}
+                onClick={() => setActiveCategoryId(cat.id)}
+                className={`rounded-xl px-3.5 py-3 cursor-pointer transition-colors ${
+                  isActive
+                    ? "bg-[#2A2724]"
+                    : "bg-[#161414] hover:bg-[#1f1c1a]"
+                }`}
+                style={{ border: isActive ? "1px solid rgba(184,147,92,0.45)" : "1px solid rgba(184,147,92,0.15)" }}
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
+                    #{idx + 1}
+                  </span>
                   <input
-                    type="number"
-                    value={item.price}
-                    onChange={(e) => updateItem(item.id, { price: Number(e.target.value) })}
-                    className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                    value={cat.name}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => updateCategory(cat.id, { name: e.target.value })}
+                    className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
                   />
-                  <span className="text-xs text-[var(--color-ink-soft)]">{formatCOP(item.price)}</span>
-
-                  <select
-                    value={item.categoryId}
-                    onChange={(e) => updateItem(item.id, { categoryId: e.target.value })}
-                    className="rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="ml-auto flex items-center gap-1.5"
                   >
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
-                    <input
-                      type="checkbox"
-                      checked={item.available}
-                      onChange={(e) => updateItem(item.id, { available: e.target.checked })}
-                    />
-                    Disponible
-                  </label>
-
-                  <div className="ml-auto flex items-center gap-1.5">
                     <button
-                      onClick={() => moveItem(item.id, "up")}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      aria-label="Subir producto"
+                      onClick={() => moveCategory(cat.id, "up")}
+                      disabled={idx === 0}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#161414] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
                       style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      disabled={items.findIndex((it) => it.id === item.id) === 0}
+                      aria-label="Subir categoría"
                     >
                       <ChevronUp size={16} strokeWidth={2} />
                     </button>
                     <button
-                      onClick={() => moveItem(item.id, "down")}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      aria-label="Bajar producto"
+                      onClick={() => moveCategory(cat.id, "down")}
+                      disabled={idx === categories.length - 1}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#161414] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
                       style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      disabled={items.findIndex((it) => it.id === item.id) === items.length - 1}
+                      aria-label="Bajar categoría"
                     >
                       <ChevronDown size={16} strokeWidth={2} />
                     </button>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeCategory(cat.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                      aria-label="Eliminar producto"
                       style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                      aria-label="Eliminar categoría"
                     >
                       <Trash2 size={14} strokeWidth={2} />
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      </section>
 
-      <button
-        onClick={addItem}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-dashed border-[#B8935C] py-3 text-sm font-medium text-[#F5EFE6]"
+      {/* SUBCATEGORIES */}
+      <section
+        className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
       >
-        <Plus size={16} className="text-[#B8935C]" strokeWidth={2} />
-        Añadir producto
-      </button>
+        <header className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Tags size={18} className="text-[#B8935C]" />
+            <h3 className="text-[#F5EFE6] text-lg font-semibold">
+              Subcategorías de{" "}
+              <span className="text-[#B8935C]">{activeCategory?.name ?? "Selecciona"}</span>
+            </h3>
+            <span className="text-xs text-[#D4CCBF]">
+              (son los botones pequeños que aparecen debajo de la categoría)
+            </span>
+          </div>
+          {activeCategory && (
+            <button
+              onClick={() => addSubcategory(activeCategory.id)}
+              className="flex items-center gap-2 rounded-full bg-[#2A2724] px-4 py-2 text-sm text-[#F5EFE6] active:scale-95"
+              style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+            >
+              <Plus size={15} className="text-[#B8935C]" />
+              Nueva subcategoría
+            </button>
+          )}
+        </header>
+        {!activeCategory ? (
+          <p className="text-sm text-[#D4CCBF]/70 py-4">
+            Selecciona una categoría primero para gestionar sus subcategorías.
+          </p>
+        ) : activeCategory.subcategories.length === 0 ? (
+          <p className="text-sm text-[#D4CCBF]/70 py-4">
+            Aún no hay subcategorías para esta sección. Puedes crear una arriba y luego desde
+            la ficha de cada producto elegirla del desplegable.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {orderByOrder(activeCategory.subcategories).map((sub, idx, arr) => (
+              <div
+                key={sub.id}
+                className="flex flex-wrap items-center gap-2 rounded-xl bg-[#161414] px-3.5 py-2.5"
+                style={{ border: "1px solid rgba(184,147,92,0.15)" }}
+              >
+                <span className="text-xs font-medium text-[#B8935C] tracking-widest uppercase w-7">
+                  #{idx + 1}
+                </span>
+                <input
+                  value={sub.label}
+                  onChange={(e) =>
+                    updateSubcategory(activeCategory.id, sub.id, { label: e.target.value })
+                  }
+                  className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                />
+                <div className="ml-auto flex items-center gap-1.5">
+                  <button
+                    onClick={() => moveSubcategory(activeCategory.id, sub.id, "up")}
+                    disabled={idx === 0}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                    aria-label="Subir subcategoría"
+                  >
+                    <ChevronUp size={16} strokeWidth={2} />
+                  </button>
+                  <button
+                    onClick={() => moveSubcategory(activeCategory.id, sub.id, "down")}
+                    disabled={idx === arr.length - 1}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                    aria-label="Bajar subcategoría"
+                  >
+                    <ChevronDown size={16} strokeWidth={2} />
+                  </button>
+                  <button
+                    onClick={() => removeSubcategory(activeCategory.id, sub.id)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                    aria-label="Eliminar subcategoría"
+                  >
+                    <Trash2 size={14} strokeWidth={2} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* PRODUCTS */}
+      <section
+        className="rounded-2xl bg-[#1E1C1A] p-5 shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+      >
+        <header className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Package size={18} className="text-[#B8935C]" />
+            <h3 className="text-[#F5EFE6] text-lg font-semibold">
+              Productos · {activeCategory?.name ?? ""}
+            </h3>
+            <span className="text-xs text-[#D4CCBF]">
+              ({filteredItems.length} en esta categoría)
+            </span>
+          </div>
+          <button
+            onClick={addItem}
+            className="flex items-center gap-2 rounded-full bg-[#2A2724] px-4 py-2 text-sm text-[#F5EFE6] active:scale-95"
+            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+          >
+            <Plus size={15} className="text-[#B8935C]" />
+            Añadir producto
+          </button>
+        </header>
+
+        {filteredItems.length === 0 ? (
+          <p className="text-sm text-[#D4CCBF]/70 py-4 text-center">
+            Esta categoría aún no tiene productos. Añade uno con el botón de arriba.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {filteredItems.map((item, idx, arr) => {
+              const subs = activeCategory?.subcategories ?? [];
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-xl bg-[#161414] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
+                  style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                    <div className="w-full sm:w-40">
+                      <ImageUploader
+                        value={item.image}
+                        onChange={(url) => updateItem(item.id, { image: url })}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:gap-2">
+                        <input
+                          value={item.name}
+                          onChange={(e) => updateItem(item.id, { name: e.target.value })}
+                          className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                          placeholder="Nombre del producto"
+                        />
+                        <select
+                          value={item.subcategory ?? ""}
+                          onChange={(e) =>
+                            updateItem(item.id, {
+                              subcategory: e.target.value ? e.target.value : undefined,
+                            })
+                          }
+                          className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                        >
+                          <option value="">(Sin subcategoría)</option>
+                          {orderByOrder(subs).map((s) => (
+                            <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <textarea
+                        value={item.description}
+                        onChange={(e) => updateItem(item.id, { description: e.target.value })}
+                        rows={2}
+                        className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                        placeholder="Descripción"
+                      />
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) =>
+                            updateItem(item.id, { price: Number(e.target.value) })
+                          }
+                          className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                        />
+                        <span className="text-xs text-[#D4CCBF]">{formatCOP(item.price)}</span>
+
+                        <select
+                          value={item.categoryId}
+                          onChange={(e) =>
+                            updateItem(item.id, {
+                              categoryId: e.target.value,
+                              subcategory: undefined,
+                            })
+                          }
+                          className="rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+                        >
+                          {orderByOrder(categories).map((c) => (
+                            <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+
+                        <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF]">
+                          <input
+                            type="checkbox"
+                            checked={item.available}
+                            onChange={(e) =>
+                              updateItem(item.id, { available: e.target.checked })
+                            }
+                          />
+                          Disponible
+                        </label>
+
+                        <div className="ml-auto flex items-center gap-1.5">
+                          <button
+                            onClick={() => moveItem(item.id, "up")}
+                            disabled={idx === 0}
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                            aria-label="Subir producto"
+                          >
+                            <ChevronUp size={16} strokeWidth={2} />
+                          </button>
+                          <button
+                            onClick={() => moveItem(item.id, "down")}
+                            disabled={idx === arr.length - 1}
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                            aria-label="Bajar producto"
+                          >
+                            <ChevronDown size={16} strokeWidth={2} />
+                          </button>
+                          <button
+                            onClick={() => removeItem(item.id)}
+                            className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                            style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                            aria-label="Eliminar producto"
+                          >
+                            <Trash2 size={14} strokeWidth={2} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

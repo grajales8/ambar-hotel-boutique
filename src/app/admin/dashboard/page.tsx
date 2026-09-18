@@ -86,21 +86,24 @@ export default function AdminDashboardPage() {
         {tab === "restaurante" && (
           <CatalogEditor
             storageKey="restaurantItems"
-            categories={restaurantCategories}
+            categoriesStorageKey="restaurantCategories"
+            initialCategories={restaurantCategories}
             initialItems={restaurantItems}
           />
         )}
         {tab === "minibar" && (
           <CatalogEditor
             storageKey="minibarItems"
-            categories={minibarCategories}
+            categoriesStorageKey="minibarCategories"
+            initialCategories={minibarCategories}
             initialItems={minibarItems}
           />
         )}
         {tab === "boutique" && (
           <CatalogEditor
             storageKey="boutiqueItems"
-            categories={boutiqueCategories}
+            categoriesStorageKey="boutiqueCategories"
+            initialCategories={boutiqueCategories}
             initialItems={boutiqueItems}
           />
         )}

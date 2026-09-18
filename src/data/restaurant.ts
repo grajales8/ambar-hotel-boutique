@@ -1,18 +1,54 @@
 import { MenuCategory, MenuItem } from "@/lib/types";
 
 export const restaurantCategories: MenuCategory[] = [
-  { id: "comida", name: "Comida" },
-  { id: "postres", name: "Postres" },
-  { id: "bebidas", name: "Bebidas" },
-  { id: "licores", name: "Licores" },
-  { id: "cocteles", name: "Cócteles" },
+  {
+    id: "comida",
+    name: "Comida",
+    order: 1,
+    subcategories: [
+      { id: "sb-com-entradas-frias", label: "Entradas frías", order: 1 },
+      { id: "sb-com-fuertes", label: "Platos fuertes", order: 2 },
+    ],
+  },
+  {
+    id: "postres",
+    name: "Postres",
+    order: 2,
+    subcategories: [
+      { id: "sb-post-calientes", label: "Postres calientes", order: 1 },
+    ],
+  },
+  {
+    id: "bebidas",
+    name: "Bebidas",
+    order: 3,
+    subcategories: [
+      { id: "sb-beb-jugos", label: "Jugos y naturales", order: 1 },
+    ],
+  },
+  {
+    id: "licores",
+    name: "Licores",
+    order: 4,
+    subcategories: [
+      { id: "sb-lic-tintos", label: "Vinos tintos", order: 1 },
+    ],
+  },
+  {
+    id: "cocteles",
+    name: "Cócteles",
+    order: 5,
+    subcategories: [
+      { id: "sb-coc-clasicos", label: "Clásicos", order: 1 },
+    ],
+  },
 ];
 
 export const restaurantItems: MenuItem[] = [
   {
     id: "r-1",
     categoryId: "comida",
-    subcategory: "Entradas frías",
+    subcategory: "sb-com-entradas-frias",
     name: "Carpaccio de res trufado",
     description: "Finas láminas de res, parmesano curado, rúgula y aceite de trufa negra.",
     price: 38000,
@@ -22,7 +58,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-2",
     categoryId: "comida",
-    subcategory: "Entradas frías",
+    subcategory: "sb-com-entradas-frias",
     name: "Tartar de atún",
     description: "Atún aleta amarilla, aguacate, sésamo tostado y salsa de maracuyá.",
     price: 42000,
@@ -32,7 +68,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-3",
     categoryId: "comida",
-    subcategory: "Platos fuertes",
+    subcategory: "sb-com-fuertes",
     name: "Lomo de res al carbón",
     description: "Costra de hierbas, puré de papa criolla trufado y jugo reducido de vino tinto.",
     price: 78000,
@@ -42,7 +78,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-4",
     categoryId: "comida",
-    subcategory: "Platos fuertes",
+    subcategory: "sb-com-fuertes",
     name: "Risotto de hongos silvestres",
     description: "Arroz carnaroli, hongos porcini, parmesano 24 meses y aceite de trufa.",
     price: 56000,
@@ -52,7 +88,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-5",
     categoryId: "comida",
-    subcategory: "Platos fuertes",
+    subcategory: "sb-com-fuertes",
     name: "Corvina en costra de coco",
     description: "Salsa de leche de coco y curry suave, arroz jazmín y vegetales salteados.",
     price: 68000,
@@ -62,7 +98,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-6",
     categoryId: "postres",
-    subcategory: "Postres calientes",
+    subcategory: "sb-post-calientes",
     name: "Fondant de chocolate 70%",
     description: "Corazón líquido, helado de vainilla Madagascar y polvo de cacao.",
     price: 28000,
@@ -72,7 +108,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-7",
     categoryId: "bebidas",
-    subcategory: "Jugos y naturales",
+    subcategory: "sb-beb-jugos",
     name: "Limonada de coco",
     description: "Receta de la casa con hierbabuena fresca.",
     price: 16000,
@@ -82,7 +118,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-8",
     categoryId: "licores",
-    subcategory: "Vinos tintos",
+    subcategory: "sb-lic-tintos",
     name: "Copa de vino tinto Reserva",
     description: "Selección de la casa, cepa Cabernet Sauvignon.",
     price: 32000,
@@ -92,7 +128,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-9",
     categoryId: "cocteles",
-    subcategory: "Clásicos",
+    subcategory: "sb-coc-clasicos",
     name: "Old Fashioned de la casa",
     description: "Bourbon, angostura y naranja confitada, servido con hielo tallado.",
     price: 34000,

@@ -1,49 +1,54 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { restaurantCategories, restaurantItems as defaultItems } from "@/data/restaurant";
+import { restaurantCategories as fallbackCats, restaurantItems as defaultItems } from "@/data/restaurant";
 import { loadCollection } from "@/lib/storage";
-import { MenuItem } from "@/lib/types";
+import { MenuItem, MenuCategory } from "@/lib/types";
 import PageHeader from "@/components/ui/PageHeader";
 import CategoryTabs from "@/components/ui/CategoryTabs";
 import ProductCardReadOnly from "@/components/ui/ProductCardReadOnly";
 
-function groupBySubcategory(items: MenuItem[]) {
-  const order: string[] = [];
-  const groups = new Map<string, MenuItem[]>();
-  items.forEach((it) => {
-    const k = it.subcategory?.trim() || "";
-    if (!groups.has(k)) {
-      order.push(k);
-      groups.set(k, []);
-    }
-    groups.get(k)!.push(it);
-  });
-  return order.map((label) => ({ label, items: groups.get(label)! }));
+function orderByOrder<T extends { order?: number; id: string }>(list: T[]): T[] {
+  return [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(a.id).localeCompare(String(b.id)));
 }
 
-// Menú de solo consulta: sin carrito ni pedidos. El huésped únicamente
-// revisa platos, fotos, descripciones y precios.
+function subLabel(id: string, activeCat: MenuCategory | undefined) {
+  if (!id) return "";
+  const sub = activeCat?.subcategories.find((s) => s.id === id);
+  if (sub) return sub.label;
+  return id;
+}
+
 export default function RestaurantPage() {
-  const [category, setCategory] = useState(restaurantCategories[0].id);
+  const [category, setCategory] = useState(fallbackCats[0].id);
   const [restaurantItems, setRestaurantItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>(fallbackCats);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
   const [sub, setSub] = useState<string>("all");
 
   useEffect(() => {
     let active = true;
-    loadCollection<MenuItem>("restaurantItems", defaultItems).then((data) => {
-      if (active) {
-        setRestaurantItems(data);
-        setLoading(false);
+    Promise.all([
+      loadCollection<MenuCategory>("restaurantCategories", fallbackCats),
+      loadCollection<MenuItem>("restaurantItems", defaultItems),
+    ]).then(([cats, items]) => {
+      if (!active) return;
+      const sorted = orderByOrder(cats);
+      setCategories(sorted);
+      setRestaurantItems(items);
+      if (!sorted.some((c) => c.id === category)) {
+        setCategory(sorted[0]?.id ?? "");
       }
+      setLoading(false);
     });
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const activeCategory = categories.find((c) => c.id === category);
   const filtered = restaurantItems.filter((i) => i.categoryId === category);
 
   useEffect(() => {
@@ -51,26 +56,42 @@ export default function RestaurantPage() {
   }, [category]);
 
   const subOptions = useMemo(() => {
-    const list: string[] = [];
-    const seen = new Set<string>();
-    filtered.forEach((it) => {
-      const k = it.subcategory?.trim();
-      if (k && !seen.has(k)) {
-        seen.add(k);
-        list.push(k);
-      }
-    });
-    return list;
-  }, [filtered]);
+    if (!activeCategory) return [];
+    const list = orderByOrder(activeCategory.subcategories);
+    const hasAny = filtered.some((it) => list.some((s) => s.id === it.subcategory));
+    if (!hasAny) return [];
+    return list
+      .filter((s) => filtered.some((it) => it.subcategory === s.id))
+      .map((s) => s.id);
+  }, [filtered, activeCategory]);
 
   const hasAnySubcategory = subOptions.length > 0;
 
   const filteredBySub = useMemo(
-    () => (sub === "all" ? filtered : filtered.filter((it) => (it.subcategory?.trim() || "") === sub)),
+    () => (sub === "all" ? filtered : filtered.filter((it) => (it.subcategory || "") === sub)),
     [filtered, sub]
   );
 
-  const grouped = useMemo(() => groupBySubcategory(filteredBySub), [filteredBySub]);
+  const grouped = useMemo(() => {
+    const order: string[] = [];
+    const groups = new Map<string, MenuItem[]>();
+    subOptions.forEach((sid) => {
+      order.push(sid);
+      groups.set(sid, []);
+    });
+    filteredBySub.forEach((it) => {
+      const k = it.subcategory || "";
+      if (!groups.has(k)) {
+        order.unshift(k);
+        groups.set(k, []);
+      }
+      groups.get(k)!.push(it);
+    });
+    return order.map((sid) => ({
+      label: subLabel(sid, activeCategory),
+      items: groups.get(sid) ?? [],
+    }));
+  }, [filteredBySub, subOptions, activeCategory]);
 
   function renderCard(item: MenuItem) {
     return (
@@ -89,7 +110,7 @@ export default function RestaurantPage() {
 
       <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3 space-y-2.5">
         <CategoryTabs
-          categories={restaurantCategories}
+          categories={categories}
           active={category}
           onChange={(c) => {
             setCategory(c);
@@ -109,18 +130,18 @@ export default function RestaurantPage() {
             >
               Todos
             </button>
-            {subOptions.map((s) => {
-              const active = s === sub;
+            {subOptions.map((sid) => {
+              const active = sid === sub;
               return (
                 <button
-                  key={s}
-                  onClick={() => setSub(s)}
+                  key={sid}
+                  onClick={() => setSub(sid)}
                   className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
                     active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
                   }`}
                   style={!active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
                 >
-                  {s}
+                  {subLabel(sid, activeCategory)}
                 </button>
               );
             })}

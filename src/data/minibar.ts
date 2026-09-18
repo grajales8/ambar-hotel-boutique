@@ -1,15 +1,34 @@
 import { MenuCategory, MenuItem } from "@/lib/types";
 
 export const minibarCategories: MenuCategory[] = [
-  { id: "bebidas", name: "Bebidas" },
-  { id: "snacks", name: "Snacks" },
+  {
+    id: "bebidas",
+    name: "Bebidas",
+    order: 1,
+    subcategories: [
+      { id: "sb-beb-aguas", label: "Aguas", order: 1 },
+      { id: "sb-beb-gaseosas", label: "Gaseosas", order: 2 },
+      { id: "sb-beb-calientes", label: "Bebidas calientes", order: 3 },
+      { id: "sb-beb-cervezas", label: "Cervezas", order: 4 },
+      { id: "sb-beb-licores", label: "Licores y vinos", order: 5 },
+    ],
+  },
+  {
+    id: "snacks",
+    name: "Snacks",
+    order: 2,
+    subcategories: [
+      { id: "sb-snk-salados", label: "Papas y snacks salados", order: 1 },
+      { id: "sb-snk-dulces", label: "Chocolates y dulces", order: 2 },
+    ],
+  },
 ];
 
 export const minibarItems: MenuItem[] = [
   {
     id: "m-1",
     categoryId: "bebidas",
-    subcategory: "Aguas",
+    subcategory: "sb-beb-aguas",
     name: "Agua mineral 500ml",
     description: "Agua sin gas, botella de vidrio.",
     price: 8000,
@@ -19,7 +38,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-2",
     categoryId: "bebidas",
-    subcategory: "Gaseosas",
+    subcategory: "sb-beb-gaseosas",
     name: "Gaseosa 350ml",
     description: "Sabores surtidos.",
     price: 9000,
@@ -29,7 +48,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-3",
     categoryId: "bebidas",
-    subcategory: "Cervezas",
+    subcategory: "sb-beb-cervezas",
     name: "Cerveza artesanal IPA",
     description: "Botella 330ml, notas cítricas.",
     price: 18000,
@@ -39,7 +58,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-4",
     categoryId: "bebidas",
-    subcategory: "Licores y vinos",
+    subcategory: "sb-beb-licores",
     name: "Vino blanco Chardonnay",
     description: "Media botella, 375ml.",
     price: 45000,
@@ -49,7 +68,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-5",
     categoryId: "bebidas",
-    subcategory: "Bebidas calientes",
+    subcategory: "sb-beb-calientes",
     name: "Café colombiano de origen",
     description: "Cápsula individual, tueste medio.",
     price: 9000,
@@ -59,7 +78,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-6",
     categoryId: "snacks",
-    subcategory: "Papas y snacks salados",
+    subcategory: "sb-snk-salados",
     name: "Tabla de pasabocas",
     description: "Nueces, aceitunas y queso curado.",
     price: 26000,
@@ -69,7 +88,7 @@ export const minibarItems: MenuItem[] = [
   {
     id: "m-7",
     categoryId: "snacks",
-    subcategory: "Chocolates y dulces",
+    subcategory: "sb-snk-dulces",
     name: "Chocolatería fina",
     description: "Selección de 6 bombones artesanales.",
     price: 22000,

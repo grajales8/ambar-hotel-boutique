@@ -2,9 +2,17 @@
 // con futuras colecciones de Firestore / tablas de Supabase, así que al
 // migrar de datos mock a backend real, estos tipos no deberían cambiar.
 
+export type Subcategory = {
+  id: string;
+  label: string;
+  order: number;
+};
+
 export type MenuCategory = {
   id: string;
   name: string;
+  order: number;
+  subcategories: Subcategory[];
 };
 
 export type MenuItem = {
