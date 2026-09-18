@@ -392,24 +392,6 @@ export default function CatalogEditor({
                     className="ml-auto flex items-center gap-1.5"
                   >
                     <button
-                      onClick={() => moveCategory(cat.id, "up")}
-                      disabled={idx === 0}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#161414] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      aria-label="Subir categoría"
-                    >
-                      <ChevronUp size={16} strokeWidth={2} />
-                    </button>
-                    <button
-                      onClick={() => moveCategory(cat.id, "down")}
-                      disabled={idx === categories.length - 1}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#161414] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      aria-label="Bajar categoría"
-                    >
-                      <ChevronDown size={16} strokeWidth={2} />
-                    </button>
-                    <button
                       onClick={() => removeCategory(cat.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
                       style={{ border: "1px solid rgba(248,113,113,0.25)" }}
@@ -506,24 +488,6 @@ export default function CatalogEditor({
                     className="flex-1 min-w-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-1.5 text-sm font-medium text-[#F5EFE6] outline-none focus:border-[#B8935C]"
                   />
                   <div className="ml-auto flex items-center gap-1.5">
-                    <button
-                      onClick={() => moveSubcategory(activeCategory.id, sub.id, "up")}
-                      disabled={idx === 0}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      aria-label="Subir subcategoría"
-                    >
-                      <ChevronUp size={16} strokeWidth={2} />
-                    </button>
-                    <button
-                      onClick={() => moveSubcategory(activeCategory.id, sub.id, "down")}
-                      disabled={idx === arr.length - 1}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                      aria-label="Bajar subcategoría"
-                    >
-                      <ChevronDown size={16} strokeWidth={2} />
-                    </button>
                     <button
                       onClick={() => removeSubcategory(activeCategory.id, sub.id)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
@@ -693,24 +657,6 @@ export default function CatalogEditor({
                         </label>
 
                         <div className="ml-auto flex items-center gap-1.5">
-                          <button
-                            onClick={() => moveItem(item.id, "up")}
-                            disabled={idx === 0}
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                            aria-label="Subir producto"
-                          >
-                            <ChevronUp size={16} strokeWidth={2} />
-                          </button>
-                          <button
-                            onClick={() => moveItem(item.id, "down")}
-                            disabled={idx === arr.length - 1}
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0B0B0C] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
-                            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                            aria-label="Bajar producto"
-                          >
-                            <ChevronDown size={16} strokeWidth={2} />
-                          </button>
                           <button
                             onClick={() => removeItem(item.id)}
                             className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
