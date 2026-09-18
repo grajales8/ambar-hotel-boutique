@@ -29,6 +29,7 @@ function MinibarContent() {
   const [minibarItems, setMinibarItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [sub, setSub] = useState<string>("all");
   const { lines, addItem, decrement } = useCart();
 
   useEffect(() => {
@@ -45,8 +46,33 @@ function MinibarContent() {
   }, []);
 
   const filtered = minibarItems.filter((i) => i.categoryId === category);
-  const grouped = useMemo(() => groupBySubcategory(filtered), [filtered]);
-  const hasAnySubcategory = grouped.some((g) => g.label !== "");
+
+  // Cada vez que cambie la categoría, reseteamos la subcategoría a "Todos".
+  useEffect(() => {
+    setSub("all");
+  }, [category]);
+
+  const subOptions = useMemo(() => {
+    const list: string[] = [];
+    const seen = new Set<string>();
+    filtered.forEach((it) => {
+      const k = it.subcategory?.trim();
+      if (k && !seen.has(k)) {
+        seen.add(k);
+        list.push(k);
+      }
+    });
+    return list;
+  }, [filtered]);
+
+  const hasAnySubcategory = subOptions.length > 0;
+
+  const filteredBySub = useMemo(
+    () => (sub === "all" ? filtered : filtered.filter((it) => (it.subcategory?.trim() || "") === sub)),
+    [filtered, sub]
+  );
+
+  const grouped = useMemo(() => groupBySubcategory(filteredBySub), [filteredBySub]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
@@ -70,7 +96,7 @@ function MinibarContent() {
     <main className="min-h-screen bg-[#0B0B0C] pb-32">
       <PageHeader title="Minibar" subtitle="Directo a tu habitación" />
 
-      <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3">
+      <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3 space-y-2.5">
         <CategoryTabs
           categories={minibarCategories}
           active={category}
@@ -79,6 +105,36 @@ function MinibarContent() {
             setOpenId(null);
           }}
         />
+        {hasAnySubcategory && (
+          <div className="scrollbar-thin flex gap-1.5 overflow-x-auto px-5">
+            <button
+              onClick={() => setSub("all")}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                sub === "all"
+                  ? "bg-[#B8935C] text-[#0B0B0C]"
+                  : "bg-[#1E1C1A] text-[#F5EFE6]"
+              }`}
+              style={sub !== "all" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+            >
+              Todos
+            </button>
+            {subOptions.map((s) => {
+              const active = s === sub;
+              return (
+                <button
+                  key={s}
+                  onClick={() => setSub(s)}
+                  className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                    active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
+                  }`}
+                  style={!active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="px-5 pt-4 pb-2 space-y-6">
@@ -86,7 +142,11 @@ function MinibarContent() {
           <p className="pt-4 text-center text-sm text-[#D4CCBF]">Cargando…</p>
         )}
         {!loading &&
-          (hasAnySubcategory ? (
+          (sub !== "all" ? (
+            <div className="grid grid-cols-2 gap-4">
+              {filteredBySub.map(renderCard)}
+            </div>
+          ) : hasAnySubcategory ? (
             grouped.map((group) => (
               <section key={group.label || "otros"} className="space-y-4">
                 {group.label && (
@@ -105,7 +165,7 @@ function MinibarContent() {
             ))
           ) : (
             <div className="grid grid-cols-2 gap-4">
-              {filtered.map(renderCard)}
+              {filteredBySub.map(renderCard)}
             </div>
           ))}
       </div>
