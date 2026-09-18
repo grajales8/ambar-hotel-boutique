@@ -10,6 +10,7 @@ export type MenuCategory = {
 export type MenuItem = {
   id: string;
   categoryId: string;
+  subcategory?: string;
   name: string;
   description: string;
   price: number; // COP

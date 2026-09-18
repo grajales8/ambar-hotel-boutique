@@ -99,12 +99,24 @@ export default function CatalogEditor({
                 />
               </div>
               <div className="min-w-0 flex-1 space-y-2">
-                <input
-                  value={item.name}
-                  onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                  className="w-full rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                  placeholder="Nombre"
-                />
+                <div className="flex flex-col sm:flex-row sm:gap-2">
+                  <input
+                    value={item.name}
+                    onChange={(e) => updateItem(item.id, { name: e.target.value })}
+                    className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                    placeholder="Nombre del producto"
+                  />
+                  <input
+                    value={item.subcategory ?? ""}
+                    onChange={(e) =>
+                      updateItem(item.id, {
+                        subcategory: e.target.value.trim() ? e.target.value : undefined,
+                      })
+                    }
+                    className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                    placeholder="Subcategoría (ej: Aguas, Gaseosas)"
+                  />
+                </div>
                 <textarea
                   value={item.description}
                   onChange={(e) => updateItem(item.id, { description: e.target.value })}

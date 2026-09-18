@@ -13,6 +13,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-1",
     categoryId: "accesorios",
+    subcategory: "Sombreros y arte",
     name: "Sombrero de paja toquilla",
     description: "Tejido artesanal colombiano, ideal para el clima cálido de Cali.",
     price: 85000,
@@ -22,6 +23,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-2",
     categoryId: "accesorios",
+    subcategory: "Bolsos y carteras",
     name: "Bolso tejido a mano",
     description: "Fibras naturales, diseño artesanal de la región.",
     price: 120000,
@@ -31,6 +33,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-3",
     categoryId: "ropa",
+    subcategory: "Camisetas y tops",
     name: "Camiseta AMBAR",
     description: "Algodón 100%, edición exclusiva del hotel.",
     price: 65000,
@@ -40,6 +43,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-4",
     categoryId: "ropa",
+    subcategory: "Abrigos ligeros",
     name: "Bufanda de algodón",
     description: "Tejido liviano, perfecta como abrigo ligero en la noche.",
     price: 58000,
@@ -49,6 +53,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-5",
     categoryId: "detalles",
+    subcategory: "Aromáticas y bienestar",
     name: "Vela aromática AMBAR",
     description: "Aroma de la casa, en frasco de cerámica reutilizable.",
     price: 48000,
@@ -58,6 +63,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-6",
     categoryId: "detalles",
+    subcategory: "Café y gastronomía",
     name: "Set de café de origen",
     description: "Café colombiano de finca, ideal para llevar a casa.",
     price: 42000,
@@ -67,6 +73,7 @@ export const boutiqueItems: MenuItem[] = [
   {
     id: "b-7",
     categoryId: "detalles",
+    subcategory: "Papelería y regalos",
     name: "Libreta artesanal",
     description: "Papel reciclado y tapa en cuero vegetal, hecha a mano.",
     price: 36000,

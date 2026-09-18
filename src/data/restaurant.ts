@@ -12,6 +12,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-1",
     categoryId: "comida",
+    subcategory: "Entradas frías",
     name: "Carpaccio de res trufado",
     description: "Finas láminas de res, parmesano curado, rúgula y aceite de trufa negra.",
     price: 38000,
@@ -21,6 +22,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-2",
     categoryId: "comida",
+    subcategory: "Entradas frías",
     name: "Tartar de atún",
     description: "Atún aleta amarilla, aguacate, sésamo tostado y salsa de maracuyá.",
     price: 42000,
@@ -30,6 +32,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-3",
     categoryId: "comida",
+    subcategory: "Platos fuertes",
     name: "Lomo de res al carbón",
     description: "Costra de hierbas, puré de papa criolla trufado y jugo reducido de vino tinto.",
     price: 78000,
@@ -39,6 +42,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-4",
     categoryId: "comida",
+    subcategory: "Platos fuertes",
     name: "Risotto de hongos silvestres",
     description: "Arroz carnaroli, hongos porcini, parmesano 24 meses y aceite de trufa.",
     price: 56000,
@@ -48,6 +52,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-5",
     categoryId: "comida",
+    subcategory: "Platos fuertes",
     name: "Corvina en costra de coco",
     description: "Salsa de leche de coco y curry suave, arroz jazmín y vegetales salteados.",
     price: 68000,
@@ -57,6 +62,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-6",
     categoryId: "postres",
+    subcategory: "Postres calientes",
     name: "Fondant de chocolate 70%",
     description: "Corazón líquido, helado de vainilla Madagascar y polvo de cacao.",
     price: 28000,
@@ -66,6 +72,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-7",
     categoryId: "bebidas",
+    subcategory: "Jugos y naturales",
     name: "Limonada de coco",
     description: "Receta de la casa con hierbabuena fresca.",
     price: 16000,
@@ -75,6 +82,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-8",
     categoryId: "licores",
+    subcategory: "Vinos tintos",
     name: "Copa de vino tinto Reserva",
     description: "Selección de la casa, cepa Cabernet Sauvignon.",
     price: 32000,
@@ -84,6 +92,7 @@ export const restaurantItems: MenuItem[] = [
   {
     id: "r-9",
     categoryId: "cocteles",
+    subcategory: "Clásicos",
     name: "Old Fashioned de la casa",
     description: "Bourbon, angostura y naranja confitada, servido con hielo tallado.",
     price: 34000,
