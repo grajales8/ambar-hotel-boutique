@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, ChevronUp, ChevronDown } from "lucide-react";
 import { MenuItem, MenuCategory } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { formatCOP } from "@/lib/cart-context";
@@ -58,6 +58,17 @@ export default function CatalogEditor({
 
   function removeItem(id: string) {
     persist(items.filter((it) => it.id !== id));
+  }
+
+  function moveItem(id: string, direction: "up" | "down") {
+    const idx = items.findIndex((it) => it.id === id);
+    if (idx < 0) return;
+    if (direction === "up" && idx === 0) return;
+    if (direction === "down" && idx === items.length - 1) return;
+    const next = [...items];
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+    persist(next);
   }
 
   function addItem() {
@@ -155,14 +166,34 @@ export default function CatalogEditor({
                     Disponible
                   </label>
 
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                    aria-label="Eliminar producto"
-                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                  >
-                    <Trash2 size={14} strokeWidth={2} />
-                  </button>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <button
+                      onClick={() => moveItem(item.id, "up")}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                      aria-label="Subir producto"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                      disabled={items.findIndex((it) => it.id === item.id) === 0}
+                    >
+                      <ChevronUp size={16} strokeWidth={2} />
+                    </button>
+                    <button
+                      onClick={() => moveItem(item.id, "down")}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30 disabled:pointer-events-none"
+                      aria-label="Bajar producto"
+                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                      disabled={items.findIndex((it) => it.id === item.id) === items.length - 1}
+                    >
+                      <ChevronDown size={16} strokeWidth={2} />
+                    </button>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                      aria-label="Eliminar producto"
+                      style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                    >
+                      <Trash2 size={14} strokeWidth={2} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
