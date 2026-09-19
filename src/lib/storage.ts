@@ -146,10 +146,9 @@ export function debounce<Args extends unknown[]>(
   };
 }
 
-// Sesión simple del admin (solo para ocultar el panel tras una contraseña
-// de operación diaria; no reemplaza un sistema de autenticación real).
-// Esto sigue siendo local a cada dispositivo — es solo la "llave" que abre
-// el panel en ESE navegador, no datos que deban sincronizarse.
+// Sesión simple del admin (usuario + password ingresado; no reemplaza
+// autenticación real pero requiere ambos campos para acceder).
+// Se guarda local en sessionStorage (dispositivo/navegador actual).
 const SESSION_KEY = "ambar-admin:session";
 
 export function setAdminSession(active: boolean) {
