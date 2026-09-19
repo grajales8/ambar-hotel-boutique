@@ -101,31 +101,30 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5 shadow-[0_6px_20px_rgba(37,211,102,0.18)]"
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5 shadow-[0_6px_20px_rgba(184,147,92,0.18)]"
           style={{
-            background:
-              "linear-gradient(135deg, #1D9F58 0%, #25D366 55%, #128C7E 100%)",
-            border: "1px solid rgba(255,255,255,0.14)",
+            backgroundColor: "#F2E7D2",
+            border: "1px solid rgba(184,147,92,0.45)",
           }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-white"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#1E1C1A]"
             style={{
-              backgroundColor: "rgba(255,255,255,0.14)",
+              backgroundColor: "rgba(30,28,26,0.08)",
               borderRadius: "9999px",
             }}
           >
-            <ChatBubbleIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
+            <ChatBubbleIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2.1} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base md:text-[18px] font-semibold text-white">
+            <span className="block text-base md:text-[18px] font-semibold text-[#1E1C1A]">
               Chatear con recepción
             </span>
-            <span className="block text-[12px] md:text-[13.5px] text-white/80">
+            <span className="block text-[12px] md:text-[13.5px] text-[#3D3A36]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-white/90" />
+          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#1E1C1A]/85" />
         </motion.a>
 
         <motion.a
@@ -136,31 +135,30 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5 shadow-[0_6px_20px_rgba(251,191,36,0.18)]"
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5 shadow-[0_6px_20px_rgba(184,147,92,0.16)]"
           style={{
-            background:
-              "linear-gradient(135deg, #EA580C 0%, #F59E0B 45%, #FBBF24 100%)",
-            border: "1px solid rgba(255,255,255,0.14)",
+            backgroundColor: "#E7D4B0",
+            border: "1px solid rgba(184,147,92,0.55)",
           }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-white"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#1E1C1A]"
             style={{
-              backgroundColor: "rgba(255,255,255,0.14)",
+              backgroundColor: "rgba(30,28,26,0.08)",
               borderRadius: "9999px",
             }}
           >
-            <StarOutlineIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
+            <StarOutlineIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2.1} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base md:text-[18px] font-semibold text-white">
+            <span className="block text-base md:text-[18px] font-semibold text-[#1E1C1A]">
               Calificar experiencia
             </span>
-            <span className="block text-[12px] md:text-[13.5px] text-white/85">
+            <span className="block text-[12px] md:text-[13.5px] text-[#3D3A36]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-white/90" />
+          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#1E1C1A]/85" />
         </motion.a>
       </div>
     </div>
