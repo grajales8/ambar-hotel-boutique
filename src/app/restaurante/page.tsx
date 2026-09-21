@@ -51,6 +51,27 @@ export default function RestaurantPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const filterByCategory = useMemo(() => {
+    const out = new Map<string, MenuItem[]>();
+    categories.forEach((c) => out.set(c.id, []));
+    restaurantItems.forEach((it) => {
+      if (!out.has(it.categoryId)) out.set(it.categoryId, []);
+      out.get(it.categoryId)!.push(it);
+    });
+    return out;
+  }, [categories, restaurantItems]);
+
+  const activeCategory = categories.find((c) => c.id === category);
+
+  const subOptions = useMemo(() => {
+    if (!activeCategory) return [] as string[];
+    const items = filterByCategory.get(activeCategory.id) ?? [];
+    const subs = orderByOrder(activeCategory.subcategories).filter((s) =>
+      items.some((it) => it.subcategory === s.id)
+    );
+    return subs.map((s) => s.id);
+  }, [activeCategory, filterByCategory]);
+
   useEffect(() => {
     setSub("all");
   }, [category]);
@@ -83,27 +104,6 @@ export default function RestaurantPage() {
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [categories, loading, category]);
-
-  const filterByCategory = useMemo(() => {
-    const out = new Map<string, MenuItem[]>();
-    categories.forEach((c) => out.set(c.id, []));
-    restaurantItems.forEach((it) => {
-      if (!out.has(it.categoryId)) out.set(it.categoryId, []);
-      out.get(it.categoryId)!.push(it);
-    });
-    return out;
-  }, [categories, restaurantItems]);
-
-  const activeCategory = categories.find((c) => c.id === category);
-
-  const subOptions = useMemo(() => {
-    if (!activeCategory) return [] as string[];
-    const items = filterByCategory.get(activeCategory.id) ?? [];
-    const subs = orderByOrder(activeCategory.subcategories).filter((s) =>
-      items.some((it) => it.subcategory === s.id)
-    );
-    return subs.map((s) => s.id);
-  }, [activeCategory, filterByCategory]);
 
   function renderCard(item: MenuItem) {
     return (

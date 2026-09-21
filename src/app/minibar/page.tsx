@@ -54,6 +54,16 @@ function MinibarContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const filterByCategory = useMemo(() => {
+    const out = new Map<string, MenuItem[]>();
+    categories.forEach((c) => out.set(c.id, []));
+    minibarItems.forEach((it) => {
+      if (!out.has(it.categoryId)) out.set(it.categoryId, []);
+      out.get(it.categoryId)!.push(it);
+    });
+    return out;
+  }, [categories, minibarItems]);
+
   const activeCategory = categories.find((c) => c.id === category);
 
   const subOptions = useMemo(() => {
@@ -97,16 +107,6 @@ function MinibarContent() {
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [categories, loading, category]);
-
-  const filterByCategory = useMemo(() => {
-    const out = new Map<string, MenuItem[]>();
-    categories.forEach((c) => out.set(c.id, []));
-    minibarItems.forEach((it) => {
-      if (!out.has(it.categoryId)) out.set(it.categoryId, []);
-      out.get(it.categoryId)!.push(it);
-    });
-    return out;
-  }, [categories, minibarItems]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
