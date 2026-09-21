@@ -39,6 +39,7 @@ export default function ExperiencesPage() {
 
   const lightAction: LightboxAction = lightSvc
     ? {
+        kind: "button",
         label: "Más información",
         variant: "primary",
         onClick: () => {
