@@ -50,18 +50,18 @@ export default function ProductLightbox({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-[100] flex items-center justify-center"
           onClick={onClose}
         >
           <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
           <motion.div
-            initial={{ y: 60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 60, opacity: 0 }}
-            transition={{ type: "spring", damping: 28, stiffness: 260 }}
+            initial={{ scale: 0.94, opacity: 0, y: 0 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.94, opacity: 0, y: 0 }}
+            transition={{ type: "spring", damping: 28, stiffness: 280 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative z-10 w-full sm:max-w-[460px] sm:rounded-3xl rounded-t-3xl bg-[#1E1C1A] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.5)]"
-            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+            className="relative z-10 w-[min(92vw,460px)] rounded-3xl bg-[#1E1C1A] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.55)] max-h-[86vh] flex flex-col"
+            style={{ border: "1px solid rgba(184,147,92,0.32)" }}
           >
             <button
               onClick={onClose}
@@ -71,26 +71,28 @@ export default function ProductLightbox({
               <X size={18} strokeWidth={2.3} />
             </button>
 
-            <div className="relative w-full aspect-[4/3] bg-black">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={images[0]}
-                alt={name}
-                className="h-full w-full object-cover"
-              />
+            <div className="relative w-full flex-none">
+              <div className="aspect-[4/3] bg-black w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[0]}
+                  alt={name}
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
 
-            <div className="p-5">
-              <h3 className="font-display text-xl text-[#F5EFE6] leading-tight">
+            <div className="p-5 overflow-y-auto flex-1">
+              <h3 className="font-display text-xl text-[#F5EFE6] leading-tight text-center">
                 {name}
               </h3>
               {priceText !== undefined && priceText !== null && (
-                <p className="mt-2 text-[#B8935C] font-semibold text-base">
+                <p className="mt-2 text-[#B8935C] font-semibold text-base text-center">
                   {priceText}
                 </p>
               )}
               {description && (
-                <p className="mt-3 text-sm leading-relaxed text-[#D4CCBF] whitespace-pre-line">
+                <p className="mt-4 text-sm leading-relaxed text-[#D4CCBF] whitespace-pre-line text-center">
                   {description}
                 </p>
               )}
@@ -98,7 +100,7 @@ export default function ProductLightbox({
               {action ? (
                 <button
                   onClick={action.onClick}
-                  className={`mt-5 w-full rounded-full py-3 text-sm font-semibold active:scale-[0.98] transition-transform ${
+                  className={`mt-6 w-full rounded-full py-3 text-sm font-semibold active:scale-[0.98] transition-transform ${
                     action.variant === "secondary"
                       ? "bg-[#0B0B0C] text-[#F5EFE6]"
                       : "bg-[#B8935C] text-[#0B0B0C]"

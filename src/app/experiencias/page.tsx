@@ -98,16 +98,15 @@ export default function ExperiencesPage() {
                 <p className="mt-1 text-xs leading-snug text-[#D4CCBF] line-clamp-2">
                   {service.shortDescription}
                 </p>
-                <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-[#D4CCBF] shrink-0">
+                <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-2">
+                  <span className="text-xs font-medium text-[#D4CCBF]">
                     {service.price ? formatCOP(service.price) : "Consultar"}
                   </span>
                   <button
                     onClick={() => openWhatsapp(buildServiceMsg(service))}
-                    className="flex items-center gap-1 rounded-full bg-[#0B0B0C] px-3 py-1.5 text-[11.5px] font-semibold text-[#F5EFE6] active:scale-[0.97] transition-transform shrink-0"
-                    style={{ border: "1px solid rgba(184,147,92,0.35)" }}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-xs font-semibold text-[#0B0B0C] active:scale-[0.97] transition-transform"
                   >
-                    <MessageCircle size={13} className="text-[#B8935C]" strokeWidth={2.3} />
+                    <MessageCircle size={13} strokeWidth={2.4} />
                     Más información
                   </button>
                 </div>

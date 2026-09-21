@@ -24,7 +24,6 @@ export default function RestaurantPage() {
   const [restaurantItems, setRestaurantItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<MenuCategory[]>(fallbackCats);
   const [loading, setLoading] = useState(true);
-  const [openId, setOpenId] = useState<string | null>(null);
   const [sub, setSub] = useState<string>("all");
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -73,7 +72,6 @@ export default function RestaurantPage() {
         });
         if (bestId && bestId !== category && bestRatio >= 0.5) {
           setCategory(bestId);
-          setOpenId(null);
         }
       },
       {
@@ -101,8 +99,6 @@ export default function RestaurantPage() {
       <ProductCardReadOnly
         key={item.id}
         item={item}
-        isOpen={openId === item.id}
-        onToggle={() => setOpenId((cur) => (cur === item.id ? null : item.id))}
       />
     );
   }
@@ -113,7 +109,6 @@ export default function RestaurantPage() {
     if (el && root) {
       scrollSuppressRef.current = true;
       setCategory(catId);
-      setOpenId(null);
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       window.clearTimeout((scrollSuppressRef as any)._t);
       (scrollSuppressRef as any)._t = window.setTimeout(() => {

@@ -26,7 +26,6 @@ function BoutiqueContent() {
   const [boutiqueItems, setBoutiqueItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<MenuCategory[]>(fallbackCats);
   const [loading, setLoading] = useState(true);
-  const [openId, setOpenId] = useState<string | null>(null);
   const [sub, setSub] = useState<string>("all");
   const { lines, addItem, decrement } = useCart();
 
@@ -76,7 +75,6 @@ function BoutiqueContent() {
         });
         if (bestId && bestId !== category && bestRatio >= 0.5) {
           setCategory(bestId);
-          setOpenId(null);
         }
       },
       {
@@ -111,8 +109,6 @@ function BoutiqueContent() {
         quantity={quantityOf(item.id)}
         onAdd={() => addItem(item)}
         onRemove={() => decrement(item.id)}
-        isOpen={openId === item.id}
-        onToggle={() => setOpenId((cur) => (cur === item.id ? null : item.id))}
       />
     );
   }
@@ -123,7 +119,6 @@ function BoutiqueContent() {
     if (el && root) {
       scrollSuppressRef.current = true;
       setCategory(catId);
-      setOpenId(null);
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       window.clearTimeout((scrollSuppressRef as any)._t);
       (scrollSuppressRef as any)._t = window.setTimeout(() => {
