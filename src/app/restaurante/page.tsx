@@ -94,6 +94,17 @@ export default function RestaurantPage() {
     return out;
   }, [categories, restaurantItems]);
 
+  const activeCategory = categories.find((c) => c.id === category);
+
+  const subOptions = useMemo(() => {
+    if (!activeCategory) return [] as string[];
+    const items = filterByCategory.get(activeCategory.id) ?? [];
+    const subs = orderByOrder(activeCategory.subcategories).filter((s) =>
+      items.some((it) => it.subcategory === s.id)
+    );
+    return subs.map((s) => s.id);
+  }, [activeCategory, filterByCategory]);
+
   function renderCard(item: MenuItem) {
     return (
       <ProductCardReadOnly
@@ -129,6 +140,41 @@ export default function RestaurantPage() {
             onChange={(c) => scrollToCat(c)}
           />
         </div>
+
+        {subOptions.length > 0 && (
+          <div className="px-5 pb-3 flex-none">
+            <div className="scrollbar-thin flex gap-1.5 overflow-x-auto">
+              <button
+                onClick={() => setSub("all")}
+                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                  sub === "all"
+                    ? "bg-[#B8935C] text-[#0B0B0C]"
+                    : "bg-[#1E1C1A] text-[#F5EFE6]"
+                }`}
+                style={
+                  sub !== "all" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined
+                }
+              >
+                Todos
+              </button>
+              {subOptions.map((sid) => {
+                const active = sub === sid;
+                return (
+                  <button
+                    key={sid}
+                    onClick={() => setSub(sid)}
+                    className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                      active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
+                    }`}
+                    style={!active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                  >
+                    {subLabel(sid, activeCategory).toLowerCase()}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <div
@@ -143,10 +189,6 @@ export default function RestaurantPage() {
         {!loading &&
           categories.map((cat) => {
             const items = filterByCategory.get(cat.id) ?? [];
-            const subListRaw = orderByOrder(cat.subcategories);
-            const subOptions = subListRaw
-              .filter((s) => items.some((it) => it.subcategory === s.id))
-              .map((s) => s.id);
             const hasSub = subOptions.length > 0;
             const isActiveCat = cat.id === category;
             const effectiveSub = isActiveCat ? sub : "all";
@@ -156,7 +198,7 @@ export default function RestaurantPage() {
                 : items.filter((it) => (it.subcategory || "") === effectiveSub);
             const order: string[] = [];
             const groups = new Map<string, MenuItem[]>();
-            if (hasSub && effectiveSub === "all") {
+            if (isActiveCat && hasSub && effectiveSub === "all") {
               subOptions.forEach((sid) => {
                 order.push(sid);
                 groups.set(sid, []);
@@ -164,7 +206,7 @@ export default function RestaurantPage() {
             }
             filtered.forEach((it) => {
               const k = it.subcategory || "";
-              if (effectiveSub === "all" && hasSub) {
+              if (isActiveCat && effectiveSub === "all" && hasSub) {
                 if (!groups.has(k)) {
                   order.unshift(k);
                   groups.set(k, []);
@@ -180,65 +222,14 @@ export default function RestaurantPage() {
                   if (node) sectionRefs.current.set(cat.id, node);
                   else sectionRefs.current.delete(cat.id);
                 }}
-                className="snap-start min-h-[calc(100svh-160px)] flex flex-col"
+                className="snap-start min-h-[calc(100svh-200px)] flex flex-col"
               >
-                <div className="px-5 pt-3 pb-2 flex-none">
-                  {hasSub && (
-                    <div className="scrollbar-thin flex gap-1.5 overflow-x-auto">
-                      <button
-                        onClick={() => {
-                          if (isActiveCat) setSub("all");
-                          else {
-                            setSub("all");
-                            scrollToCat(cat.id);
-                          }
-                        }}
-                        className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
-                          effectiveSub === "all"
-                            ? "bg-[#B8935C] text-[#0B0B0C]"
-                            : "bg-[#1E1C1A] text-[#F5EFE6]"
-                        }`}
-                        style={
-                          effectiveSub !== "all"
-                            ? { border: "1px solid rgba(184,147,92,0.22)" }
-                            : undefined
-                        }
-                      >
-                        Todos
-                      </button>
-                      {subOptions.map((sid) => {
-                        const active = effectiveSub === sid;
-                        return (
-                          <button
-                            key={sid}
-                            onClick={() => {
-                              if (isActiveCat) setSub(sid);
-                              else {
-                                setSub(sid);
-                                scrollToCat(cat.id);
-                              }
-                            }}
-                            className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
-                              active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
-                            }`}
-                            style={
-                              !active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined
-                            }
-                          >
-                            {subLabel(sid, cat).toLowerCase()}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
                 <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
                   {filtered.length === 0 ? (
                     <p className="py-10 text-center text-sm text-[#D4CCBF]/70">
                       No hay productos en esta sección.
                     </p>
-                  ) : effectiveSub !== "all" || !hasSub ? (
+                  ) : !isActiveCat || effectiveSub !== "all" || !hasSub ? (
                     <div className="grid grid-cols-2 gap-4">{filtered.map(renderCard)}</div>
                   ) : (
                     order.map((sid) => {
