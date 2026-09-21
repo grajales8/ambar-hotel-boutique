@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, Plus, Minus } from "lucide-react";
 
-export type LightboxAction = {
-  label: string;
-  onClick: () => void;
-  variant?: "primary" | "secondary";
-} | null;
+export type LightboxAction =
+  | {
+      kind: "button";
+      label: string;
+      onClick: () => void;
+      variant?: "primary" | "secondary";
+    }
+  | {
+      kind: "stepper";
+      quantity: number;
+      onAdd: () => void;
+      onRemove: () => void;
+      addLabel?: string;
+      disabled?: boolean;
+    }
+  | null;
 
 export default function ProductLightbox({
   open,
@@ -18,6 +29,7 @@ export default function ProductLightbox({
   description,
   priceText,
   action,
+  extraFooter,
 }: {
   open: boolean;
   onClose: () => void;
@@ -26,6 +38,7 @@ export default function ProductLightbox({
   description: string;
   priceText?: string;
   action?: LightboxAction;
+  extraFooter?: ReactNode;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -82,22 +95,22 @@ export default function ProductLightbox({
               </div>
             </div>
 
-            <div className="p-5 overflow-y-auto flex-1">
+            <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-1">
               <h3 className="font-display text-xl text-[#F5EFE6] leading-tight text-center">
                 {name}
               </h3>
-              {priceText !== undefined && priceText !== null && (
-                <p className="mt-2 text-[#B8935C] font-semibold text-base text-center">
-                  {priceText}
-                </p>
-              )}
               {description && (
-                <p className="mt-4 text-sm leading-relaxed text-[#D4CCBF] whitespace-pre-line text-center">
+                <p className="mt-3 text-sm leading-relaxed text-[#D4CCBF] whitespace-pre-line text-center">
                   {description}
                 </p>
               )}
+              {priceText !== undefined && priceText !== null && (
+                <p className="mt-4 text-[#B8935C] font-semibold text-base text-center">
+                  {priceText}
+                </p>
+              )}
 
-              {action ? (
+              {action && action.kind === "button" ? (
                 <button
                   onClick={action.onClick}
                   className={`mt-6 w-full rounded-full py-3 text-sm font-semibold active:scale-[0.98] transition-transform ${
@@ -114,6 +127,44 @@ export default function ProductLightbox({
                   {action.label}
                 </button>
               ) : null}
+
+              {action && action.kind === "stepper" ? (
+                <div className="mt-6">
+                  {action.quantity === 0 ? (
+                    <button
+                      onClick={action.onAdd}
+                      disabled={action.disabled}
+                      className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-3 text-sm font-semibold text-[#0B0B0C] active:scale-[0.98] transition-transform disabled:opacity-40"
+                    >
+                      <Plus size={15} strokeWidth={2.5} />
+                      {action.addLabel ?? "Agregar"}
+                    </button>
+                  ) : (
+                    <div className="flex w-full items-center justify-center gap-6 rounded-full bg-[#0B0B0C] px-3 py-2.5">
+                      <button
+                        onClick={action.onRemove}
+                        aria-label="Quitar uno"
+                        className="flex h-8 w-8 items-center justify-center text-[#B8935C] active:scale-90 transition-transform"
+                      >
+                        <Minus size={19} strokeWidth={2.5} />
+                      </button>
+                      <span className="text-base font-semibold text-[#F5EFE6]">
+                        {action.quantity}
+                      </span>
+                      <button
+                        onClick={action.onAdd}
+                        aria-label="Agregar uno más"
+                        disabled={action.disabled}
+                        className="flex h-8 w-8 items-center justify-center text-[#B8935C] active:scale-90 transition-transform disabled:opacity-40"
+                      >
+                        <Plus size={19} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {extraFooter}
             </div>
           </motion.div>
         </motion.div>

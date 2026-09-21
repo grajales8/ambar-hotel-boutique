@@ -12,7 +12,7 @@ export default function ProductCard({
   quantity,
   onAdd,
   onRemove,
-  actionLabel = "Agregar al carrito",
+  actionLabel = "Agregar",
 }: {
   item: MenuItem;
   quantity: number;
@@ -22,10 +22,12 @@ export default function ProductCard({
 }) {
   const [light, setLight] = useState(false);
   const addAction: LightboxAction = {
-    label: quantity === 0 ? actionLabel : "Agregar otro",
-    onClick: () => {
-      onAdd();
-    },
+    kind: "stepper",
+    quantity,
+    onAdd,
+    onRemove,
+    addLabel: actionLabel,
+    disabled: !item.available,
   };
 
   return (
@@ -96,7 +98,10 @@ export default function ProductCard({
                 Agregar
               </button>
             ) : (
-              <div className="flex w-full items-center justify-center gap-5 rounded-full bg-[#0B0B0C] px-2 py-2">
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="flex w-full items-center justify-center gap-5 rounded-full bg-[#0B0B0C] px-2 py-2"
+              >
                 <button
                   onClick={onRemove}
                   aria-label="Quitar uno"
