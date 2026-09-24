@@ -81,8 +81,61 @@ function BoutiqueContent() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // SINCRONIZACIÓN MANUAL 100%: tabs NO CAMBIAN AUTOMÁTICAMENTE al deslizar,
-  // solo al tocar el tab correspondiente.
+  // SINCRONIZACIÓN TABS AUTOMÁTICA (versión ancla lenta):
+  // solo cambia cuando la sección ya se ancló arriba; no anticipada.
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    const detectActive = () => {
+      if (scrollSuppressRef.current) return;
+      const rootRect = root.getBoundingClientRect();
+      const anchorY = 140;
+
+      let activeCatId: string | null = null;
+      let bestCatTop = -Infinity;
+      sectionRefs.current.forEach((el, catId) => {
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
+          bestCatTop = relTop;
+          activeCatId = catId;
+        }
+      });
+      if (activeCatId && activeCatId !== category) {
+        setCategory(activeCatId);
+        const nextCat = categories.find((c) => c.id === activeCatId);
+        if (nextCat) {
+          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+          const firstSub = orderByOrder(nextCat.subcategories)
+            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+            .map((s) => s.id)[0];
+          if (firstSub) setSub(firstSub);
+        }
+      }
+
+      let activeSubId: string | null = null;
+      let bestSubTop = -Infinity;
+      subheadingRefs.current.forEach((el, key) => {
+        const [catId, sid] = key.split(":");
+        if (catId !== activeCatId) return;
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
+          bestSubTop = relTop;
+          activeSubId = sid;
+        }
+      });
+      if (activeSubId && activeSubId !== sub) {
+        setSub(activeSubId);
+      }
+    };
+    detectActive();
+    const onScroll = () => {
+      window.requestAnimationFrame(detectActive);
+    };
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [categories, loading, category, sub, filterByCategory]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
@@ -167,7 +220,7 @@ function BoutiqueContent() {
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto snap-y snap-mandatory overscroll-contain scrollbar-thin pb-32"
+        className="flex-1 overflow-y-auto snap-y snap-proximity overscroll-contain scrollbar-thin pb-32"
       >
         {loading && (
           <section className="min-h-full flex items-center justify-center">

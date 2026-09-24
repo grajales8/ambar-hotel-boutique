@@ -81,10 +81,65 @@ function MinibarContent() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // --- SINCRONIZACIÓN MANUAL 100%: tabs categoría/sub NO CAMBIAN AUTOMÁTICAMENTE mientras deslizas.
-  // Cambian SOLO cuando el usuario toca el tab (scrollToCat / scrollToSub).
-  // Esto deja que el usuario vea tranquilamente los últimos productos de una subcategoría
-  // sin que los tabs de la próxima categoría/sub se activen solos.
+  // SINCRONIZACIÓN TABS AUTOMÁTICA (versión ancla lenta):
+  // Sombrea el tab de la categoría/subcategoria cuyo heading YA PASÓ la línea ancla
+  // (debajo del sticky header). La próxima sección que asoma abajo NO activa aún,
+  // así que el cambio se siente natural al deslizar, no anticipado.
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    const detectActive = () => {
+      if (scrollSuppressRef.current) return;
+      const rootRect = root.getBoundingClientRect();
+      const anchorY = 140; // línea ancla: justo debajo del sticky header
+
+      // Categoría activa: la última cuyo heading ha cruzado anchorY (anclado arriba)
+      let activeCatId: string | null = null;
+      let bestCatTop = -Infinity;
+      sectionRefs.current.forEach((el, catId) => {
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
+          bestCatTop = relTop;
+          activeCatId = catId;
+        }
+      });
+      if (activeCatId && activeCatId !== category) {
+        setCategory(activeCatId);
+        const nextCat = categories.find((c) => c.id === activeCatId);
+        if (nextCat) {
+          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+          const firstSub = orderByOrder(nextCat.subcategories)
+            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+            .map((s) => s.id)[0];
+          if (firstSub) setSub(firstSub);
+        }
+      }
+
+      // Subcategoría activa: misma lógica (última sub anclada arriba)
+      let activeSubId: string | null = null;
+      let bestSubTop = -Infinity;
+      subheadingRefs.current.forEach((el, key) => {
+        const [catId, sid] = key.split(":");
+        if (catId !== activeCatId) return;
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
+          bestSubTop = relTop;
+          activeSubId = sid;
+        }
+      });
+      if (activeSubId && activeSubId !== sub) {
+        setSub(activeSubId);
+      }
+    };
+    detectActive();
+    const onScroll = () => {
+      window.requestAnimationFrame(detectActive);
+    };
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [categories, loading, category, sub, filterByCategory]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
@@ -169,7 +224,7 @@ function MinibarContent() {
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto snap-y snap-mandatory overscroll-contain scrollbar-thin pb-32"
+        className="flex-1 overflow-y-auto snap-y snap-proximity overscroll-contain scrollbar-thin pb-32"
       >
         {loading && (
           <section className="min-h-full flex items-center justify-center">
