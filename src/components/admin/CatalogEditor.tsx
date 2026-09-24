@@ -176,8 +176,16 @@ export default function CatalogEditor({
   );
 
   function persistItems(next: MenuItem[]) {
-    setItems(next);
-    debouncedSaveItems(next);
+    // Reindexa order por categoría (estable) para que drag & drop de productos
+    // dentro de una categoría sí quede guardado y se renderice en ese orden al recargar.
+    const byCat = new Map<string, number>();
+    const indexed = next.map((it) => {
+      const n = (byCat.get(it.categoryId) ?? 0) + 1;
+      byCat.set(it.categoryId, n);
+      return { ...it, order: n };
+    });
+    setItems(indexed);
+    debouncedSaveItems(indexed);
   }
 
   function persistCategories(next: MenuCategory[]) {
