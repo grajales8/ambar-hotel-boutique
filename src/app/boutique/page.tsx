@@ -31,6 +31,7 @@ function BoutiqueContent() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const subheadingRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const scrollSuppressRef = useRef(false);
 
   useEffect(() => {
@@ -79,12 +80,15 @@ function BoutiqueContent() {
     setSub("all");
   }, [category]);
 
+  const subFilteredActive = sub !== "all";
+
   useEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (scrollSuppressRef.current) return;
+        if (subFilteredActive) return;
         let bestId: string | null = null;
         let bestRatio = 0;
         entries.forEach((e) => {
@@ -101,12 +105,41 @@ function BoutiqueContent() {
       {
         root,
         threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: "-60px 0px -20% 0px",
+        rootMargin: "-120px 0px -25% 0px",
       }
     );
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [categories, loading, category]);
+  }, [categories, loading, category, subFilteredActive]);
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (scrollSuppressRef.current) return;
+        let bestId: string | null = null;
+        let bestRatio = 0;
+        entries.forEach((e) => {
+          const id = (e.target as HTMLDivElement).dataset.subId;
+          if (id && e.intersectionRatio > bestRatio) {
+            bestRatio = e.intersectionRatio;
+            bestId = id;
+          }
+        });
+        if (bestId && bestId !== sub) {
+          setSub(bestId);
+        }
+      },
+      {
+        root,
+        threshold: [0, 0.5, 0.8, 1],
+        rootMargin: "-140px 0px -60% 0px",
+      }
+    );
+    subheadingRefs.current.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [categories, loading, category, sub, subOptions.length]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
@@ -189,7 +222,9 @@ function BoutiqueContent() {
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto snap-y snap-mandatory overscroll-contain scrollbar-thin pb-32"
+        className={`flex-1 overflow-y-auto overscroll-contain scrollbar-thin pb-32 ${
+          subFilteredActive ? "snap-y snap-proximity" : "snap-y snap-mandatory"
+        }`}
       >
         {loading && (
           <section className="min-h-full flex items-center justify-center">
@@ -232,7 +267,9 @@ function BoutiqueContent() {
                   if (node) sectionRefs.current.set(cat.id, node);
                   else sectionRefs.current.delete(cat.id);
                 }}
-                className="snap-start min-h-[calc(100svh-200px)] flex flex-col"
+                className={`snap-start flex flex-col ${
+                  filtered.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"
+                }`}
               >
                 <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
                   {filtered.length === 0 ? (
@@ -249,7 +286,14 @@ function BoutiqueContent() {
                       return (
                         <div key={sid || "otros"} className="space-y-4">
                           {label && (
-                            <div className="flex items-center gap-2 pt-1">
+                            <div
+                              data-sub-id={sid}
+                              ref={(node) => {
+                                if (node) subheadingRefs.current.set(`${cat.id}:${sid}`, node);
+                                else subheadingRefs.current.delete(`${cat.id}:${sid}`);
+                              }}
+                              className="flex items-center gap-2 pt-1 scroll-mt-[140px]"
+                            >
                               <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
                               <h3 className="text-[13px] md:text-sm font-semibold tracking-[0.16em] uppercase text-[#B8935C] shrink-0">
                                 {label.toUpperCase()}
