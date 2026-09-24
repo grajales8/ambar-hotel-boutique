@@ -180,22 +180,29 @@ export default function ImageUploader({
             )}
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            className="flex h-32 w-full flex-col items-center justify-center gap-2 text-[#D4CCBF]"
-          >
+          <div className="flex h-32 w-full flex-col items-center justify-center gap-2 px-3 py-2 text-[#D4CCBF]">
             {status === "loading" ? (
               <Loader2 size={22} className="animate-spin text-[#B8935C]" />
             ) : (
               <ImagePlus size={22} className="text-[#B8935C]" strokeWidth={2} />
             )}
-            <span className="text-xs">Arrastra una imagen aquí o</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-2 text-xs font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.28)" }}>
+            <span className="text-center text-xs leading-snug">
+              Arrastra una imagen aquí o
+            </span>
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-2 text-xs font-medium text-[#F5EFE6]"
+              style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+            >
               <Upload size={12} className="text-[#B8935C]" strokeWidth={2} />
               Subir imagen
-            </span>
-          </button>
+            </button>
+            <p className="mt-0.5 text-[10.5px] leading-snug text-center text-[#D4CCBF]/70">
+              Tamaño recomendado: <span className="font-medium text-[#B8935C]">1200 × 900 px</span> (4:3).
+              Formatos: JPG, PNG o WEBP.
+            </p>
+          </div>
         )}
       </div>
 
