@@ -220,7 +220,7 @@ function BoutiqueContent() {
 
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto snap-y snap-proximity overscroll-contain scrollbar-thin pb-32"
+        className="flex-1 overflow-y-auto snap-y snap-proximity overscroll-contain scrollbar-thin pb-32 [scroll-padding-top:140px]"
       >
         {loading && (
           <section className="min-h-full flex items-center justify-center">
@@ -259,7 +259,7 @@ function BoutiqueContent() {
                   if (node) sectionRefs.current.set(cat.id, node);
                   else sectionRefs.current.delete(cat.id);
                 }}
-                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${items.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"}`}
+                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${items.length === 0 ? "min-h-[20vh]" : "min-h-[50vh]"}`}
               >
                 <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
                   {items.length === 0 ? (
@@ -276,7 +276,7 @@ function BoutiqueContent() {
                       return (
                         <div
                           key={sid || "otros"}
-                          className="space-y-4 snap-start min-h-[calc(100svh-200px)] flex flex-col justify-start"
+                          className="space-y-4 snap-start shrink-0 min-h-[50vh] flex flex-col justify-start"
                         >
                           {label && (
                             <div
@@ -286,7 +286,7 @@ function BoutiqueContent() {
                                 if (node) subheadingRefs.current.set(key, node);
                                 else subheadingRefs.current.delete(key);
                               }}
-                              className="flex items-center gap-2 pt-1 scroll-mt-[140px]"
+                              className="flex items-center gap-2 pt-1"
                             >
                               <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
                               <h3 className="text-[13px] md:text-sm font-semibold tracking-[0.16em] uppercase text-[#B8935C] shrink-0">
