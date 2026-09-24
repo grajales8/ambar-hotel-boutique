@@ -223,7 +223,7 @@ function BoutiqueContent() {
       <div
         ref={scrollRef}
         className={`flex-1 overflow-y-auto overscroll-contain scrollbar-thin pb-32 ${
-          subFilteredActive ? "snap-y snap-proximity" : "snap-y snap-mandatory"
+          subFilteredActive ? "" : "snap-y snap-mandatory"
         }`}
       >
         {loading && (
@@ -259,6 +259,7 @@ function BoutiqueContent() {
                 groups.get(k)!.push(it);
               }
             });
+            const renderAsSubSnap = isActiveCat && effectiveSub === "all" && hasSub;
             return (
               <section
                 key={cat.id}
@@ -267,9 +268,7 @@ function BoutiqueContent() {
                   if (node) sectionRefs.current.set(cat.id, node);
                   else sectionRefs.current.delete(cat.id);
                 }}
-                className={`snap-start flex flex-col ${
-                  filtered.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"
-                }`}
+                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${filtered.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"}`}
               >
                 <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
                   {filtered.length === 0 ? (
@@ -284,7 +283,10 @@ function BoutiqueContent() {
                       const label = subLabel(sid, cat);
                       if (groupItems.length === 0) return null;
                       return (
-                        <div key={sid || "otros"} className="space-y-4">
+                        <div
+                          key={sid || "otros"}
+                          className="space-y-4 snap-start min-h-[calc(100svh-200px)] flex flex-col justify-start"
+                        >
                           {label && (
                             <div
                               data-sub-id={sid}
