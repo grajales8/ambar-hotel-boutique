@@ -94,6 +94,14 @@ export default function RestaurantPage() {
         });
         if (bestId && bestId !== category && bestRatio >= 0.5) {
           setCategory(bestId);
+          const nextCat = categories.find((c) => c.id === bestId);
+          if (nextCat) {
+            const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+            const firstSub = orderByOrder(nextCat.subcategories)
+              .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+              .map((s) => s.id)[0];
+            if (firstSub) setSub(firstSub);
+          }
         }
       },
       {
@@ -104,7 +112,7 @@ export default function RestaurantPage() {
     );
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [categories, loading, category]);
+  }, [categories, loading, category, filterByCategory]);
 
   useEffect(() => {
     const root = scrollRef.current;
@@ -221,11 +229,14 @@ export default function RestaurantPage() {
         {!loading &&
           categories.map((cat) => {
             const items = filterByCategory.get(cat.id) ?? [];
-            const hasSub = subOptions.length > 0 && cat.id === category;
+            const allSubsOfCat = orderByOrder(cat.subcategories);
+            const catSubOptionsIds = allSubsOfCat
+              .filter((s) => items.some((it) => it.subcategory === s.id))
+              .map((s) => s.id);
             const order: string[] = [];
             const groups = new Map<string, MenuItem[]>();
-            if (hasSub) {
-              subOptions.forEach((sid) => {
+            if (catSubOptionsIds.length > 0) {
+              catSubOptionsIds.forEach((sid) => {
                 order.push(sid);
                 groups.set(sid, []);
               });
@@ -238,7 +249,7 @@ export default function RestaurantPage() {
                 groups.get(k)!.push(it);
               });
             }
-            const renderAsSubSnap = hasSub && order.length > 0;
+            const renderAsSubSnap = order.length > 0;
             return (
               <section
                 key={cat.id}

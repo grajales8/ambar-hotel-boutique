@@ -100,6 +100,16 @@ function MinibarContent() {
         });
         if (bestId && bestId !== category && bestRatio >= 0.5) {
           setCategory(bestId);
+          // Inicializa la primera subcategoría de la nueva categoría EN EL MISMO TICK
+          // para que los tabs se iluminan inmediatamente sin frame de delay al cruzar.
+          const nextCat = categories.find((c) => c.id === bestId);
+          if (nextCat) {
+            const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+            const firstSub = orderByOrder(nextCat.subcategories)
+              .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+              .map((s) => s.id)[0];
+            if (firstSub) setSub(firstSub);
+          }
         }
       },
       {
@@ -110,7 +120,7 @@ function MinibarContent() {
     );
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [categories, loading, category]);
+  }, [categories, loading, category, filterByCategory]);
 
   // Observa los encabezados de subcategoría (AGUAS, GASEOSAS...) y sincroniza el tab sub activo.
   useEffect(() => {
@@ -235,12 +245,16 @@ function MinibarContent() {
         {!loading &&
           categories.map((cat) => {
             const items = filterByCategory.get(cat.id) ?? [];
-            const hasSub = subOptions.length > 0 && cat.id === category;
+            // Generamos grupos/sub opciones EN TODAS las categorías (no solo la activa)
+            // para que subheadingRefs + observer lean anticipadamente Snacks / la próxima.
+            const allSubsOfCat = orderByOrder(cat.subcategories);
+            const catSubOptionsIds = allSubsOfCat
+              .filter((s) => items.some((it) => it.subcategory === s.id))
+              .map((s) => s.id);
             const order: string[] = [];
             const groups = new Map<string, MenuItem[]>();
-            if (hasSub) {
-              // En la categoría activa: mostramos subcats en el orden de subOptions.
-              subOptions.forEach((sid) => {
+            if (catSubOptionsIds.length > 0) {
+              catSubOptionsIds.forEach((sid) => {
                 order.push(sid);
                 groups.set(sid, []);
               });
@@ -253,7 +267,7 @@ function MinibarContent() {
                 groups.get(k)!.push(it);
               });
             }
-            const renderAsSubSnap = hasSub && order.length > 0;
+            const renderAsSubSnap = order.length > 0;
             return (
               <section
                 key={cat.id}
