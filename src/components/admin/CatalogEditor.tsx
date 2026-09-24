@@ -9,6 +9,7 @@ import {
   Tags,
   FolderTree,
   GripVertical,
+  RotateCcw,
 } from "lucide-react";
 import { MenuItem, MenuCategory, Subcategory } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
@@ -54,6 +55,7 @@ export default function CatalogEditor({
   const [saved, setSaved] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
   const [expandedCatId, setExpandedCatId] = useState<string | null>(initialCategories[0]?.id ?? null);
+  const [restoring, setRestoring] = useState(false);
 
   const [dragCatId, setDragCatId] = useState<string | null>(null);
   const [dragSubId, setDragSubId] = useState<string | null>(null);
@@ -253,6 +255,41 @@ export default function CatalogEditor({
     persistCategories(next);
   }
 
+  async function restoreSeedDefaults() {
+    try {
+      setRestoring(true);
+      // 1) Guardamos categorías iniciales (sobrescribe en Firestore,
+      //    crea las que faltan, borra las que sobran).
+      await saveCollection(categoriesStorageKey, initialCategories);
+      // 2) Guardamos items iniciales.
+      const sortedCats = orderByOrder(initialCategories);
+      const mappedItems = initialItems.map((it) => {
+        const cat = sortedCats.find((c) => c.id === it.categoryId);
+        if (!cat) return it;
+        const newSub = normalizeSubcategoryFromLegacy(it.subcategory, cat.subcategories);
+        if (newSub === it.subcategory) return it;
+        return { ...it, subcategory: newSub };
+      });
+      await saveCollection(storageKey, mappedItems);
+      // 3) Seteamos estado local (no esperamos al loadCollection useEffect,
+      //    para que se vean los cambios inmediatamente).
+      setCategories(sortedCats);
+      setActiveCategoryId(sortedCats[0]?.id ?? "");
+      setExpandedCatId(sortedCats[0]?.id ?? null);
+      const byCat = new Map<string, number>();
+      const indexed = mappedItems.map((it) => {
+        const n = (byCat.get(it.categoryId) ?? 0) + 1;
+        byCat.set(it.categoryId, n);
+        return { ...it, order: n };
+      });
+      setItems(indexed);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    } finally {
+      setRestoring(false);
+    }
+  }
+
   function addSubcategory(categoryId: string) {
     const cat = categories.find((c) => c.id === categoryId);
     if (!cat) return;
@@ -336,11 +373,27 @@ export default function CatalogEditor({
 
   return (
     <div className="space-y-8">
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm text-[#D4CCBF]">
           {items.length} productos · {categories.length} categorías · cambios guardados automáticamente
         </p>
-        {saved && <span className="text-xs font-medium text-emerald-500">Guardado ✓</span>}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={restoreSeedDefaults}
+            disabled={restoring}
+            className="flex items-center gap-2 rounded-full px-4 py-2 text-sm text-[#F5EFE6] active:scale-95 transition-transform disabled:opacity-50"
+            style={{
+              border: "1px solid rgba(184,147,92,0.35)",
+              backgroundColor: "rgba(184,147,92,0.08)",
+            }}
+            aria-label="Cargar productos demo desde el seed (sobrescribe Firestore)"
+            title="Restaura los productos/datos iniciales de ejemplo para esta sección (sobrescribe los datos actuales en Firestore)."
+          >
+            <RotateCcw size={14} className={`text-[#B8935C] ${restoring ? "animate-spin" : ""}`} strokeWidth={2.2} />
+            {restoring ? "Cargando…" : "Restaurar datos iniciales"}
+          </button>
+          {saved && <span className="text-xs font-medium text-emerald-500 shrink-0">Guardado ✓</span>}
+        </div>
       </div>
 
       {/* CATEGORIES (ACORDEÓN: cada categoría expandible muestra sus subcats + sus productos) */}

@@ -42,7 +42,7 @@ export default function ProductCard({
         style={{ border: "1px solid rgba(184,147,92,0.22)" }}
       >
         <div
-          className="relative aspect-[4/3] w-full cursor-zoom-in bg-[#12100E] p-3 md:p-4"
+          className="relative h-36 w-full cursor-zoom-in"
           onClick={() => {
             if (item.available) setLight(true);
           }}
@@ -60,7 +60,7 @@ export default function ProductCard({
           <img
             src={item.image}
             alt={item.name}
-            className={`h-full w-full object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] ${item.available ? "" : "cursor-not-allowed"}`}
+            className={`h-full w-full object-cover ${item.available ? "" : "cursor-not-allowed"}`}
           />
           {!item.available && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50">

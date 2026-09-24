@@ -85,12 +85,12 @@ export default function ProductLightbox({
             </button>
 
             <div className="relative w-full flex-none">
-              <div className="aspect-[4/3] bg-[#12100E] w-full p-4 md:p-6">
+              <div className="aspect-[4/3] bg-black w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={images[0]}
                   alt={name}
-                  className="h-full w-full object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
+                  className="h-full w-full object-cover"
                 />
               </div>
             </div>
