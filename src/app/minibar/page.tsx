@@ -81,76 +81,62 @@ function MinibarContent() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // Siempre hay subcategoría activa → scroll por categoría sólo si la categoría entera
-  // acaba de terminar (lo detecta el observer de secciones).
+  // Observer categorías: activa la sección cuyo inicio está más cerca del tope del viewport.
+  // No depende de intersectionRatio ≥ 0.5 → apenas Snacks cruza el header se ilumina.
   useEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (scrollSuppressRef.current) return;
-        let bestId: string | null = null;
-        let bestRatio = 0;
-        entries.forEach((e) => {
-          const id = (e.target as HTMLElement).dataset.catId;
-          if (id && e.intersectionRatio > bestRatio) {
-            bestRatio = e.intersectionRatio;
-            bestId = id;
-          }
-        });
-        if (bestId && bestId !== category && bestRatio >= 0.5) {
-          setCategory(bestId);
-          // Inicializa la primera subcategoría de la nueva categoría EN EL MISMO TICK
-          // para que los tabs se iluminan inmediatamente sin frame de delay al cruzar.
-          const nextCat = categories.find((c) => c.id === bestId);
-          if (nextCat) {
-            const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
-            const firstSub = orderByOrder(nextCat.subcategories)
-              .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
-              .map((s) => s.id)[0];
-            if (firstSub) setSub(firstSub);
-          }
+    const detectActive = () => {
+      if (scrollSuppressRef.current) return;
+      const rootRect = root.getBoundingClientRect();
+      const topOffset = 140; // aprox altura sticky header
+      let bestCatId: string | null = null;
+      let bestCatDelta = Infinity;
+      sectionRefs.current.forEach((el, catId) => {
+        const rect = el.getBoundingClientRect();
+        const relativeTop = rect.top - rootRect.top;
+        const delta = Math.abs(relativeTop - topOffset);
+        if (relativeTop <= topOffset + 60 && delta < bestCatDelta) {
+          bestCatDelta = delta;
+          bestCatId = catId;
         }
-      },
-      {
-        root,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-        rootMargin: "-120px 0px -25% 0px",
-      }
-    );
-    sectionRefs.current.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [categories, loading, category, filterByCategory]);
-
-  // Observa los encabezados de subcategoría (AGUAS, GASEOSAS...) y sincroniza el tab sub activo.
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (scrollSuppressRef.current) return;
-        let bestId: string | null = null;
-        let bestRatio = 0;
-        entries.forEach((e) => {
-          const id = (e.target as HTMLDivElement).dataset.subId;
-          if (id && e.intersectionRatio > bestRatio) {
-            bestRatio = e.intersectionRatio;
-            bestId = id;
-          }
-        });
-        if (bestId && bestId !== sub) {
-          setSub(bestId);
+      });
+      if (bestCatId && bestCatId !== category) {
+        setCategory(bestCatId);
+        const nextCat = categories.find((c) => c.id === bestCatId);
+        if (nextCat) {
+          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+          const firstSub = orderByOrder(nextCat.subcategories)
+            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+            .map((s) => s.id)[0];
+          if (firstSub) setSub(firstSub);
         }
-      },
-      {
-        root,
-        threshold: [0, 0.5, 0.8, 1],
-        rootMargin: "-140px 0px -60% 0px",
       }
-    );
-    subheadingRefs.current.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [categories, loading, category, sub, subOptions.length]);
+      // Subcategorías: misma lógica, busca el subheading más cercano al topOffset dentro de la categoría actual.
+      let bestSubId: string | null = null;
+      let bestSubDelta = Infinity;
+      subheadingRefs.current.forEach((el, key) => {
+        const [catId, sid] = key.split(":");
+        if (catId !== bestCatId) return;
+        const rect = el.getBoundingClientRect();
+        const relativeTop = rect.top - rootRect.top;
+        const delta = Math.abs(relativeTop - topOffset);
+        if (relativeTop <= topOffset + 80 && delta < bestSubDelta) {
+          bestSubDelta = delta;
+          bestSubId = sid;
+        }
+      });
+      if (bestSubId && bestSubId !== sub) {
+        setSub(bestSubId);
+      }
+    };
+    detectActive();
+    const onScroll = () => {
+      window.requestAnimationFrame(detectActive);
+    };
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [categories, loading, category, sub, filterByCategory]);
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
