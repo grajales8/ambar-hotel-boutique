@@ -37,7 +37,7 @@ type MenuEntry = {
 // — solo en esta pantalla de inicio.
 const gridEntries: MenuEntry[] = [
   { id: "hotel", label: "Hotel", icon: HotelIcon, action: { type: "link", href: "/guia-hotel" } },
-  { id: "guia-habitacion", label: "Guía habitación", icon: DoorHangerIcon, action: { type: "link", href: "/guia" } },
+  { id: "guia-habitacion", label: "Habitación", icon: DoorHangerIcon, action: { type: "link", href: "/guia" } },
   { id: "servicio", label: "Solicitar servicio", icon: ServiceBellIcon, action: { type: "link", href: "/servicio" } },
   { id: "wifi", label: "WiFi", icon: WifiIcon, action: { type: "link", href: "/wifi" } },
   { id: "minibar", label: "Minibar", icon: MinibarIcon, action: { type: "link", href: "/minibar" } },

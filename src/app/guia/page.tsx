@@ -7,7 +7,7 @@ export default function GuidePage() {
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <PageHeader title="Guía de la habitación" subtitle="Todo lo que necesitas saber" />
+      <PageHeader title="Habitación" subtitle="Todo lo que necesitas saber" />
       <GuideAccordion sections={sections} defaultOpenId="bienvenida" />
     </main>
   );
