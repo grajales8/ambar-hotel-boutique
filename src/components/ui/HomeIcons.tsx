@@ -1,11 +1,5 @@
 import type { SVGProps } from "react";
 
-// Íconos propios en línea fina, estilo "boutique de lujo" — trazo redondeado,
-// sin relleno, pensados para verse grandes y directamente sobre la tarjeta
-// (sin círculo de fondo), en dorado. Reemplazan los íconos genéricos de
-// Lucide en la grilla principal de inicio y se reutilizan (Wifi, pin) en
-// otras secciones de la app.
-
 type IconProps = SVGProps<SVGSVGElement>;
 
 const base = {
@@ -19,17 +13,108 @@ const base = {
 export function HotelIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      <rect x="14" y="8" width="20" height="32" rx="1.5" stroke="currentColor" />
-      <path d="M8 40V20l6-4" stroke="currentColor" />
-      <path d="M40 40V20l-6-4" stroke="currentColor" />
-      <line x1="6" y1="40" x2="42" y2="40" stroke="currentColor" />
-      <line x1="19" y1="15" x2="23" y2="15" stroke="currentColor" />
-      <line x1="25" y1="15" x2="29" y2="15" stroke="currentColor" />
-      <line x1="19" y1="22" x2="23" y2="22" stroke="currentColor" />
-      <line x1="25" y1="22" x2="29" y2="22" stroke="currentColor" />
-      <line x1="19" y1="29" x2="23" y2="29" stroke="currentColor" />
-      <line x1="25" y1="29" x2="29" y2="29" stroke="currentColor" />
-      <rect x="21" y="34" width="6" height="6" stroke="currentColor" />
+      <rect x="14" y="6" width="20" height="36" rx="2" stroke="currentColor" />
+      <path d="M10 14L14 14M38 14L34 14" stroke="currentColor" />
+      <rect x="18" y="11" width="4" height="4" stroke="currentColor" />
+      <rect x="26" y="11" width="4" height="4" stroke="currentColor" />
+      <rect x="18" y="19" width="4" height="4" stroke="currentColor" />
+      <rect x="26" y="19" width="4" height="4" stroke="currentColor" />
+      <rect x="18" y="27" width="4" height="4" stroke="currentColor" />
+      <rect x="26" y="27" width="4" height="4" stroke="currentColor" />
+      <rect x="20.5" y="35" width="7" height="7" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function DoorHangerIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="17" y="6" width="14" height="30" rx="2.8" stroke="currentColor" />
+      <circle cx="24" cy="16.5" r="2.5" stroke="currentColor" />
+      <path d="M24 9v5" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function ServiceBellIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M24 7c-0.8 0-1.5 0.7-1.5 1.6v2.7C15 12.2 9 18.5 9 26.5v2h30v-2c0-8-6-14.3-13.5-15.2V8.6C25.5 7.7 24.8 7 24 7Z"
+        stroke="currentColor"
+      />
+      <line x1="9" y1="37" x2="39" y2="37" stroke="currentColor" />
+      <path d="M17.5 37c0 2 2.7 3.5 6.5 3.5s6.5-1.5 6.5-3.5" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function WifiIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M10 20.5a19 19 0 0 1 28 0" stroke="currentColor" />
+      <path d="M15 26.5a12 12 0 0 1 18 0" stroke="currentColor" />
+      <path d="M19.5 32.5a6.5 6.5 0 0 1 9 0" stroke="currentColor" />
+      <circle cx="24" cy="38" r="1.7" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function MinibarIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="13" y="6" width="22" height="36" rx="2.6" stroke="currentColor" />
+      <line x1="13" y1="20" x2="35" y2="20" stroke="currentColor" />
+      <line x1="17.5" y1="11" x2="17.5" y2="16" stroke="currentColor" />
+      <line x1="17.5" y1="25" x2="17.5" y2="30" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function UtensilsCrossedIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <line x1="11.5" y1="7" x2="11.5" y2="30" stroke="currentColor" />
+      <line x1="16.5" y1="7" x2="16.5" y2="30" stroke="currentColor" />
+      <line x1="21.5" y1="7" x2="21.5" y2="18" stroke="currentColor" />
+      <path d="M11 30c0 3.8 5.5 6 6 6s6-2.2 6-6" stroke="currentColor" />
+      <line x1="17.5" y1="36" x2="17.5" y2="42" stroke="currentColor" />
+      <path d="M34.5 8c1.5 3 1 7-2.5 9.5L20.5 35" stroke="currentColor" />
+      <path d="M31.5 7.5v10" stroke="currentColor" />
+      <path d="M37 7.5v10" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function BoutiqueBagIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <rect x="11" y="17" width="26" height="25" rx="2.2" stroke="currentColor" />
+      <path d="M17 17c0-3.7 3.3-7 7-7s7 3.3 7 7" stroke="currentColor" />
+    </svg>
+  );
+}
+
+export function SparkleServiceIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M24 7l1.7 5.4L31 14l-5.3 1.6L24 21l-1.7-5.4L17 14l5.3-1.6L24 7Z" stroke="currentColor" />
+      <circle cx="10" cy="18" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="38" cy="18" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="14" cy="34" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="34" cy="34" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function DiscoverPinIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M24 6c7 0 13 5.7 13 12.8 0 9.7-13 23.2-13 23.2S11 28.5 11 18.8C11 11.7 17 6 24 6Z"
+        stroke="currentColor"
+      />
+      <circle cx="24" cy="20" r="4.5" stroke="currentColor" />
     </svg>
   );
 }
@@ -42,96 +127,6 @@ export function RoomGuideIcon(props: IconProps) {
         stroke="currentColor"
       />
       <line x1="24" y1="14" x2="24" y2="36" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function ServiceBellIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M8 32c0-8.837 7.163-16 16-16s16 7.163 16 16" stroke="currentColor" />
-      <line x1="6" y1="32" x2="42" y2="32" stroke="currentColor" />
-      <line x1="24" y1="10" x2="24" y2="14" stroke="currentColor" />
-      <circle cx="24" cy="8" r="1.6" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function WifiIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M11 20a18 18 0 0 1 26 0" stroke="currentColor" />
-      <path d="M16.5 26.5a11 11 0 0 1 15 0" stroke="currentColor" />
-      <path d="M21 33a4.5 4.5 0 0 1 6 0" stroke="currentColor" />
-      <circle cx="24" cy="38" r="1.7" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-export function MinibarIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <rect x="12" y="6" width="24" height="36" rx="2" stroke="currentColor" />
-      <line x1="12" y1="20" x2="36" y2="20" stroke="currentColor" />
-      <line x1="16" y1="11" x2="16" y2="15" stroke="currentColor" />
-      <line x1="16" y1="25" x2="16" y2="29" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function BoutiqueBagIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M17 16c0-5.5 3-9 7-9s7 3.5 7 9" stroke="currentColor" />
-      <path d="M10 16h28l-2.3 24H12.3L10 16Z" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function SparkleServiceIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M8 30c0-8.837 7.163-16 16-16s16 7.163 16 16" stroke="currentColor" />
-      <line x1="6" y1="30" x2="42" y2="30" stroke="currentColor" />
-      <path d="M35 8l1.3 3.2L39.5 12l-3.2 1.3L35 16.5l-1.3-3.2L30.5 12l3.2-1.3L35 8Z" stroke="currentColor" />
-      <path d="M40 18l0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8 0.8-2Z" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function DiscoverPinIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path
-        d="M24 6c7 0 12.5 5.4 12.5 12.3C36.5 27 24 42 24 42S11.5 27 11.5 18.3C11.5 11.4 17 6 24 6Z"
-        stroke="currentColor"
-      />
-      <circle cx="24" cy="18" r="4.5" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function DoorHangerIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <circle cx="24" cy="9" r="3" stroke="currentColor" />
-      <path
-        d="M17 13c0-3 3-5 7-5s7 2 7 5l3 25c0 3-6 5-10 5s-10-2-10-5l3-25Z"
-        stroke="currentColor"
-      />
-      <circle cx="24" cy="24" r="3.2" stroke="currentColor" />
-      <path d="M22.5 27.2l1.5 5 1.5-5" stroke="currentColor" />
-    </svg>
-  );
-}
-
-export function UtensilsCrossedIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M13 6v9M17.5 6v9M22 6v9" stroke="currentColor" />
-      <path d="M13 15c0 3.2 4.5 5 4.5 5s4.5-1.8 4.5-5" stroke="currentColor" />
-      <path d="M17.5 20 32 42" stroke="currentColor" />
-      <path d="M34 6c2.5 4 1.5 9-2.5 12L16 42" stroke="currentColor" />
     </svg>
   );
 }
