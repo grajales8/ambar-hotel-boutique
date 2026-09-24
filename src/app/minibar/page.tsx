@@ -280,7 +280,7 @@ function MinibarContent() {
                       return (
                         <div
                           key={sid || "otros"}
-                          className="space-y-4 snap-start shrink-0 min-h-[50vh] flex flex-col justify-start"
+                          className="space-y-4 snap-start"
                         >
                           {label && (
                             <div
@@ -299,7 +299,7 @@ function MinibarContent() {
                               <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
                             </div>
                           )}
-                          <div className="grid grid-cols-2 gap-4">{groupItems.map(renderCard)}</div>
+                          <div className="grid grid-cols-2 gap-4 pb-8">{groupItems.map(renderCard)}</div>
                         </div>
                       );
                     })
