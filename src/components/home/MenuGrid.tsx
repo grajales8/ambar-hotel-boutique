@@ -65,10 +65,10 @@ function renderAction(action: MenuAction, children: React.ReactNode, key: string
 export default function MenuGrid() {
   return (
     <div
-      className="h-full flex flex-col justify-between px-4 py-1 md:py-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] md:pb-[calc(env(safe-area-inset-bottom)+0.5rem)]"
+      className="w-full flex flex-col px-4 py-3 md:py-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] md:pb-[calc(env(safe-area-inset-bottom)+1.75rem)]"
       style={{ backgroundColor: "#0B0B0C" }}
     >
-      <div className="grid flex-1 grid-cols-3 gap-2 py-2 md:py-3 min-h-0 content-evenly">
+      <div className="grid grid-cols-3 gap-3 md:gap-4 py-2">
         {gridEntries.map((entry, i) => {
           const Icon = entry.icon;
           const card = (
@@ -77,7 +77,7 @@ export default function MenuGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.05 * i, ease: "easeOut" }}
               whileTap={{ scale: 0.95 }}
-              className="flex min-h-[88px] md:min-h-[108px] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2 text-center"
+              className="flex min-h-[96px] md:min-h-[116px] flex-col items-center justify-center gap-2 rounded-xl px-2 py-3 text-center"
               style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <Icon className="h-8 w-8 md:h-9 md:w-9" style={{ color: BRONZE }} strokeWidth={2} />
@@ -90,7 +90,7 @@ export default function MenuGrid() {
         })}
       </div>
 
-      <div className="mt-1 md:mt-2 mb-1 space-y-2 md:space-y-2.5 flex-shrink-0">
+      <div className="mt-4 md:mt-6 space-y-3 md:space-y-4">
         <motion.a
           href={buildWhatsappLink(
             "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
@@ -101,7 +101,7 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5"
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3.5 md:py-4"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
@@ -128,7 +128,7 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3 md:py-3.5"
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3.5 md:py-4"
           style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
