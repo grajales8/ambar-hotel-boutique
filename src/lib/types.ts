@@ -24,6 +24,7 @@ export type MenuItem = {
   price: number; // COP
   image: string;
   available: boolean;
+  order?: number;
 };
 
 export type CartLine = {
