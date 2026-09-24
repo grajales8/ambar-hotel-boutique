@@ -26,7 +26,7 @@ function BoutiqueContent() {
   const [boutiqueItems, setBoutiqueItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<MenuCategory[]>(fallbackCats);
   const [loading, setLoading] = useState(true);
-  const [sub, setSub] = useState<string>("all");
+  const [sub, setSub] = useState<string>("");
   const { lines, addItem, decrement } = useCart();
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -77,10 +77,8 @@ function BoutiqueContent() {
   }, [activeCategory, filterByCategory]);
 
   useEffect(() => {
-    setSub("all");
-  }, [category]);
-
-  const subFilteredActive = sub !== "all";
+    setSub(subOptions[0] ?? "");
+  }, [category, subOptions]);
 
   useEffect(() => {
     const root = scrollRef.current;
@@ -88,7 +86,6 @@ function BoutiqueContent() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (scrollSuppressRef.current) return;
-        if (subFilteredActive) return;
         let bestId: string | null = null;
         let bestRatio = 0;
         entries.forEach((e) => {
@@ -110,7 +107,7 @@ function BoutiqueContent() {
     );
     sectionRefs.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [categories, loading, category, subFilteredActive]);
+  }, [categories, loading, category]);
 
   useEffect(() => {
     const root = scrollRef.current;
@@ -171,6 +168,21 @@ function BoutiqueContent() {
     }
   }
 
+  function scrollToSub(sid: string) {
+    const key = `${category}:${sid}`;
+    const el = subheadingRefs.current.get(key);
+    const root = scrollRef.current;
+    if (el && root) {
+      scrollSuppressRef.current = true;
+      setSub(sid);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.clearTimeout((scrollSuppressRef as any)._t);
+      (scrollSuppressRef as any)._t = window.setTimeout(() => {
+        scrollSuppressRef.current = false;
+      }, 700);
+    }
+  }
+
   return (
     <main className="h-[100svh] overflow-hidden flex flex-col bg-[#0B0B0C]">
       <div className="flex-none z-30 bg-[#0B0B0C] backdrop-blur-md">
@@ -187,25 +199,12 @@ function BoutiqueContent() {
         {subOptions.length > 0 && (
           <div className="px-5 pb-3 flex-none">
             <div className="scrollbar-thin flex gap-1.5 overflow-x-auto">
-              <button
-                onClick={() => setSub("all")}
-                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
-                  sub === "all"
-                    ? "bg-[#B8935C] text-[#0B0B0C]"
-                    : "bg-[#1E1C1A] text-[#F5EFE6]"
-                }`}
-                style={
-                  sub !== "all" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined
-                }
-              >
-                Todos
-              </button>
               {subOptions.map((sid) => {
                 const active = sub === sid;
                 return (
                   <button
                     key={sid}
-                    onClick={() => setSub(sid)}
+                    onClick={() => scrollToSub(sid)}
                     className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
                       active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
                     }`}
@@ -222,9 +221,7 @@ function BoutiqueContent() {
 
       <div
         ref={scrollRef}
-        className={`flex-1 overflow-y-auto overscroll-contain scrollbar-thin pb-32 ${
-          subFilteredActive ? "" : "snap-y snap-mandatory"
-        }`}
+        className="flex-1 overflow-y-auto snap-y snap-mandatory overscroll-contain scrollbar-thin pb-32"
       >
         {loading && (
           <section className="min-h-full flex items-center justify-center">
@@ -234,32 +231,24 @@ function BoutiqueContent() {
         {!loading &&
           categories.map((cat) => {
             const items = filterByCategory.get(cat.id) ?? [];
-            const hasSub = subOptions.length > 0;
-            const isActiveCat = cat.id === category;
-            const effectiveSub = isActiveCat ? sub : "all";
-            const filtered =
-              effectiveSub === "all"
-                ? items
-                : items.filter((it) => (it.subcategory || "") === effectiveSub);
+            const hasSub = subOptions.length > 0 && cat.id === category;
             const order: string[] = [];
             const groups = new Map<string, MenuItem[]>();
-            if (isActiveCat && hasSub && effectiveSub === "all") {
+            if (hasSub) {
               subOptions.forEach((sid) => {
                 order.push(sid);
                 groups.set(sid, []);
               });
-            }
-            filtered.forEach((it) => {
-              const k = it.subcategory || "";
-              if (isActiveCat && effectiveSub === "all" && hasSub) {
+              items.forEach((it) => {
+                const k = it.subcategory || "";
                 if (!groups.has(k)) {
                   order.unshift(k);
                   groups.set(k, []);
                 }
                 groups.get(k)!.push(it);
-              }
-            });
-            const renderAsSubSnap = isActiveCat && effectiveSub === "all" && hasSub;
+              });
+            }
+            const renderAsSubSnap = hasSub && order.length > 0;
             return (
               <section
                 key={cat.id}
@@ -268,15 +257,15 @@ function BoutiqueContent() {
                   if (node) sectionRefs.current.set(cat.id, node);
                   else sectionRefs.current.delete(cat.id);
                 }}
-                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${filtered.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"}`}
+                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${items.length === 0 ? "min-h-[20vh]" : "min-h-[calc(100svh-200px)]"}`}
               >
                 <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
-                  {filtered.length === 0 ? (
+                  {items.length === 0 ? (
                     <p className="py-10 text-center text-sm text-[#D4CCBF]/70">
                       No hay productos en esta sección.
                     </p>
-                  ) : !isActiveCat || effectiveSub !== "all" || !hasSub ? (
-                    <div className="grid grid-cols-2 gap-4">{filtered.map(renderCard)}</div>
+                  ) : !renderAsSubSnap ? (
+                    <div className="grid grid-cols-2 gap-4">{items.map(renderCard)}</div>
                   ) : (
                     order.map((sid) => {
                       const groupItems = groups.get(sid) ?? [];
@@ -291,8 +280,9 @@ function BoutiqueContent() {
                             <div
                               data-sub-id={sid}
                               ref={(node) => {
-                                if (node) subheadingRefs.current.set(`${cat.id}:${sid}`, node);
-                                else subheadingRefs.current.delete(`${cat.id}:${sid}`);
+                                const key = `${cat.id}:${sid}`;
+                                if (node) subheadingRefs.current.set(key, node);
+                                else subheadingRefs.current.delete(key);
                               }}
                               className="flex items-center gap-2 pt-1 scroll-mt-[140px]"
                             >
