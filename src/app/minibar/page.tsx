@@ -81,73 +81,10 @@ function MinibarContent() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // Detección por ANCLAJE (no "más cerca del header"):
-  // - La categoría/subcategoria ACTIVA es la ÚLTIMA cuyo heading YA PASÓ la línea ancla
-  //   puesta en el header (topOffset ~ 140px). Así el usuario "siente" que entra a una sección
-  //   cuando ésta está ya anclada arriba, NO cuando la próxima apenas asoma.
-  //
-  // Resultado UX: cuando terminas Bebidas/Otros y empiezas a ver Snacks en la parte inferior,
-  // el tab Snacks NO se sombrea todavía → se sombrea solo después de deslizar más, hasta que
-  // el heading de Snacks cruce el header y se ancle arriba.
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root) return;
-    const detectActive = () => {
-      if (scrollSuppressRef.current) return;
-      const rootRect = root.getBoundingClientRect();
-      const anchorY = 140; // línea ancla dentro del scroll: justo debajo del sticky header
-
-      // --- CATEGORÍA ACTIVA: última que ha cruzado anchorY (heading ya está ANCLADO arriba) ---
-      let activeCatId: string | null = null;
-      let bestCatTop = -Infinity;
-      sectionRefs.current.forEach((el, catId) => {
-        const rect = el.getBoundingClientRect();
-        const relTop = rect.top - rootRect.top;
-        // relTop <= anchorY → heading de esta categoría está ENCIMA de la línea ancla (ya pasó)
-        // escogemos la que tiene relTop MAYOR (más cerca de anchorY, la última en cruzar)
-        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
-          bestCatTop = relTop;
-          activeCatId = catId;
-        }
-      });
-      if (activeCatId && activeCatId !== category) {
-        setCategory(activeCatId);
-        const nextCat = categories.find((c) => c.id === activeCatId);
-        if (nextCat) {
-          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
-          const firstSub = orderByOrder(nextCat.subcategories)
-            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
-            .map((s) => s.id)[0];
-          if (firstSub) setSub(firstSub);
-        }
-      }
-
-      // --- SUBCATEGORÍA ACTIVA: última sub cuyo heading ha cruzado anchorY ---
-      // Misma lógica: cuando estás deslizando de OTROS → snacks1, OTROS sigue activo
-      // hasta que snacks1 pase el header (ancle). La próxima sub que asoma abajo NO ilumina aún.
-      let activeSubId: string | null = null;
-      let bestSubTop = -Infinity;
-      subheadingRefs.current.forEach((el, key) => {
-        const [catId, sid] = key.split(":");
-        if (catId !== activeCatId) return;
-        const rect = el.getBoundingClientRect();
-        const relTop = rect.top - rootRect.top;
-        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
-          bestSubTop = relTop;
-          activeSubId = sid;
-        }
-      });
-      if (activeSubId && activeSubId !== sub) {
-        setSub(activeSubId);
-      }
-    };
-    detectActive();
-    const onScroll = () => {
-      window.requestAnimationFrame(detectActive);
-    };
-    root.addEventListener("scroll", onScroll, { passive: true });
-    return () => root.removeEventListener("scroll", onScroll);
-  }, [categories, loading, category, sub, filterByCategory]);
+  // --- SINCRONIZACIÓN MANUAL 100%: tabs categoría/sub NO CAMBIAN AUTOMÁTICAMENTE mientras deslizas.
+  // Cambian SOLO cuando el usuario toca el tab (scrollToCat / scrollToSub).
+  // Esto deja que el usuario vea tranquilamente los últimos productos de una subcategoría
+  // sin que los tabs de la próxima categoría/sub se activen solos.
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;

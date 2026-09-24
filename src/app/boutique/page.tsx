@@ -76,64 +76,13 @@ function BoutiqueContent() {
     return subs.map((s) => s.id);
   }, [activeCategory, filterByCategory]);
 
+  // Al cambiar de categoría, la subcategoría se inicializa en la primera (NO "Todos").
   useEffect(() => {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // Detección por ANCLAJE: categoría/sub ACTIVA es la ÚLTIMA cuyo heading YA PASÓ anchorY.
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root) return;
-    const detectActive = () => {
-      if (scrollSuppressRef.current) return;
-      const rootRect = root.getBoundingClientRect();
-      const anchorY = 140;
-
-      let activeCatId: string | null = null;
-      let bestCatTop = -Infinity;
-      sectionRefs.current.forEach((el, catId) => {
-        const rect = el.getBoundingClientRect();
-        const relTop = rect.top - rootRect.top;
-        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
-          bestCatTop = relTop;
-          activeCatId = catId;
-        }
-      });
-      if (activeCatId && activeCatId !== category) {
-        setCategory(activeCatId);
-        const nextCat = categories.find((c) => c.id === activeCatId);
-        if (nextCat) {
-          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
-          const firstSub = orderByOrder(nextCat.subcategories)
-            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
-            .map((s) => s.id)[0];
-          if (firstSub) setSub(firstSub);
-        }
-      }
-
-      let activeSubId: string | null = null;
-      let bestSubTop = -Infinity;
-      subheadingRefs.current.forEach((el, key) => {
-        const [catId, sid] = key.split(":");
-        if (catId !== activeCatId) return;
-        const rect = el.getBoundingClientRect();
-        const relTop = rect.top - rootRect.top;
-        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
-          bestSubTop = relTop;
-          activeSubId = sid;
-        }
-      });
-      if (activeSubId && activeSubId !== sub) {
-        setSub(activeSubId);
-      }
-    };
-    detectActive();
-    const onScroll = () => {
-      window.requestAnimationFrame(detectActive);
-    };
-    root.addEventListener("scroll", onScroll, { passive: true });
-    return () => root.removeEventListener("scroll", onScroll);
-  }, [categories, loading, category, sub, filterByCategory]);
+  // SINCRONIZACIÓN MANUAL 100%: tabs NO CAMBIAN AUTOMÁTICAMENTE al deslizar,
+  // solo al tocar el tab correspondiente.
 
   function quantityOf(id: string) {
     return lines.find((l) => l.item.id === id)?.quantity ?? 0;
