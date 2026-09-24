@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Descargar imágenes Minibar · Ambar Hotel</title>
+  <style>
+    :root {
+      --bg: #0B0B0C;
+      --card: #1E1C1A;
+      --bronze: #B8935C;
+      --text: #F5EFE6;
+      --muted: #D4CCBF;
+      --border: rgba(184,147,92,0.22);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    h1 { color: var(--text); margin: 0 0 4px; }
+    p.sub { color: var(--muted); margin: 0 0 20px; font-size: 14px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 600; font-size: 14px;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: transform 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--bronze); color: #0B0B0C; }
+    .btn-secondary {
+      background: rgba(184,147,92,0.08); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .thumb {
+      aspect-ratio: 4/3;
+      background: #12100E;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(184,147,92,0.14);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(212,204,191,0.6);
+      font-size: 12px;
+      text-align: center;
+      padding: 8px;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .filename {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11.5px;
+      color: var(--bronze);
+      word-break: break-all;
+      padding: 4px 6px;
+      background: rgba(184,147,92,0.07);
+      border-radius: 6px;
+      border: 1px dashed rgba(184,147,92,0.2);
+    }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .status {
+      font-size: 12px;
+      color: rgba(212,204,191,0.7);
+      min-height: 16px;
+    }
+    .ok { color: #34d399 !important; }
+  </style>
+</head>
+<body>
+  <h1>📦 Imágenes Minibar · Paquete para subir manualmente</h1>
+  <p class="sub">
+    Haz click en <b>Descargar una</b> sobre cada imagen, o <b>Descargar todas</b> arriba para que tu navegador descargue las 20 con su nombre correcto.
+    Luego entra al panel admin → Minibar y súbelas al producto correspondiente.
+  </p>
+
+  <div class="topbar">
+    <div>
+      <div style="font-weight: 700; font-size: 16px;">20 imágenes · 4:3 · 1200 × 900</div>
+      <div style="color: var(--muted); font-size: 13px; margin-top: 3px;">
+        Formatos compatibles con el uploader del admin (JPG / PNG transparente).
+      </div>
+    </div>
+    <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+      <button id="btnAll" class="btn btn-primary">⬇  Descargar todas</button>
+      <button id="btnCopy" class="btn btn-secondary">📋 Copiar nombres</button>
+    </div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const IMAGES = [
+      { name: "agua-sin-gas-500ml", file: "agua-sin-gas-500ml.jpg", label: "Agua sin gas 500ml", prompt: "Botella plastica transparente de agua purificada de 500ml, etiqueta azul minimalista, fondo gris oscuro elegante, fotografia comercial de producto, 4:3, iluminacion estudio suave, sin texto" },
+      { name: "agua-con-gas-500ml", file: "agua-con-gas-500ml.jpg", label: "Agua con gas 500ml", prompt: "Botella plastica de agua mineral con gas de 500ml, etiqueta verde brillante, burbujas visibles, fondo gris oscuro premium, fotografia comercial producto, 4:3, iluminacion estudio" },
+      { name: "coca-cola-lata-330ml", file: "coca-cola-lata-330ml.jpg", label: "Coca-Cola lata 330ml", prompt: "Lata roja clasica de gaseosa 330ml, condensacion gotas frias, fondo gris carbon oscuro, fotografia comercial premium, 4:3, iluminacion estudio suave, enfoque nitido lata" },
+      { name: "sprite-lata-330ml", file: "sprite-lata-330ml.jpg", label: "Sprite lata 330ml", prompt: "Lata verde limon lima 330ml, gotas frias de condensacion, fondo carbon oscuro, fotografia comercial producto premium, 4:3, iluminacion estudio, sin texto excesivo" },
+      { name: "cafe-tinto", file: "cafe-tinto.jpg", label: "Café tinto", prompt: "Taza ceramica negra con cafe negro humeante, grano cafe tostado esparcido alrededor, fondo madera oscura, fotografia comercial gastronomica, 4:3, iluminacion calida suave" },
+      { name: "cafe-con-leche", file: "cafe-con-leche.jpg", label: "Café con leche", prompt: "Taza blanca ceramica con cafe con leche y arte latte corazon, cuchara al lado, fondo gris elegante, fotografia gastronomica comercial, 4:3, iluminacion calida" },
+      { name: "cerveza-aguila-330ml", file: "cerveza-aguila-330ml.jpg", label: "Cerveza Águila 330ml", prompt: "Lata dorada de cerveza rubia 330ml, condensacion gotas frias, fondo gris carbon oscuro, fotografia comercial producto, 4:3, iluminacion estudio premium" },
+      { name: "cerveza-poker-330ml", file: "cerveza-poker-330ml.jpg", label: "Cerveza Poker 330ml", prompt: "Lata negra roja de cerveza rubia 330ml, gotas frias condensacion, fondo oscuro elegante, fotografia comercial, 4:3, iluminacion estudio nitida" },
+      { name: "vino-blanco-chardonnay-375ml", file: "vino-blanco-chardonnay-375ml.jpg", label: "Vino blanco Chardonnay 375ml", prompt: "Media botella de vino blanco 375ml, cristal transparente, etiqueta minimalista elegante, copa al lado, fondo madera oscura, fotografia comercial producto, 4:3" },
+      { name: "whisky-mini-50ml", file: "whisky-mini-50ml.jpg", label: "Whisky mini 50ml", prompt: "Mini botella de whisky escoces 50ml, cristal ambar, etiqueta dorada elegante, fondo negro premium, fotografia comercial, 4:3, iluminacion estudio" },
+      { name: "papas-margarita-pequenas", file: "papas-margarita-pequenas.jpg", label: "Papas Margarita pequeñas", prompt: "Bolsa pequena amarilla de papas fritas clasicas, patatas fritas esparcidas alrededor, fondo gris oscuro, fotografia comercial producto snack, 4:3, iluminacion brillante" },
+      { name: "papas-pollo-bbq-pequenas", file: "papas-pollo-bbq-pequenas.jpg", label: "Papas pollo BBQ pequeñas", prompt: "Bolsa pequena roja de papas fritas sabor pollo BBQ, patatas crujientes al lado, fondo oscuro, fotografia comercial producto snack, 4:3, enfoque nitido" },
+      { name: "cheetos-pequeno", file: "cheetos-pequeno.jpg", label: "Cheetos bolso pequeño", prompt: "Bolsa pequena naranja brillante de snacks de queso, algunos palitos de queso salidos al lado, fondo gris carbon, fotografia comercial, 4:3, iluminacion viva" },
+      { name: "mani-mix", file: "mani-mix.jpg", label: "Mani Mix familiar", prompt: "Bol transparente con mani mix tostado, almendras, pasas, chicharron de cerdo, cuchara al lado, fondo madera rustica oscura, fotografia gastronomica, 4:3" },
+      { name: "platanitos-maduritos", file: "platanitos-maduritos.jpg", label: "Platanitos maduritos", prompt: "Bolsa verde y amarilla de chifles plantanos maduritos crujientes, platano frito esparcido por el borde, fondo gris oscuro, fotografia snack comercial, 4:3" },
+      { name: "mm-bolsa-roja", file: "mm-bolsa-roja.jpg", label: "M&M bolsa roja", prompt: "Bolsa roja de chocolates confitados con cacahuate, chocolates de colores amarillo rojo verde azul cafe derramados en la parte inferior, fondo negro elegante, fotografia comercial producto, 4:3, enfoque nitido" },
+      { name: "chocolatina-jet", file: "chocolatina-jet.jpg", label: "Chocolatina Jet", prompt: "Barra de chocolate envoltura amarilla y azul, trozo de chocolate cortado revelando interior cremoso, fondo madera, fotografia comercial dulce, 4:3" },
+      { name: "galletas-festival-rellenas", file: "galletas-festival-rellenas.jpg", label: "Galletas Festival rellenas", prompt: "Paquete rojo de galletas rellenas de crema de chocolate, galleta partido por la mitad mostrando relleno, fondo gris claro premium, fotografia comercial dulces, 4:3" },
+      { name: "chocolates-premium-6-bombones", file: "chocolates-premium-6-bombones.jpg", label: "Chocolates premium 6 bombones", prompt: "Caja elegante de madera oscura con 6 bombones artesanales de chocolate, variados colores y formas, cacao en polvo esparcido, fondo negro, fotografia comercial lujo, 4:3" },
+      { name: "nucita-mini-display", file: "nucita-mini-display.jpg", label: "Nucita mini display", prompt: "3 vasitos pequenos de crema de chocolate blanco y negro clasico, uno abierto con cuchara, fondo amarillo suave, fotografia comercial dulces, 4:3, iluminacion calida" }
+    ];
+
+    const makeUrl = (prompt) =>
+      `https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
+
+    const grid = document.getElementById("grid");
+    IMAGES.forEach((img, i) => {
+      const url = makeUrl(img.prompt);
+      const cell = document.createElement("div");
+      cell.className = "item";
+      cell.innerHTML = `
+        <div class="thumb">
+          <img loading="lazy" src="${url}" alt="${img.label}" />
+        </div>
+        <div class="title">${img.label}</div>
+        <div class="filename">${img.file}</div>
+        <div class="actions">
+          <button class="btn btn-secondary btn-one" data-idx="${i}">⬇ Descargar</button>
+        </div>
+        <div class="status" data-status="${i}"></div>
+      `;
+      grid.appendChild(cell);
+    });
+
+    function setStatus(i, text, ok=false) {
+      const el = document.querySelector(`[data-status="${i}"]`);
+      if (!el) return;
+      el.textContent = text;
+      el.classList.toggle("ok", !!ok);
+    }
+
+    async function downloadOne(i) {
+      const img = IMAGES[i];
+      const url = makeUrl(img.prompt);
+      setStatus(i, "Descargando…");
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const blob = await res.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = img.file;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        setStatus(i, "✓ Descargada", true);
+      } catch (err) {
+        setStatus(i, "Error: " + err.message);
+      }
+    }
+
+    document.querySelectorAll(".btn-one").forEach((b) => {
+      b.addEventListener("click", (e) => {
+        const idx = Number(e.currentTarget.getAttribute("data-idx"));
+        downloadOne(idx);
+      });
+    });
+
+    document.getElementById("btnAll").addEventListener("click", async () => {
+      for (let i = 0; i < IMAGES.length; i++) {
+        await new Promise((r) => setTimeout(r, 400));
+        downloadOne(i);
+      }
+    });
+
+    document.getElementById("btnCopy").addEventListener("click", async () => {
+      const txt = IMAGES.map((x) => x.file).join("\n");
+      try {
+        await navigator.clipboard.writeText(txt);
+        alert("Nombres de los 20 archivos copiados al portapapeles.");
+      } catch {
+        prompt("Copia:", txt);
+      }
+    });
+  </script>
+</body>
+</html>
