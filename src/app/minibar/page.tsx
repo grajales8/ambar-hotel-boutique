@@ -81,29 +81,38 @@ function MinibarContent() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // Observer categorías: activa la sección cuyo inicio está más cerca del tope del viewport.
-  // No depende de intersectionRatio ≥ 0.5 → apenas Snacks cruza el header se ilumina.
+  // Detección por ANCLAJE (no "más cerca del header"):
+  // - La categoría/subcategoria ACTIVA es la ÚLTIMA cuyo heading YA PASÓ la línea ancla
+  //   puesta en el header (topOffset ~ 140px). Así el usuario "siente" que entra a una sección
+  //   cuando ésta está ya anclada arriba, NO cuando la próxima apenas asoma.
+  //
+  // Resultado UX: cuando terminas Bebidas/Otros y empiezas a ver Snacks en la parte inferior,
+  // el tab Snacks NO se sombrea todavía → se sombrea solo después de deslizar más, hasta que
+  // el heading de Snacks cruce el header y se ancle arriba.
   useEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
     const detectActive = () => {
       if (scrollSuppressRef.current) return;
       const rootRect = root.getBoundingClientRect();
-      const topOffset = 140; // aprox altura sticky header
-      let bestCatId: string | null = null;
-      let bestCatDelta = Infinity;
+      const anchorY = 140; // línea ancla dentro del scroll: justo debajo del sticky header
+
+      // --- CATEGORÍA ACTIVA: última que ha cruzado anchorY (heading ya está ANCLADO arriba) ---
+      let activeCatId: string | null = null;
+      let bestCatTop = -Infinity;
       sectionRefs.current.forEach((el, catId) => {
         const rect = el.getBoundingClientRect();
-        const relativeTop = rect.top - rootRect.top;
-        const delta = Math.abs(relativeTop - topOffset);
-        if (relativeTop <= topOffset + 60 && delta < bestCatDelta) {
-          bestCatDelta = delta;
-          bestCatId = catId;
+        const relTop = rect.top - rootRect.top;
+        // relTop <= anchorY → heading de esta categoría está ENCIMA de la línea ancla (ya pasó)
+        // escogemos la que tiene relTop MAYOR (más cerca de anchorY, la última en cruzar)
+        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
+          bestCatTop = relTop;
+          activeCatId = catId;
         }
       });
-      if (bestCatId && bestCatId !== category) {
-        setCategory(bestCatId);
-        const nextCat = categories.find((c) => c.id === bestCatId);
+      if (activeCatId && activeCatId !== category) {
+        setCategory(activeCatId);
+        const nextCat = categories.find((c) => c.id === activeCatId);
         if (nextCat) {
           const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
           const firstSub = orderByOrder(nextCat.subcategories)
@@ -112,22 +121,24 @@ function MinibarContent() {
           if (firstSub) setSub(firstSub);
         }
       }
-      // Subcategorías: misma lógica, busca el subheading más cercano al topOffset dentro de la categoría actual.
-      let bestSubId: string | null = null;
-      let bestSubDelta = Infinity;
+
+      // --- SUBCATEGORÍA ACTIVA: última sub cuyo heading ha cruzado anchorY ---
+      // Misma lógica: cuando estás deslizando de OTROS → snacks1, OTROS sigue activo
+      // hasta que snacks1 pase el header (ancle). La próxima sub que asoma abajo NO ilumina aún.
+      let activeSubId: string | null = null;
+      let bestSubTop = -Infinity;
       subheadingRefs.current.forEach((el, key) => {
         const [catId, sid] = key.split(":");
-        if (catId !== bestCatId) return;
+        if (catId !== activeCatId) return;
         const rect = el.getBoundingClientRect();
-        const relativeTop = rect.top - rootRect.top;
-        const delta = Math.abs(relativeTop - topOffset);
-        if (relativeTop <= topOffset + 80 && delta < bestSubDelta) {
-          bestSubDelta = delta;
-          bestSubId = sid;
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
+          bestSubTop = relTop;
+          activeSubId = sid;
         }
       });
-      if (bestSubId && bestSubId !== sub) {
-        setSub(bestSubId);
+      if (activeSubId && activeSubId !== sub) {
+        setSub(activeSubId);
       }
     };
     detectActive();

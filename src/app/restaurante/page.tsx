@@ -77,28 +77,28 @@ export default function RestaurantPage() {
     setSub(subOptions[0] ?? "");
   }, [category, subOptions]);
 
-  // Observer categorías: activa la sección cuyo inicio está más cerca del tope del viewport.
+  // Detección por ANCLAJE: categoría/sub ACTIVA es la ÚLTIMA cuyo heading YA PASÓ anchorY.
   useEffect(() => {
     const root = scrollRef.current;
     if (!root) return;
     const detectActive = () => {
       if (scrollSuppressRef.current) return;
       const rootRect = root.getBoundingClientRect();
-      const topOffset = 140;
-      let bestCatId: string | null = null;
-      let bestCatDelta = Infinity;
+      const anchorY = 140;
+
+      let activeCatId: string | null = null;
+      let bestCatTop = -Infinity;
       sectionRefs.current.forEach((el, catId) => {
         const rect = el.getBoundingClientRect();
-        const relativeTop = rect.top - rootRect.top;
-        const delta = Math.abs(relativeTop - topOffset);
-        if (relativeTop <= topOffset + 60 && delta < bestCatDelta) {
-          bestCatDelta = delta;
-          bestCatId = catId;
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
+          bestCatTop = relTop;
+          activeCatId = catId;
         }
       });
-      if (bestCatId && bestCatId !== category) {
-        setCategory(bestCatId);
-        const nextCat = categories.find((c) => c.id === bestCatId);
+      if (activeCatId && activeCatId !== category) {
+        setCategory(activeCatId);
+        const nextCat = categories.find((c) => c.id === activeCatId);
         if (nextCat) {
           const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
           const firstSub = orderByOrder(nextCat.subcategories)
@@ -107,21 +107,21 @@ export default function RestaurantPage() {
           if (firstSub) setSub(firstSub);
         }
       }
-      let bestSubId: string | null = null;
-      let bestSubDelta = Infinity;
+
+      let activeSubId: string | null = null;
+      let bestSubTop = -Infinity;
       subheadingRefs.current.forEach((el, key) => {
         const [catId, sid] = key.split(":");
-        if (catId !== bestCatId) return;
+        if (catId !== activeCatId) return;
         const rect = el.getBoundingClientRect();
-        const relativeTop = rect.top - rootRect.top;
-        const delta = Math.abs(relativeTop - topOffset);
-        if (relativeTop <= topOffset + 80 && delta < bestSubDelta) {
-          bestSubDelta = delta;
-          bestSubId = sid;
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
+          bestSubTop = relTop;
+          activeSubId = sid;
         }
       });
-      if (bestSubId && bestSubId !== sub) {
-        setSub(bestSubId);
+      if (activeSubId && activeSubId !== sub) {
+        setSub(activeSubId);
       }
     };
     detectActive();
