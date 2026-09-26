@@ -8,12 +8,15 @@ import ProductLightbox from "./ProductLightbox";
 
 export default function ProductCardReadOnly({
   item,
+  allowGallery = true,
 }: {
   item: MenuItem;
+  allowGallery?: boolean;
 }) {
   const [light, setLight] = useState(false);
-  const images = item.images && item.images.length > 0 ? item.images : [item.image];
-  const hasGallery = images.length > 1;
+  const allImages = item.images && item.images.length > 0 ? item.images : [item.image];
+  const images = allowGallery ? allImages : [item.image];
+  const hasGallery = allowGallery && allImages.length > 1;
 
   return (
     <>

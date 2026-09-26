@@ -46,11 +46,13 @@ export default function CatalogEditor({
   categoriesStorageKey,
   initialCategories,
   initialItems,
+  allowGallery = true,
 }: {
   storageKey: string;
   categoriesStorageKey: string;
   initialCategories: MenuCategory[];
   initialItems: MenuItem[];
+  allowGallery?: boolean;
 }) {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<MenuCategory[]>([]);
@@ -716,75 +718,82 @@ export default function CatalogEditor({
                                       <GripVertical size={18} strokeWidth={2} />
                                     </span>
                                 <div className="flex-1 sm:flex-none">
-                                    <div>
-                                      <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
-                                        Galería de fotos ({getItemImages(item).length})
-                                      </label>
-                                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                        {getItemImages(item).map((img, i) => (
-                                          <div key={i} className="space-y-1">
-                                            <div className="relative h-20 w-full overflow-hidden rounded-lg">
-                                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                                              <img src={img} alt="" className="h-full w-full object-cover" />
-                                              {i === 0 && (
-                                                <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.35)" }}>
-                                                  <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
-                                                  Portada
-                                                </span>
-                                              )}
-                                            </div>
-                                            <div className="flex items-center justify-center gap-1">
-                                              {i !== 0 && (
+                                    {allowGallery ? (
+                                      <div>
+                                        <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
+                                          Galería de fotos ({getItemImages(item).length})
+                                        </label>
+                                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                                          {getItemImages(item).map((img, i) => (
+                                            <div key={i} className="space-y-1">
+                                              <div className="relative h-20 w-full overflow-hidden rounded-lg">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img src={img} alt="" className="h-full w-full object-cover" />
+                                                {i === 0 && (
+                                                  <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.35)" }}>
+                                                    <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
+                                                    Portada
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <div className="flex items-center justify-center gap-1">
+                                                {i !== 0 && (
+                                                  <button
+                                                    onClick={() => makeItemImageCover(item.id, i)}
+                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                                    aria-label="Usar como portada"
+                                                    title="Usar como portada"
+                                                  >
+                                                    <Star size={12} strokeWidth={2} />
+                                                  </button>
+                                                )}
                                                 <button
-                                                  onClick={() => makeItemImageCover(item.id, i)}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                                                  onClick={() => moveItemImage(item.id, i, "up")}
+                                                  disabled={i === 0}
+                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
                                                   style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                  aria-label="Usar como portada"
-                                                  title="Usar como portada"
+                                                  aria-label="Mover antes"
                                                 >
-                                                  <Star size={12} strokeWidth={2} />
+                                                  <ChevronUp size={12} strokeWidth={2.5} />
                                                 </button>
-                                              )}
-                                              <button
-                                                onClick={() => moveItemImage(item.id, i, "up")}
-                                                disabled={i === 0}
-                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                aria-label="Mover antes"
-                                              >
-                                                <ChevronUp size={12} strokeWidth={2.5} />
-                                              </button>
-                                              <button
-                                                onClick={() => moveItemImage(item.id, i, "down")}
-                                                disabled={i === getItemImages(item).length - 1}
-                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                aria-label="Mover después"
-                                              >
-                                                <ChevronDown size={12} strokeWidth={2.5} />
-                                              </button>
-                                              <button
-                                                onClick={() => removeItemImage(item.id, i)}
-                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                                style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                                aria-label="Eliminar foto"
-                                              >
-                                                <Trash2 size={12} strokeWidth={2} />
-                                              </button>
+                                                <button
+                                                  onClick={() => moveItemImage(item.id, i, "down")}
+                                                  disabled={i === getItemImages(item).length - 1}
+                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                                  aria-label="Mover después"
+                                                >
+                                                  <ChevronDown size={12} strokeWidth={2.5} />
+                                                </button>
+                                                <button
+                                                  onClick={() => removeItemImage(item.id, i)}
+                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                                                  style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                                                  aria-label="Eliminar foto"
+                                                >
+                                                  <Trash2 size={12} strokeWidth={2} />
+                                                </button>
+                                              </div>
                                             </div>
+                                          ))}
+                                          <div className="w-full">
+                                            <ImageUploader value="" onChange={(url) => url && addItemImage(item.id, url)} />
                                           </div>
-                                        ))}
-                                        <div className="w-full">
-                                          <ImageUploader value="" onChange={(url) => url && addItemImage(item.id, url)} />
                                         </div>
+                                        {getItemImages(item).length === 0 && (
+                                          <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
+                                            <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
+                                            Agrega al menos una foto para que se muestre en el catálogo.
+                                          </p>
+                                        )}
                                       </div>
-                                      {getItemImages(item).length === 0 && (
-                                        <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
-                                          <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
-                                          Agrega al menos una foto para que se muestre en el catálogo.
-                                        </p>
-                                      )}
-                                    </div>
+                                    ) : (
+                                      <ImageUploader
+                                        value={item.image}
+                                        onChange={(url) => updateItem(item.id, { image: url })}
+                                      />
+                                    )}
                                   </div>
                                   </div>
                                   <div className="min-w-0 flex-1 space-y-2">

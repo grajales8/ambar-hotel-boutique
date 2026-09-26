@@ -89,6 +89,7 @@ export default function AdminDashboardPage() {
             categoriesStorageKey="restaurantCategories"
             initialCategories={restaurantCategories}
             initialItems={restaurantItems}
+            allowGallery={false}
           />
         )}
         {tab === "minibar" && (
@@ -97,6 +98,7 @@ export default function AdminDashboardPage() {
             categoriesStorageKey="minibarCategories"
             initialCategories={minibarCategories}
             initialItems={minibarItems}
+            allowGallery={true}
           />
         )}
         {tab === "boutique" && (
@@ -105,6 +107,7 @@ export default function AdminDashboardPage() {
             categoriesStorageKey="boutiqueCategories"
             initialCategories={boutiqueCategories}
             initialItems={boutiqueItems}
+            allowGallery={true}
           />
         )}
         {tab === "experiencias" && <ExperiencesEditor />}

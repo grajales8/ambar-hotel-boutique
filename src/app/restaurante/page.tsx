@@ -139,6 +139,7 @@ export default function RestaurantPage() {
       <ProductCardReadOnly
         key={item.id}
         item={item}
+        allowGallery={false}
       />
     );
   }
