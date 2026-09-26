@@ -72,7 +72,7 @@ export default function ExperiencesPage() {
               style={{ border: "1px solid rgba(184,147,92,0.22)" }}
             >
               <div
-                className="relative h-32 w-full cursor-zoom-in"
+                className="relative cursor-zoom-in overflow-hidden"
                 onClick={() => setLightSvc(service)}
                 role="button"
                 tabIndex={0}
@@ -84,15 +84,43 @@ export default function ExperiencesPage() {
                 }}
                 aria-label={`Ver ${service.name} en grande`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={service.images[0]}
-                  alt={service.name}
-                  className="h-full w-full object-cover"
-                />
-                <span className="absolute left-2 top-2 rounded-full bg-[#1E1C1A]/90 px-2.5 py-1 text-[10px] font-medium text-[#B8935C]">
-                  {experienceCategories.find((c) => c.id === service.categoryId)?.name}
-                </span>
+                <div className="relative h-32 w-full">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={service.images[0]}
+                    alt={service.name}
+                    className="h-full w-full object-cover"
+                  />
+                  <span className="absolute left-2 top-2 rounded-full bg-[#1E1C1A]/90 px-2.5 py-1 text-[10px] font-medium text-[#B8935C]">
+                    {experienceCategories.find((c) => c.id === service.categoryId)?.name}
+                  </span>
+                </div>
+                {service.images.length > 1 && (
+                  <div className="px-2 pt-2 pb-2 bg-[#12100E] border-t border-white/5">
+                    <div className="flex items-center gap-1.5">
+                      {service.images.slice(1, 4).map((src, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 aspect-[4/3] rounded-lg overflow-hidden ring-1 ring-white/10"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={src}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ))}
+                      {service.images.length > 4 && (
+                        <div className="flex-1 aspect-[4/3] rounded-lg bg-black/60 flex items-center justify-center ring-1 ring-white/10">
+                          <span className="text-[11px] font-semibold text-[#F5EFE6]">
+                            +{service.images.length - 4}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="p-4 flex flex-col flex-1">
                 <h3 className="font-display text-base text-[#F5EFE6]">{service.name}</h3>

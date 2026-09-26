@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Minus } from "lucide-react";
+import { X, Plus, Minus, ChevronLeft, ChevronRight } from "lucide-react";
 
 export type LightboxAction =
   | {
@@ -40,19 +40,58 @@ export default function ProductLightbox({
   action?: LightboxAction;
   extraFooter?: ReactNode;
 }) {
+  const hasGallery = images.length > 1;
+  const [activeIdx, setActiveIdx] = useState(0);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const thumbScrollerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!open) return;
+    setActiveIdx(0);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (!hasGallery) return;
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      document.body.style.overflow = previousBodyOverflow;
     };
-  }, [open, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, onClose, hasGallery]);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || !hasGallery) return;
+    const target = el.children[activeIdx] as HTMLElement | undefined;
+    if (!target) return;
+    el.scrollTo({ left: target.offsetLeft, behavior: "smooth" });
+  }, [activeIdx, hasGallery]);
+
+  useEffect(() => {
+    const el = thumbScrollerRef.current;
+    if (!el || !hasGallery) return;
+    const target = el.children[activeIdx] as HTMLElement | undefined;
+    if (!target) return;
+    target.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  }, [activeIdx, hasGallery]);
+
+  function goNext() {
+    setActiveIdx((i) => (images.length ? (i + 1) % images.length : 0));
+  }
+  function goPrev() {
+    setActiveIdx((i) => (images.length ? (i - 1 + images.length) % images.length : 0));
+  }
+  function onScrollerScroll() {
+    const el = scrollerRef.current;
+    if (!el || !hasGallery) return;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== activeIdx) setActiveIdx(idx);
+  }
 
   return (
     <AnimatePresence>
@@ -85,15 +124,86 @@ export default function ProductLightbox({
             </button>
 
             <div className="relative w-full flex-none">
-              <div className="aspect-[4/3] bg-black w-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={images[0]}
-                  alt={name}
-                  className="h-full w-full object-cover"
-                />
+              <div
+                ref={scrollerRef}
+                onScroll={onScrollerScroll}
+                className={`aspect-[4/3] bg-black w-full flex overflow-x-scroll overflow-y-hidden ${hasGallery ? "snap-x snap-mandatory" : ""}`}
+                style={{ scrollbarWidth: "none" }}
+              >
+                {images.map((src, i) => (
+                  <div
+                    key={i}
+                    className={`${hasGallery ? "snap-start" : ""} shrink-0 basis-full h-full w-full relative`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={`${name} ${i + 1}/${images.length}`}
+                      className="h-full w-full object-cover"
+                      draggable={false}
+                    />
+                  </div>
+                ))}
+                {images.length === 0 && (
+                  <div className="h-full w-full flex items-center justify-center text-[#D4CCBF]/60 text-xs">
+                    Sin imagen
+                  </div>
+                )}
               </div>
+              {hasGallery && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goPrev();
+                    }}
+                    aria-label="Imagen anterior"
+                    className="absolute left-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[#1E1C1A]/85 text-[#F5EFE6] backdrop-blur border border-white/10 active:scale-95"
+                  >
+                    <ChevronLeft size={18} strokeWidth={2.4} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goNext();
+                    }}
+                    aria-label="Imagen siguiente"
+                    className="absolute right-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[#1E1C1A]/85 text-[#F5EFE6] backdrop-blur border border-white/10 active:scale-95"
+                  >
+                    <ChevronRight size={18} strokeWidth={2.4} />
+                  </button>
+                  <div className="absolute right-3 bottom-3 z-20 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-[#F5EFE6] backdrop-blur-sm">
+                    {activeIdx + 1}/{images.length}
+                  </div>
+                </>
+              )}
             </div>
+
+            {hasGallery && (
+              <div className="w-full flex-none bg-black/50 px-4 pt-3 pb-3 border-t border-white/5">
+                <div
+                  ref={thumbScrollerRef}
+                  className="flex gap-2 overflow-x-auto"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  {images.map((src, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveIdx(i)}
+                      className={`shrink-0 h-14 w-20 rounded-xl overflow-hidden transition-all ${
+                        i === activeIdx
+                          ? "ring-2 ring-[#B8935C] scale-[0.98] opacity-100"
+                          : "ring-1 ring-white/10 opacity-60 hover:opacity-100"
+                      }`}
+                      aria-label={`Ver imagen ${i + 1}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={src} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-1">
               <h3 className="font-display text-xl text-[#F5EFE6] leading-tight text-center">
