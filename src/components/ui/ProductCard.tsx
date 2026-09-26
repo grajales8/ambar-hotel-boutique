@@ -21,6 +21,8 @@ export default function ProductCard({
   actionLabel?: string;
 }) {
   const [light, setLight] = useState(false);
+  const images = item.images && item.images.length > 0 ? item.images : [item.image];
+  const hasGallery = images.length > 1;
   const addAction: LightboxAction = {
     kind: "stepper",
     quantity,
@@ -42,7 +44,7 @@ export default function ProductCard({
         style={{ border: "1px solid rgba(184,147,92,0.22)" }}
       >
         <div
-          className="relative h-36 w-full cursor-zoom-in"
+          className="relative cursor-zoom-in overflow-hidden"
           onClick={() => {
             if (item.available) setLight(true);
           }}
@@ -56,17 +58,41 @@ export default function ProductCard({
           }}
           aria-label={`Ver ${item.name} en grande`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={item.image}
-            alt={item.name}
-            className={`h-full w-full object-cover ${item.available ? "" : "cursor-not-allowed"}`}
-          />
-          {!item.available && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-              <span className="rounded-full bg-[#1E1C1A]/90 px-3 py-1 text-xs font-semibold text-[#B8935C]">
-                No disponible
-              </span>
+          <div className="relative h-36 w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={images[0]}
+              alt={item.name}
+              className={`h-full w-full object-cover ${item.available ? "" : "cursor-not-allowed"}`}
+            />
+            {!item.available && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <span className="rounded-full bg-[#1E1C1A]/90 px-3 py-1 text-xs font-semibold text-[#B8935C]">
+                  No disponible
+                </span>
+              </div>
+            )}
+          </div>
+          {hasGallery && (
+            <div className="px-2 pt-2 pb-2 bg-[#12100E] border-t border-white/5">
+              <div className="flex items-center gap-1.5">
+                {images.slice(1, 4).map((src, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 aspect-[4/3] rounded-lg overflow-hidden ring-1 ring-white/10"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+                {images.length > 4 && (
+                  <div className="flex-1 aspect-[4/3] rounded-lg bg-black/60 flex items-center justify-center ring-1 ring-white/10">
+                    <span className="text-[11px] font-semibold text-[#F5EFE6]">
+                      +{images.length - 4}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -126,7 +152,7 @@ export default function ProductCard({
       <ProductLightbox
         open={light}
         onClose={() => setLight(false)}
-        images={[item.image]}
+        images={images}
         name={item.name}
         description={item.description || ""}
         priceText={formatCOP(item.price)}

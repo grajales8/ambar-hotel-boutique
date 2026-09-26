@@ -5,11 +5,14 @@ import {
   Trash2,
   Plus,
   ChevronDown,
+  ChevronUp,
   Package,
   Tags,
   FolderTree,
   GripVertical,
   RotateCcw,
+  Star,
+  ImagePlus,
 } from "lucide-react";
 import { MenuItem, MenuCategory, Subcategory } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
@@ -367,6 +370,45 @@ export default function CatalogEditor({
     persistItems([...items, next]);
   }
 
+  // --- Galería de imágenes por producto (Minibar / Restaurante / Boutique) ---
+  function getItemImages(item: MenuItem): string[] {
+    if (Array.isArray(item.images) && item.images.length > 0) return item.images;
+    return item.image ? [item.image] : [];
+  }
+  function setItemImages(itemId: string, nextImages: string[]) {
+    const patch: Partial<MenuItem> = { images: nextImages };
+    if (nextImages.length > 0) patch.image = nextImages[0];
+    updateItem(itemId, patch);
+  }
+  function addItemImage(itemId: string, url: string) {
+    if (!url) return;
+    const cur = items.find((it) => it.id === itemId);
+    setItemImages(itemId, [...getItemImages(cur!), url]);
+  }
+  function removeItemImage(itemId: string, index: number) {
+    const item = items.find((it) => it.id === itemId);
+    if (!item) return;
+    setItemImages(itemId, getItemImages(item).filter((_, i) => i !== index));
+  }
+  function moveItemImage(itemId: string, index: number, direction: "up" | "down") {
+    const item = items.find((it) => it.id === itemId);
+    if (!item) return;
+    const arr = getItemImages(item);
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= arr.length) return;
+    const next = [...arr];
+    [next[index], next[targetIdx]] = [next[targetIdx], next[index]];
+    setItemImages(itemId, next);
+  }
+  function makeItemImageCover(itemId: string, index: number) {
+    const item = items.find((it) => it.id === itemId);
+    if (!item || index === 0) return;
+    const arr = getItemImages(item);
+    const [picked] = arr.splice(index, 1);
+    arr.unshift(picked);
+    setItemImages(itemId, arr);
+  }
+
   if (loading) {
     return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
@@ -673,12 +715,77 @@ export default function CatalogEditor({
                                     >
                                       <GripVertical size={18} strokeWidth={2} />
                                     </span>
-                                    <div className="flex-1 sm:flex-none">
-                                      <ImageUploader
-                                        value={item.image}
-                                        onChange={(url) => updateItem(item.id, { image: url })}
-                                      />
+                                <div className="flex-1 sm:flex-none">
+                                    <div>
+                                      <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
+                                        Galería de fotos ({getItemImages(item).length})
+                                      </label>
+                                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                                        {getItemImages(item).map((img, i) => (
+                                          <div key={i} className="space-y-1">
+                                            <div className="relative h-20 w-full overflow-hidden rounded-lg">
+                                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                                              <img src={img} alt="" className="h-full w-full object-cover" />
+                                              {i === 0 && (
+                                                <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]" style={{ border: "1px solid rgba(184,147,92,0.35)" }}>
+                                                  <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
+                                                  Portada
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="flex items-center justify-center gap-1">
+                                              {i !== 0 && (
+                                                <button
+                                                  onClick={() => makeItemImageCover(item.id, i)}
+                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                                  aria-label="Usar como portada"
+                                                  title="Usar como portada"
+                                                >
+                                                  <Star size={12} strokeWidth={2} />
+                                                </button>
+                                              )}
+                                              <button
+                                                onClick={() => moveItemImage(item.id, i, "up")}
+                                                disabled={i === 0}
+                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                                aria-label="Mover antes"
+                                              >
+                                                <ChevronUp size={12} strokeWidth={2.5} />
+                                              </button>
+                                              <button
+                                                onClick={() => moveItemImage(item.id, i, "down")}
+                                                disabled={i === getItemImages(item).length - 1}
+                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                                                aria-label="Mover después"
+                                              >
+                                                <ChevronDown size={12} strokeWidth={2.5} />
+                                              </button>
+                                              <button
+                                                onClick={() => removeItemImage(item.id, i)}
+                                                className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                                                style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                                                aria-label="Eliminar foto"
+                                              >
+                                                <Trash2 size={12} strokeWidth={2} />
+                                              </button>
+                                            </div>
+                                          </div>
+                                        ))}
+                                        <div className="w-full">
+                                          <ImageUploader value="" onChange={(url) => url && addItemImage(item.id, url)} />
+                                        </div>
+                                      </div>
+                                      {getItemImages(item).length === 0 && (
+                                        <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
+                                          <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
+                                          Agrega al menos una foto para que se muestre en el catálogo.
+                                        </p>
+                                      )}
                                     </div>
+                                  </div>
                                   </div>
                                   <div className="min-w-0 flex-1 space-y-2">
                                     <div className="flex flex-col sm:flex-row sm:gap-2">

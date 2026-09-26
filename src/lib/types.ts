@@ -23,6 +23,8 @@ export type MenuItem = {
   description: string;
   price: number; // COP
   image: string;
+  /** Galería de imágenes adicionales. Si no se provee, se usa sólo image. */
+  images?: string[];
   available: boolean;
   order?: number;
 };
