@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, Plus, ChevronUp, ChevronDown, ImagePlus, Star } from "lucide-react";
+import { Trash2, Plus, ChevronUp, ChevronDown, ImagePlus, Star, RotateCcw } from "lucide-react";
 import { ExperienceService } from "@/lib/types";
 import { loadCollection, saveCollection, debounce } from "@/lib/storage";
 import { experienceServices as defaultServices, experienceCategories } from "@/data/experiences";
@@ -111,17 +111,31 @@ export default function ExperiencesEditor() {
     update(serviceId, { images: nextImages });
   }
 
+  function restoreDefaults() {
+    const next = [...defaultServices].sort((a, b) => a.order - b.order);
+    persist(next);
+  }
+
   if (loading) {
     return <p className="text-sm text-[var(--color-ink-soft)]">Cargando…</p>;
   }
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm text-[var(--color-ink-soft)]">
           {services.length} servicios · los cambios se guardan automáticamente
         </p>
-        {saved && <span className="text-xs font-medium text-emerald-600">Guardado ✓</span>}
+        <div className="flex items-center gap-3">
+          {saved && <span className="text-xs font-medium text-emerald-600">Guardado ✓</span>}
+          <button
+            onClick={restoreDefaults}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(184,147,92,0.28)] bg-[rgba(184,147,92,0.08)] px-3.5 py-2 text-xs font-semibold text-[#F5EFE6] active:scale-[0.98]"
+          >
+            <RotateCcw size={13} strokeWidth={2} />
+            Restaurar datos iniciales
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
