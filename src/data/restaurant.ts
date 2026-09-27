@@ -1,4 +1,4 @@
-﻿import { MenuCategory, MenuItem } from "@/lib/types";
+﻿﻿import { MenuCategory, MenuItem } from "@/lib/types";
 
 export const restaurantCategories: MenuCategory[] = [
   {

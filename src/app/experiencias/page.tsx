@@ -9,7 +9,7 @@ import { ExperienceService } from "@/lib/types";
 import { formatCOP } from "@/lib/cart-context";
 import PageHeader from "@/components/ui/PageHeader";
 import CategoryTabs from "@/components/ui/CategoryTabs";
-import ProductLightbox, { LightboxAction } from "@/components/ui/ProductLightbox";
+import ExperienceDetailModal from "@/components/ui/ExperienceDetailModal";
 import { openWhatsapp } from "@/lib/whatsapp";
 
 function buildServiceMsg(service: ExperienceService) {
@@ -20,7 +20,7 @@ export default function ExperiencesPage() {
   const [category, setCategory] = useState(experienceCategories[0].id);
   const [services, setServices] = useState<ExperienceService[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lightSvc, setLightSvc] = useState<ExperienceService | null>(null);
+  const [selectedService, setSelectedService] = useState<ExperienceService | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,17 +36,6 @@ export default function ExperiencesPage() {
   }, []);
 
   const filtered = services.filter((s) => s.categoryId === category && s.active);
-
-  const lightAction: LightboxAction = lightSvc
-    ? {
-        kind: "button",
-        label: "Más información",
-        variant: "primary",
-        onClick: () => {
-          openWhatsapp(buildServiceMsg(lightSvc));
-        },
-      }
-    : null;
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
@@ -73,18 +62,18 @@ export default function ExperiencesPage() {
             >
               <div
                 className="relative cursor-zoom-in overflow-hidden"
-                onClick={() => setLightSvc(service)}
+                onClick={() => setSelectedService(service)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    setLightSvc(service);
+                    setSelectedService(service);
                   }
                 }}
-                aria-label={`Ver ${service.name} en grande`}
+                aria-label={`Ver detalles de ${service.name}`}
               >
-                <div className="relative h-32 w-full">
+                <div className="relative h-36 w-full">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={service.images[0]}
@@ -95,44 +84,23 @@ export default function ExperiencesPage() {
                     {experienceCategories.find((c) => c.id === service.categoryId)?.name}
                   </span>
                 </div>
-                {service.images.length > 1 && (
-                  <div className="px-2 pt-2 pb-2 bg-[#12100E] border-t border-white/5">
-                    <div className="flex items-center gap-1.5">
-                      {service.images.slice(1, 4).map((src, i) => (
-                        <div
-                          key={i}
-                          className="flex-1 aspect-[4/3] rounded-lg overflow-hidden ring-1 ring-white/10"
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={src}
-                            alt=""
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                      ))}
-                      {service.images.length > 4 && (
-                        <div className="flex-1 aspect-[4/3] rounded-lg bg-black/60 flex items-center justify-center ring-1 ring-white/10">
-                          <span className="text-[11px] font-semibold text-[#F5EFE6]">
-                            +{service.images.length - 4}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
               <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-display text-base text-[#F5EFE6]">{service.name}</h3>
+                <h3 className="font-display text-base leading-snug text-[#F5EFE6]">
+                  {service.name}
+                </h3>
                 <p className="mt-1 text-xs leading-snug text-[#D4CCBF] line-clamp-2">
                   {service.shortDescription}
                 </p>
                 <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-2">
-                  <span className="text-xs font-medium text-[#D4CCBF]">
+                  <span className="font-display text-base text-[#B8935C]">
                     {service.price ? formatCOP(service.price) : "Consultar"}
                   </span>
                   <button
-                    onClick={() => openWhatsapp(buildServiceMsg(service))}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openWhatsapp(buildServiceMsg(service));
+                    }}
                     className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-xs font-semibold text-[#0B0B0C] active:scale-[0.97] transition-transform"
                   >
                     <MessageCircle size={13} strokeWidth={2.4} />
@@ -150,15 +118,8 @@ export default function ExperiencesPage() {
         )}
       </div>
 
-      <ProductLightbox
-        open={!!lightSvc}
-        onClose={() => setLightSvc(null)}
-        images={lightSvc?.images ?? []}
-        name={lightSvc?.name ?? ""}
-        description={lightSvc?.fullDescription ?? lightSvc?.shortDescription ?? ""}
-        priceText={lightSvc ? (lightSvc.price ? formatCOP(lightSvc.price) : "Consultar precio") : undefined}
-        action={lightAction}
-      />
+      <ExperienceDetailModal service={selectedService} onClose={() => setSelectedService(null)} />
     </main>
   );
 }
+
