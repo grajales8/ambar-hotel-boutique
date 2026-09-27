@@ -94,7 +94,7 @@ export default function ExperienceDetailModal({
             exit={{ y: 40, opacity: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative z-10 w-full sm:w-[min(92vw,460px)] sm:rounded-3xl rounded-t-[28px] bg-[#1E1C1A] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] max-h-[92vh] flex flex-col"
+            className="relative z-10 w-[min(92vw,460px)] rounded-3xl bg-[#1E1C1A] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] max-h-[86vh] flex flex-col"
             style={{ border: "1px solid rgba(184,147,92,0.32)" }}
           >
             <button
