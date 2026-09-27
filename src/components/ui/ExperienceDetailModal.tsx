@@ -179,63 +179,29 @@ export default function ExperienceDetailModal({
             )}
 
             <div className="overflow-y-auto px-5 pt-3 pb-5 flex-1">
-              <h2 className="font-display text-[22px] leading-tight text-[#F5EFE6]">
+              <h2 className="text-center font-display text-[26px] leading-tight text-[#F5EFE6]">
                 {service.name}
               </h2>
 
-              {service.price ? (
-                <p className="mt-1 font-display text-lg text-[#B8935C]">
-                  {formatCOP(service.price)}
-                </p>
-              ) : (
-                <p className="mt-1 text-sm font-medium text-[#B8935C]">Consultar precio</p>
-              )}
-
-              <p className="mt-4 text-sm leading-relaxed text-[#D4CCBF]">
+              <p className="mt-4 text-center text-[15px] leading-relaxed text-[#D4CCBF]">
                 {service.fullDescription || service.shortDescription}
               </p>
 
-              {service.includes && service.includes.length > 0 && (
-                <div className="mt-5 rounded-2xl bg-[#2A2724] p-4" style={{ border: "1px solid rgba(184,147,92,0.18)" }}>
-                  <p className="mb-2 text-xs font-semibold text-[#B8935C] uppercase tracking-wider">
-                    Incluye
-                  </p>
-                  <ul className="space-y-2">
-                    {service.includes.map((it, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[#F5EFE6]">
-                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#B8935C]/20 text-[#B8935C]">
-                          <Check size={11} strokeWidth={3.2} />
-                        </span>
-                        {it}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {service.benefits && service.benefits.length > 0 && (
-                <div className="mt-4 rounded-2xl bg-[#2A2724] p-4" style={{ border: "1px solid rgba(184,147,92,0.18)" }}>
-                  <p className="mb-2 text-xs font-semibold text-[#B8935C] uppercase tracking-wider">
-                    Beneficios
-                  </p>
-                  <ul className="space-y-2">
-                    {service.benefits.map((it, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[#F5EFE6]">
-                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#B8935C]/20 text-[#B8935C]">
-                          <Check size={11} strokeWidth={3.2} />
-                        </span>
-                        {it}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {service.price ? (
+                <p className="mt-5 text-center font-display text-xl text-[#B8935C]">
+                  {formatCOP(service.price)}
+                </p>
+              ) : (
+                <p className="mt-5 text-center text-base font-medium text-[#B8935C]">
+                  Consultar precio
+                </p>
               )}
 
               <button
                 onClick={() => openWhatsapp(buildServiceMsg(service))}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 text-sm font-semibold text-[#0B0B0C] active:scale-[0.98] transition-transform"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#B8935C] py-3.5 text-base font-semibold text-[#0B0B0C] active:scale-[0.98] transition-transform"
               >
-                <MessageCircle size={16} strokeWidth={2.4} />
+                <MessageCircle size={17} strokeWidth={2.4} />
                 Más información
               </button>
             </div>
