@@ -39,10 +39,11 @@ export default function ExperiencesPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <PageHeader title="Servicios & Experiencias" subtitle="El portafolio de AMBAR para tu ocasión" />
-
-      <div className="sticky top-[86px] z-20 bg-[#0B0B0C]/90 backdrop-blur-md py-3">
-        <CategoryTabs categories={experienceCategories} active={category} onChange={setCategory} />
+      <div className="sticky top-0 z-30 flex-none bg-[#0B0B0C] shadow-sm">
+        <PageHeader title="Servicios & Experiencias" subtitle="El portafolio de AMBAR para tu ocasión" />
+        <div className="px-5 pt-0 mt-[-4px] pb-3">
+          <CategoryTabs categories={experienceCategories} active={category} onChange={setCategory} />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-5 pt-4">

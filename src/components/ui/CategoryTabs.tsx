@@ -12,7 +12,7 @@ export default function CategoryTabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div className="scrollbar-thin flex gap-2 overflow-x-auto px-5 pb-1">
+    <div className="scrollbar-thin flex gap-2 overflow-x-auto pb-1">
       {categories.map((c) => {
         const isActive = c.id === active;
         return (
