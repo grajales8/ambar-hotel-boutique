@@ -31,7 +31,7 @@ export default function WelcomeHero() {
         className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 px-8 pb-1.5 md:pb-3 text-center"
       >
         <Image
-          src="/brand/logo-dorado.png"
+          src="/brand/logo-terracota.png"
           alt="AMBAR Hotel Boutique"
           width={640}
           height={486}
