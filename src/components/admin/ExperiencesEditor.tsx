@@ -194,22 +194,6 @@ export default function ExperiencesEditor() {
               />
             </div>
 
-            <div>
-              <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
-                Beneficios (una línea por ítem, opcional)
-              </label>
-              <textarea
-                value={service.benefits.join("\n")}
-                onChange={(e) =>
-                  update(service.id, {
-                    benefits: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
-                  })
-                }
-                rows={2}
-                className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-              />
-            </div>
-
             <div className="flex items-center gap-2">
               <span className="text-xs text-[#D4CCBF]">Precio (deja vacío para &quot;Consultar&quot;)</span>
               <input
