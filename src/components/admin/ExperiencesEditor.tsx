@@ -53,10 +53,13 @@ export default function ExperiencesEditor() {
 
   function add() {
     const id = `exp-${Date.now()}`;
+    const firstCat = experienceCategories[0];
+    const firstSub = firstCat?.subcategories?.[0];
     const next: ExperienceService = {
       id,
       name: "Nuevo servicio",
-      categoryId: experienceCategories[0]?.id ?? "",
+      categoryId: firstCat?.id ?? "",
+      subcategory: firstSub?.id ?? undefined,
       shortDescription: "",
       fullDescription: "",
       includes: [],
@@ -141,21 +144,44 @@ export default function ExperiencesEditor() {
       <div className="space-y-4">
         {services.map((service, index) => (
           <div key={service.id} className="rounded-2xl bg-[#1E1C1A] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.3)] space-y-3" style={{ border: "1px solid rgba(184,147,92,0.22)" }}>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <input
                 value={service.name}
                 onChange={(e) => update(service.id, { name: e.target.value })}
                 placeholder="Nombre del servicio"
-                className="flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+                className="flex-1 min-w-[160px] rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
               />
               <select
                 value={service.categoryId}
-                onChange={(e) => update(service.id, { categoryId: e.target.value })}
+                onChange={(e) => {
+                  const nextCatId = e.target.value;
+                  const nextCat = experienceCategories.find((c) => c.id === nextCatId);
+                  const firstSub = nextCat?.subcategories?.[0]?.id;
+                  update(service.id, { categoryId: nextCatId, subcategory: firstSub });
+                }}
                 className="w-40 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
               >
                 {experienceCategories.map((c) => (
                   <option key={c.id} value={c.id} className="bg-[#1E1C1A]">
                     {c.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={service.subcategory ?? ""}
+                onChange={(e) =>
+                  update(service.id, {
+                    subcategory: e.target.value === "" ? undefined : e.target.value,
+                  })
+                }
+                className="w-40 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-2 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+              >
+                <option value="" className="bg-[#1E1C1A]">
+                  Sin subcategoría
+                </option>
+                {(experienceCategories.find((c) => c.id === service.categoryId)?.subcategories ?? []).map((s) => (
+                  <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
+                    {s.label}
                   </option>
                 ))}
               </select>

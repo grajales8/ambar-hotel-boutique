@@ -1,10 +1,43 @@
-import { ExperienceCategory, ExperienceService } from "@/lib/types";
+import { MenuCategory, ExperienceService } from "@/lib/types";
 
-export const experienceCategories: ExperienceCategory[] = [
-  { id: "decoraciones", name: "Decoraciones" },
-  { id: "corporativo", name: "Eventos Corporativos" },
-  { id: "alimentos", name: "Alimentos y Bebidas" },
-  { id: "paquetes", name: "Paquetes Especiales" },
+export const experienceCategories: MenuCategory[] = [
+  {
+    id: "decoraciones",
+    name: "Decoraciones",
+    order: 0,
+    subcategories: [
+      { id: "romanticas", label: "Románticas", order: 0 },
+      { id: "cumpleanos", label: "Cumpleaños", order: 1 },
+    ],
+  },
+  {
+    id: "corporativo",
+    name: "Eventos Corporativos",
+    order: 1,
+    subcategories: [
+      { id: "espacios", label: "Espacios", order: 0 },
+      { id: "alimentos-corp", label: "Alimentos", order: 1 },
+    ],
+  },
+  {
+    id: "alimentos",
+    name: "Alimentos y Bebidas",
+    order: 2,
+    subcategories: [
+      { id: "catering", label: "Catering", order: 0 },
+      { id: "cocteleria", label: "Coctelería", order: 1 },
+      { id: "experiencias-gastronomicas", label: "Experiencias", order: 2 },
+    ],
+  },
+  {
+    id: "paquetes",
+    name: "Paquetes Especiales",
+    order: 3,
+    subcategories: [
+      { id: "pareja", label: "En Pareja", order: 0 },
+      { id: "amedida", label: "A Medida", order: 1 },
+    ],
+  },
 ];
 
 const img = (prompt: string) =>
@@ -20,6 +53,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-1",
     name: "Decoración Romántica",
     categoryId: "decoraciones",
+    subcategory: "romanticas",
     shortDescription: "Pétalos, velas y detalles para una noche inolvidable en tu habitación.",
     fullDescription:
       "Transformamos tu habitación en un ambiente íntimo y romántico, ideal para sorprender a esa persona especial en una fecha importante o simplemente porque sí.",
@@ -43,6 +77,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-2",
     name: "Decoración de Cumpleaños",
     categoryId: "decoraciones",
+    subcategory: "cumpleanos",
     shortDescription: "Globos, torta y ambientación especial para celebrar un año más.",
     fullDescription:
       "Organizamos la sorpresa de cumpleaños dentro de la habitación o en un espacio privado del hotel, con ambientación festiva y atención a cada detalle.",
@@ -63,6 +98,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-3",
     name: "Salón de Reuniones",
     categoryId: "corporativo",
+    subcategory: "espacios",
     shortDescription: "Espacio versátil para reuniones, capacitaciones y presentaciones.",
     fullDescription:
       "Nuestro salón se adapta a distintos formatos —auditorio, mesa en U, estilo escuela— para reuniones de trabajo, capacitaciones o presentaciones corporativas.",
@@ -80,6 +116,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-4",
     name: "Coffee Break Empresarial",
     categoryId: "corporativo",
+    subcategory: "alimentos-corp",
     shortDescription: "Servicio de café y pasabocas para tus reuniones de trabajo.",
     fullDescription:
       "Un coffee break completo para acompañar reuniones, capacitaciones o jornadas de trabajo, servido en el salón de eventos o en la sala que elijas.",
@@ -98,6 +135,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-4b",
     name: "Almuerzos Ejecutivos",
     categoryId: "corporativo",
+    subcategory: "alimentos-corp",
     shortDescription: "Menús ejecutivos para grupos, servicio en salón o en sitio privado.",
     fullDescription:
       "Almuerzos ejecutivos de tres tiempos para tu equipo o clientes, servidos en espacio privado o dentro del salón de eventos, con menú que combina cocina internacional y colombiana.",
@@ -118,6 +156,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-5",
     name: "Catering de Autor",
     categoryId: "alimentos",
+    subcategory: "catering",
     shortDescription: "Menús personalizados por el chef para eventos privados o corporativos.",
     fullDescription:
       "Nuestro equipo de cocina diseña un menú a la medida de tu evento, desde almuerzos ejecutivos hasta cenas de gala, con servicio completo en sitio.",
@@ -136,6 +175,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-6",
     name: "Cenas Especiales Privadas",
     categoryId: "alimentos",
+    subcategory: "catering",
     shortDescription: "Una mesa exclusiva en el lugar del hotel que prefieras.",
     fullDescription:
       "Disfruta de una cena privada preparada por nuestro chef, servida en la terraza, el jardín o tu propia habitación, con el menú que elijas.",
@@ -154,6 +194,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-6b",
     name: "Barra Libre Premium",
     categoryId: "alimentos",
+    subcategory: "cocteleria",
     shortDescription: "Coctelería clásica y de autor por 4 horas ilimitadas.",
     fullDescription:
       "Barra libre premium durante 4 horas para tu evento. Incluye vinos, licores internacionales, cocteles clásicos y una selección de cocteles firma del barman del Ámbar.",
@@ -172,6 +213,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-6c",
     name: "Degustación de Vinos",
     categoryId: "alimentos",
+    subcategory: "experiencias-gastronomicas",
     shortDescription: "Cata guiada por sommeliers con 5 etiquetas premium + maridajes.",
     fullDescription:
       "Una experiencia de 2 horas guiada por nuestro sommelier. Catas de vinos tintos, blancos y rosés de viñedos colombianos y sudamericanos, acompañados de maridajes gourmet diseñados por el chef.",
@@ -190,6 +232,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-6d",
     name: "Piqueo y Cervezas Artesanales",
     categoryId: "alimentos",
+    subcategory: "experiencias-gastronomicas",
     shortDescription: "Pasabocas premium + barra de 8 cervezas artesanales colombianas.",
     fullDescription:
       "Una experiencia piqueo y cerveceril para grupos. Selección de 8 cervezas artesanales de diferentes regiones de Colombia, acompañadas de una tabla de pasabocas premium diseñada para maridar.",
@@ -208,6 +251,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-6e",
     name: "Brunch Gourmet",
     categoryId: "alimentos",
+    subcategory: "experiencias-gastronomicas",
     shortDescription: "Desayuno-almuerzo premium con estación de huevos, waffles y mimosa.",
     fullDescription:
       "Un brunch completo sabatino o dominical para 2 personas o grupos. Estación de huevos a la carta, waffles belgas con frutas, panadería francesa, salmón ahumado y barra de mimosas ilimitadas por 2 horas.",
@@ -228,6 +272,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-7",
     name: "Escapada Romántica",
     categoryId: "paquetes",
+    subcategory: "pareja",
     shortDescription: "Noche de hospedaje, decoración y cena para dos.",
     fullDescription:
       "El paquete completo para una escapada en pareja: hospedaje, ambientación romántica en la habitación y cena privada incluida.",
@@ -246,6 +291,7 @@ export const experienceServices: ExperienceService[] = [
     id: "e-8",
     name: "Paquete Personalizado",
     categoryId: "paquetes",
+    subcategory: "amedida",
     shortDescription: "Diseñamos contigo una experiencia a la medida de tu celebración.",
     fullDescription:
       "¿Tienes algo especial en mente? Armamos un paquete a tu medida combinando hospedaje, decoración, gastronomía y los detalles que quieras incluir.",

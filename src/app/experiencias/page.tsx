@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
-import { experienceCategories, experienceServices as defaultServices } from "@/data/experiences";
+import { experienceCategories as fallbackCats, experienceServices as defaultServices } from "@/data/experiences";
 import { loadCollection } from "@/lib/storage";
-import { ExperienceService } from "@/lib/types";
+import { ExperienceService, MenuCategory } from "@/lib/types";
 import { formatCOP } from "@/lib/cart-context";
 import PageHeader from "@/components/ui/PageHeader";
 import CategoryTabs from "@/components/ui/CategoryTabs";
@@ -16,111 +16,347 @@ function buildServiceMsg(service: ExperienceService) {
   return `Hola, soy huésped de AMBAR Hotel Boutique y quisiera más información sobre: ${service.name}.`;
 }
 
+function orderByOrder<T extends { order?: number; id: string }>(list: T[]): T[] {
+  return [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || String(a.id).localeCompare(String(b.id)));
+}
+
+function subLabel(id: string, activeCat: MenuCategory | undefined) {
+  if (!id) return "";
+  const sub = activeCat?.subcategories.find((s) => s.id === id);
+  if (sub) return sub.label;
+  return id;
+}
+
 export default function ExperiencesPage() {
-  const [category, setCategory] = useState(experienceCategories[0].id);
+  const [category, setCategory] = useState(fallbackCats[0].id);
   const [services, setServices] = useState<ExperienceService[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>(fallbackCats);
   const [loading, setLoading] = useState(true);
+  const [sub, setSub] = useState<string>("");
   const [selectedService, setSelectedService] = useState<ExperienceService | null>(null);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const subheadingRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const scrollSuppressRef = useRef(false);
 
   useEffect(() => {
     let active = true;
-    loadCollection<ExperienceService>("experiences", defaultServices).then((data) => {
-      if (active) {
-        setServices([...data].sort((a, b) => a.order - b.order));
-        setLoading(false);
+    Promise.all([
+      loadCollection<MenuCategory>("experienceCategories", fallbackCats),
+      loadCollection<ExperienceService>("experiences", defaultServices),
+    ]).then(([cats, data]) => {
+      if (!active) return;
+      const sorted = orderByOrder(cats);
+      setCategories(sorted);
+      setServices([...data].sort((a, b) => a.order - b.order));
+      if (!sorted.some((c) => c.id === category)) {
+        setCategory(sorted[0]?.id ?? "");
       }
+      setLoading(false);
     });
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filtered = services.filter((s) => s.categoryId === category && s.active);
+  const filterByCategory = useMemo(() => {
+    const out = new Map<string, ExperienceService[]>();
+    categories.forEach((c) => out.set(c.id, []));
+    services.forEach((s) => {
+      if (!out.has(s.categoryId)) out.set(s.categoryId, []);
+      if (s.active) out.get(s.categoryId)!.push(s);
+    });
+    return out;
+  }, [categories, services]);
+
+  const activeCategory = categories.find((c) => c.id === category);
+
+  const subOptions = useMemo(() => {
+    if (!activeCategory) return [] as string[];
+    const items = filterByCategory.get(activeCategory.id) ?? [];
+    const subs = orderByOrder(activeCategory.subcategories).filter((s) =>
+      items.some((it) => it.subcategory === s.id)
+    );
+    return subs.map((s) => s.id);
+  }, [activeCategory, filterByCategory]);
+
+  useEffect(() => {
+    setSub(subOptions[0] ?? "");
+  }, [category, subOptions]);
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    const detectActive = () => {
+      if (scrollSuppressRef.current) return;
+      const rootRect = root.getBoundingClientRect();
+      const anchorY = 140;
+
+      let activeCatId: string | null = null;
+      let bestCatTop = -Infinity;
+      sectionRefs.current.forEach((el, catId) => {
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestCatTop) {
+          bestCatTop = relTop;
+          activeCatId = catId;
+        }
+      });
+      if (activeCatId && activeCatId !== category) {
+        setCategory(activeCatId);
+        const nextCat = categories.find((c) => c.id === activeCatId);
+        if (nextCat) {
+          const itemsOfNext = filterByCategory.get(nextCat.id) ?? [];
+          const firstSub = orderByOrder(nextCat.subcategories)
+            .filter((s) => itemsOfNext.some((it) => it.subcategory === s.id))
+            .map((s) => s.id)[0];
+          if (firstSub) setSub(firstSub);
+        }
+      }
+
+      let activeSubId: string | null = null;
+      let bestSubTop = -Infinity;
+      subheadingRefs.current.forEach((el, key) => {
+        const [catId, sid] = key.split(":");
+        if (catId !== activeCatId) return;
+        const rect = el.getBoundingClientRect();
+        const relTop = rect.top - rootRect.top;
+        if (relTop <= anchorY + 30 && relTop > bestSubTop) {
+          bestSubTop = relTop;
+          activeSubId = sid;
+        }
+      });
+      if (activeSubId && activeSubId !== sub) {
+        setSub(activeSubId);
+      }
+    };
+    detectActive();
+    const onScroll = () => {
+      window.requestAnimationFrame(detectActive);
+    };
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [categories, loading, category, sub, filterByCategory]);
+
+  function renderCard(service: ExperienceService, i: number) {
+    return (
+      <motion.div
+        key={service.id}
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.35, delay: 0.04 * i, ease: "easeOut" }}
+        className="overflow-hidden rounded-2xl bg-[#1E1C1A] shadow-[var(--shadow-card)] flex flex-col"
+        style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+      >
+        <div
+          className="relative cursor-zoom-in overflow-hidden"
+          onClick={() => setSelectedService(service)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setSelectedService(service);
+            }
+          }}
+          aria-label={`Ver detalles de ${service.name}`}
+        >
+          <div className="relative h-36 w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={service.images[0]}
+              alt={service.name}
+              className="h-full w-full object-cover"
+            />
+            <span className="absolute left-2 top-2 rounded-full bg-[#1E1C1A]/90 px-2.5 py-1 text-[10px] font-medium text-[#B8935C]">
+              {categories.find((c) => c.id === service.categoryId)?.name}
+            </span>
+          </div>
+        </div>
+        <div className="p-4 flex flex-col flex-1">
+          <h3 className="font-display text-base leading-snug text-[#F5EFE6]">
+            {service.name}
+          </h3>
+          <p className="mt-1 text-xs leading-snug text-[#D4CCBF] line-clamp-2">
+            {service.shortDescription}
+          </p>
+          <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-2">
+            <span className="font-display text-base text-[#B8935C]">
+              {service.price ? formatCOP(service.price) : "Consultar"}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                openWhatsapp(buildServiceMsg(service));
+              }}
+              className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-xs font-semibold text-[#0B0B0C] active:scale-[0.97] transition-transform"
+            >
+              <MessageCircle size={13} strokeWidth={2.4} />
+              Más información
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  function scrollToCat(catId: string) {
+    const el = sectionRefs.current.get(catId);
+    const root = scrollRef.current;
+    if (el && root) {
+      scrollSuppressRef.current = true;
+      setCategory(catId);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.clearTimeout((scrollSuppressRef as any)._t);
+      (scrollSuppressRef as any)._t = window.setTimeout(() => {
+        scrollSuppressRef.current = false;
+      }, 700);
+    }
+  }
+
+  function scrollToSub(sid: string) {
+    const key = `${category}:${sid}`;
+    const el = subheadingRefs.current.get(key);
+    const root = scrollRef.current;
+    if (el && root) {
+      scrollSuppressRef.current = true;
+      setSub(sid);
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.clearTimeout((scrollSuppressRef as any)._t);
+      (scrollSuppressRef as any)._t = window.setTimeout(() => {
+        scrollSuppressRef.current = false;
+      }, 700);
+    }
+  }
 
   return (
-    <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <div className="sticky top-0 z-30 flex-none bg-[#0B0B0C] shadow-sm">
-        <PageHeader title="Servicios & Experiencias" subtitle="El portafolio de AMBAR para tu ocasión" />
-        <div className="px-5 pt-0 mt-[-4px] pb-3">
-          <CategoryTabs categories={experienceCategories} active={category} onChange={setCategory} />
+    <main className="h-[100svh] overflow-hidden flex flex-col bg-[#0B0B0C]">
+      <div className="sticky top-0 z-30 flex-none bg-[#0B0B0C]">
+        <PageHeader sticky={false} title="Servicios & Experiencias" subtitle="El portafolio de AMBAR para tu ocasión" />
+
+        <div className="px-5 py-3 flex-none">
+          <CategoryTabs
+            categories={categories}
+            active={category}
+            onChange={(c) => scrollToCat(c)}
+          />
         </div>
+
+        {subOptions.length > 0 && (
+          <div className="px-5 pb-3 flex-none">
+            <div className="scrollbar-thin flex gap-1.5 overflow-x-auto">
+              {subOptions.map((sid) => {
+                const active = sub === sid;
+                return (
+                  <button
+                    key={sid}
+                    onClick={() => scrollToSub(sid)}
+                    className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                      active ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#1E1C1A] text-[#F5EFE6]"
+                    }`}
+                    style={!active ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                  >
+                    {subLabel(sid, activeCategory).toLowerCase()}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 px-5 pt-4">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto snap-y snap-proximity overscroll-contain scrollbar-thin pb-10 [scroll-padding-top:140px]"
+      >
         {loading && (
-          <p className="col-span-2 pt-6 text-center text-sm text-[#D4CCBF]">Cargando…</p>
+          <section className="min-h-full flex items-center justify-center">
+            <p className="text-sm text-[#D4CCBF]">Cargando…</p>
+          </section>
         )}
         {!loading &&
-          filtered.map((service, i) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.35, delay: 0.04 * i, ease: "easeOut" }}
-              className="overflow-hidden rounded-2xl bg-[#1E1C1A] shadow-[var(--shadow-card)] flex flex-col"
-              style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-            >
-              <div
-                className="relative cursor-zoom-in overflow-hidden"
-                onClick={() => setSelectedService(service)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedService(service);
-                  }
+          categories.map((cat) => {
+            const items = filterByCategory.get(cat.id) ?? [];
+            const allSubsOfCat = orderByOrder(cat.subcategories);
+            const catSubOptionsIds = allSubsOfCat
+              .filter((s) => items.some((it) => it.subcategory === s.id))
+              .map((s) => s.id);
+            const order: string[] = [];
+            const groups = new Map<string, ExperienceService[]>();
+            if (catSubOptionsIds.length > 0) {
+              catSubOptionsIds.forEach((sid) => {
+                order.push(sid);
+                groups.set(sid, []);
+              });
+              items.forEach((it) => {
+                const k = it.subcategory || "";
+                if (!groups.has(k)) {
+                  order.unshift(k);
+                  groups.set(k, []);
+                }
+                groups.get(k)!.push(it);
+              });
+            }
+            const renderAsSubSnap = order.length > 0;
+            return (
+              <section
+                key={cat.id}
+                data-cat-id={cat.id}
+                ref={(node) => {
+                  if (node) sectionRefs.current.set(cat.id, node);
+                  else sectionRefs.current.delete(cat.id);
                 }}
-                aria-label={`Ver detalles de ${service.name}`}
+                className={renderAsSubSnap ? "flex flex-col" : `snap-start flex flex-col ${items.length === 0 ? "min-h-[20vh]" : "min-h-[50vh]"}`}
               >
-                <div className="relative h-36 w-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={service.images[0]}
-                    alt={service.name}
-                    className="h-full w-full object-cover"
-                  />
-                  <span className="absolute left-2 top-2 rounded-full bg-[#1E1C1A]/90 px-2.5 py-1 text-[10px] font-medium text-[#B8935C]">
-                    {experienceCategories.find((c) => c.id === service.categoryId)?.name}
-                  </span>
+                <div className="flex-1 px-5 pt-2 pb-6 space-y-6">
+                  {items.length === 0 ? (
+                    <p className="py-10 text-center text-sm text-[#D4CCBF]/70">
+                      Próximamente más experiencias en esta categoría.
+                    </p>
+                  ) : !renderAsSubSnap ? (
+                    <div className="grid grid-cols-2 gap-4">{items.map((s, i) => renderCard(s, i))}</div>
+                  ) : (
+                    order.map((sid) => {
+                      const groupItems = groups.get(sid) ?? [];
+                      const label = subLabel(sid, cat);
+                      if (groupItems.length === 0) return null;
+                      return (
+                        <div
+                          key={sid || "otros"}
+                          className="space-y-4 snap-start"
+                        >
+                          {label && (
+                            <div
+                              data-sub-id={sid}
+                              ref={(node) => {
+                                const key = `${cat.id}:${sid}`;
+                                if (node) subheadingRefs.current.set(key, node);
+                                else subheadingRefs.current.delete(key);
+                              }}
+                              className="flex items-center gap-2 pt-1"
+                            >
+                              <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
+                              <h3 className="text-[13px] md:text-sm font-semibold tracking-[0.16em] uppercase text-[#B8935C] shrink-0">
+                                {label.toUpperCase()}
+                              </h3>
+                              <span className="h-px flex-1 bg-[rgba(184,147,92,0.22)]" />
+                            </div>
+                          )}
+                          <div className="grid grid-cols-2 gap-4 pb-8">{groupItems.map((s, i) => renderCard(s, i))}</div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              </div>
-              <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-display text-base leading-snug text-[#F5EFE6]">
-                  {service.name}
-                </h3>
-                <p className="mt-1 text-xs leading-snug text-[#D4CCBF] line-clamp-2">
-                  {service.shortDescription}
-                </p>
-                <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-2">
-                  <span className="font-display text-base text-[#B8935C]">
-                    {service.price ? formatCOP(service.price) : "Consultar"}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openWhatsapp(buildServiceMsg(service));
-                    }}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B8935C] py-2.5 text-xs font-semibold text-[#0B0B0C] active:scale-[0.97] transition-transform"
-                  >
-                    <MessageCircle size={13} strokeWidth={2.4} />
-                    Más información
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-
-        {!loading && filtered.length === 0 && (
-          <p className="col-span-2 pt-6 text-center text-sm text-[#D4CCBF]">
-            Próximamente más experiencias en esta categoría.
-          </p>
-        )}
+              </section>
+            );
+          })}
       </div>
 
       <ExperienceDetailModal service={selectedService} onClose={() => setSelectedService(null)} />
     </main>
   );
 }
-
