@@ -84,14 +84,14 @@ export default function ExperienceDetailModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.22 }}
-          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-[100] flex items-center justify-center"
           onClick={onClose}
         >
           <div className="absolute inset-0 bg-black/78 backdrop-blur-sm" />
           <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 40, opacity: 0 }}
+            initial={{ scale: 0.92, opacity: 0, y: 0 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.92, opacity: 0, y: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
             className="relative z-10 w-[min(92vw,460px)] rounded-3xl bg-[#1E1C1A] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] max-h-[86vh] flex flex-col"
