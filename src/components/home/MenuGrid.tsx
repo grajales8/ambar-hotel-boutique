@@ -101,23 +101,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-2xl px-4 md:px-5 py-4 md:py-[18px]"
-          style={{ backgroundColor: "#C9A46A" }}
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3.5 md:py-4"
+          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#0B0B0C]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
             <ChatBubbleIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base md:text-[18px] font-semibold text-[#0B0B0C]">
+            <span className="block text-base md:text-[18px] font-semibold text-[#F5EFE6]">
               Chatear con recepción
             </span>
-            <span className="block text-[12px] md:text-[13.5px] text-[#1E1C1A]">
+            <span className="block text-[12px] md:text-[13.5px] text-[#D4CCBF]">
               Estamos para ayudarte
             </span>
           </span>
-          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#0B0B0C]" />
+          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#B8935C]" />
         </motion.a>
 
         <motion.a
@@ -128,23 +128,23 @@ export default function MenuGrid() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05 * gridEntries.length + 0.05 }}
           whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2.5 md:gap-3 rounded-2xl px-4 md:px-5 py-4 md:py-[18px]"
-          style={{ backgroundColor: "#C9A46A" }}
+          className="flex items-center gap-2.5 md:gap-3 rounded-xl px-3 md:px-4 py-3.5 md:py-4"
+          style={{ backgroundColor: "#1E1C1A", border: "1px solid rgba(184,147,92,0.22)" }}
         >
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#0B0B0C]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center -ml-1 text-[#B8935C]"
           >
             <StarOutlineIcon className="h-[30px] w-[30px] md:h-[34px] md:w-[34px]" strokeWidth={2} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-base md:text-[18px] font-semibold text-[#0B0B0C]">
+            <span className="block text-base md:text-[18px] font-semibold text-[#F5EFE6]">
               Calificar experiencia
             </span>
-            <span className="block text-[12px] md:text-[13.5px] text-[#1E1C1A]">
+            <span className="block text-[12px] md:text-[13.5px] text-[#D4CCBF]">
               Tu opinión nos ayuda a mejorar
             </span>
           </span>
-          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#0B0B0C]" />
+          <ChevronRight size={18} className="md:h-5 md:w-5 shrink-0 text-[#B8935C]" />
         </motion.a>
       </div>
     </div>
