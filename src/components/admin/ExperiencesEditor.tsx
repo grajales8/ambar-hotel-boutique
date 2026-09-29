@@ -56,6 +56,7 @@ export default function ExperiencesEditor() {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
   const [expandedCatId, setExpandedCatId] = useState<string | null>(initialCategories[0]?.id ?? null);
   const [restoring, setRestoring] = useState(false);
+  const [activeSubByCat, setActiveSubByCat] = useState<Record<string, string>>({});
 
   const [dragCatId, setDragCatId] = useState<string | null>(null);
   const [dragSubId, setDragSubId] = useState<string | null>(null);
@@ -110,10 +111,15 @@ export default function ExperiencesEditor() {
   function addItemInto(categoryId: string) {
     const cat = categories.find((c) => c.id === categoryId);
     const id = `exp-${Date.now()}`;
+    const activeSub = activeSubByCat[categoryId] ?? "__all__";
+    const subcategory =
+      activeSub !== "__all__" && activeSub !== "__unassigned__"
+        ? activeSub
+        : cat?.subcategories?.[0]?.id ?? undefined;
     const next: ExperienceService = {
       id,
       categoryId,
-      subcategory: cat?.subcategories?.[0]?.id ?? undefined,
+      subcategory,
       name: "Nuevo servicio",
       shortDescription: "",
       fullDescription: "",
@@ -575,35 +581,100 @@ export default function ExperiencesEditor() {
                       )}
                     </div>
 
-                    {/* BLOQUE SERVICIOS */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Package size={16} className="text-[#B8935C] shrink-0" />
-                          <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
-                            Servicios
-                          </h4>
-                          <span className="text-xs text-[#D4CCBF]">
-                            ({catServices.length})
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => addItemInto(cat.id)}
-                          className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
-                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                        >
-                          <Plus size={13} className="text-[#B8935C]" />
-                          Añadir
-                        </button>
-                      </div>
+                    {/* BARRA CHIPS: filtrar por subcategoría */}
+                    {(() => {
+                      const activeSub = activeSubByCat[cat.id] ?? "__all__";
+                      const unassignedCount = catServices.filter((s) => !s.subcategory).length;
+                      const subOptions = orderByOrder(cat.subcategories);
+                      const filteredServices: ExperienceService[] = (() => {
+                        if (activeSub === "__all__") return catServices;
+                        if (activeSub === "__unassigned__") return catServices.filter((s) => !s.subcategory);
+                        return catServices.filter((s) => s.subcategory === activeSub);
+                      })();
+                      const addLabel = (() => {
+                        if (activeSub === "__all__") return "Añadir";
+                        if (activeSub === "__unassigned__") return "Añadir sin asignar";
+                        const s = subOptions.find((s) => s.id === activeSub);
+                        return `Añadir a ${s?.label ?? "subcategoría"}`;
+                      })();
+                      const emptyMsg = (() => {
+                        if (catServices.length === 0) return "Esta categoría aún no tiene servicios.";
+                        if (activeSub === "__unassigned__") return "No hay servicios sin asignar en esta categoría.";
+                        if (activeSub === "__all__") return "Esta categoría aún no tiene servicios.";
+                        const s = subOptions.find((s) => s.id === activeSub);
+                        return `Aún no hay servicios en "${s?.label ?? "esta subcategoría"}`;
+                      })();
+                      return (
+                        <>
+                          <div className="mb-3">
+                            <div className="scrollbar-thin flex items-center gap-1.5 overflow-x-auto pb-1">
+                              <button
+                                onClick={() =>
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__all__" }))}
+                                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                  activeSub === "__all__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                }`}
+                                style={activeSub !== "__all__" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                              >
+                                Todos ({catServices.length})
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__unassigned__" }))}
+                                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                  activeSub === "__unassigned__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                }`}
+                                style={activeSub !== "__unassigned__" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                              >
+                                Sin asignar ({unassignedCount})
+                              </button>
+                              {subOptions.map((sub) => {
+                                const count = catServices.filter((s) => s.subcategory === sub.id).length;
+                                const isOn = activeSub === sub.id;
+                                return (
+                                  <button
+                                    key={sub.id}
+                                    onClick={() =>
+                                      setActiveSubByCat((prev) => ({ ...prev, [cat.id]: sub.id }))}
+                                    className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                      isOn ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                    }`}
+                                    style={!isOn ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                                  >
+                                    {sub.label} ({count})
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
 
-                      {catServices.length === 0 ? (
-                        <p className="text-xs text-[#D4CCBF]/70 py-2 text-center">
-                          Esta categoría aún no tiene servicios.
-                        </p>
-                      ) : (
-                        <div className="space-y-3">
-                          {orderByOrder(catServices).map((service, iIdx) => {
+                          {/* BLOQUE SERVICIOS */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Package size={16} className="text-[#B8935C] shrink-0" />
+                                <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
+                                  Servicios
+                                </h4>
+                                <span className="text-xs text-[#D4CCBF]">
+                                  ({filteredServices.length}/{catServices.length})
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => addItemInto(cat.id)}
+                                className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
+                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                              >
+                                <Plus size={13} className="text-[#B8935C]" />
+                                {addLabel}
+                              </button>
+                            </div>
+
+                            {filteredServices.length === 0 ? (
+                              <p className="text-xs text-[#D4CCBF]/70 py-2 text-center">{emptyMsg}</p>
+                            ) : (
+                              <div className="space-y-3">
+                                {orderByOrder(filteredServices).map((service, iIdx) => {
                             const isItemDrag = dragItemId === service.id;
                             return (
                               <div
@@ -815,7 +886,10 @@ export default function ExperiencesEditor() {
                           })}
                         </div>
                       )}
-                    </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

@@ -61,6 +61,7 @@ export default function CatalogEditor({
   const [activeCategoryId, setActiveCategoryId] = useState<string>(initialCategories[0]?.id ?? "");
   const [expandedCatId, setExpandedCatId] = useState<string | null>(initialCategories[0]?.id ?? null);
   const [restoring, setRestoring] = useState(false);
+  const [activeSubByCat, setActiveSubByCat] = useState<Record<string, string>>({});
 
   const [dragCatId, setDragCatId] = useState<string | null>(null);
   const [dragSubId, setDragSubId] = useState<string | null>(null);
@@ -115,10 +116,13 @@ export default function CatalogEditor({
 
   function addItemInto(categoryId: string) {
     const id = `${storageKey}-${Date.now()}`;
+    const activeSub = activeSubByCat[categoryId] ?? "__all__";
+    const subcategory =
+      activeSub !== "__all__" && activeSub !== "__unassigned__" ? activeSub : undefined;
     const next: MenuItem = {
       id,
       categoryId,
-      subcategory: undefined,
+      subcategory,
       name: "Nuevo producto",
       description: "",
       price: 0,
@@ -648,35 +652,100 @@ export default function CatalogEditor({
                       )}
                     </div>
 
-                    {/* BLOQUE PRODUCTOS */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Package size={16} className="text-[#B8935C] shrink-0" />
-                          <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
-                            Productos
-                          </h4>
-                          <span className="text-xs text-[#D4CCBF]">
-                            ({catItems.length})
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => addItemInto(cat.id)}
-                          className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
-                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                        >
-                          <Plus size={13} className="text-[#B8935C]" />
-                          Añadir
-                        </button>
-                      </div>
+                    {/* BARRA CHIPS: filtrar por subcategoría */}
+                    {(() => {
+                      const activeSub = activeSubByCat[cat.id] ?? "__all__";
+                      const unassignedCount = catItems.filter((i) => !i.subcategory).length;
+                      const subOptions = orderByOrder(cat.subcategories);
+                      const filteredItems: MenuItem[] = (() => {
+                        if (activeSub === "__all__") return catItems;
+                        if (activeSub === "__unassigned__") return catItems.filter((i) => !i.subcategory);
+                        return catItems.filter((i) => i.subcategory === activeSub);
+                      })();
+                      const addLabel = (() => {
+                        if (activeSub === "__all__") return "Añadir";
+                        if (activeSub === "__unassigned__") return "Añadir sin asignar";
+                        const s = subOptions.find((s) => s.id === activeSub);
+                        return `Añadir a ${s?.label ?? "subcategoría"}`;
+                      })();
+                      const emptyMsg = (() => {
+                        if (catItems.length === 0) return "Esta categoría aún no tiene productos.";
+                        if (activeSub === "__unassigned__") return "No hay productos sin asignar en esta categoría.";
+                        if (activeSub === "__all__") return "Esta categoría aún no tiene productos.";
+                        const s = subOptions.find((s) => s.id === activeSub);
+                        return `Aún no hay productos en "${s?.label ?? "esta subcategoría"}`;
+                      })();
+                      return (
+                        <>
+                          <div className="mb-3">
+                            <div className="scrollbar-thin flex items-center gap-1.5 overflow-x-auto pb-1">
+                              <button
+                                onClick={() =>
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__all__" })}
+                                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                  activeSub === "__all__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                }`}
+                                style={activeSub !== "__all__" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                              >
+                                Todos ({catItems.length})
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__unassigned__" })}
+                                className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                  activeSub === "__unassigned__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                }`}
+                                style={activeSub !== "__unassigned__" ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                              >
+                                Sin asignar ({unassignedCount})
+                              </button>
+                              {subOptions.map((sub) => {
+                                const count = catItems.filter((i) => i.subcategory === sub.id).length;
+                                const isOn = activeSub === sub.id;
+                                return (
+                                  <button
+                                    key={sub.id}
+                                    onClick={() =>
+                                      setActiveSubByCat((prev) => ({ ...prev, [cat.id]: sub.id })}
+                                    className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
+                                      isOn ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
+                                    }`}
+                                    style={!isOn ? { border: "1px solid rgba(184,147,92,0.22)" } : undefined}
+                                  >
+                                    {sub.label} ({count})
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
 
-                      {catItems.length === 0 ? (
-                        <p className="text-xs text-[#D4CCBF]/70 py-2 text-center">
-                          Esta categoría aún no tiene productos.
-                        </p>
-                      ) : (
-                        <div className="space-y-3">
-                          {orderByOrder(catItems).map((item, iIdx) => {
+                          {/* BLOQUE PRODUCTOS */}
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <Package size={16} className="text-[#B8935C] shrink-0" />
+                                <h4 className="text-[#F5EFE6] text-[15px] font-semibold truncate">
+                                  Productos
+                                </h4>
+                                <span className="text-xs text-[#D4CCBF]">
+                                  ({filteredItems.length}/{catItems.length})
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => addItemInto(cat.id)}
+                                className="flex items-center gap-1.5 rounded-full bg-[#2A2724] px-3.5 py-1.5 text-xs text-[#F5EFE6] active:scale-95"
+                                style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                              >
+                                <Plus size={13} className="text-[#B8935C]" />
+                                {addLabel}
+                              </button>
+                            </div>
+
+                            {filteredItems.length === 0 ? (
+                              <p className="text-xs text-[#D4CCBF]/70 py-2 text-center">{emptyMsg}</p>
+                            ) : (
+                              <div className="space-y-3">
+                                {orderByOrder(filteredItems).map((item, iIdx) => {
                             const isItemDrag = dragItemId === item.id;
                             return (
                               <div
@@ -866,7 +935,10 @@ export default function CatalogEditor({
                           })}
                         </div>
                       )}
-                    </div>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 )}
               </div>
