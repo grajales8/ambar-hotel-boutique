@@ -249,7 +249,11 @@ function BoutiqueContent() {
                 }
                 groups.get(k)!.push(it);
               });
+              for (const [k, list] of groups) {
+                groups.set(k, orderByOrder(list));
+              }
             }
+            const sortedItemsFlat = orderByOrder(items);
             const renderAsSubSnap = order.length > 0;
             return (
               <section
@@ -267,7 +271,7 @@ function BoutiqueContent() {
                       No hay productos en esta sección.
                     </p>
                   ) : !renderAsSubSnap ? (
-                    <div className="grid grid-cols-2 gap-4">{items.map(renderCard)}</div>
+                    <div className="grid grid-cols-2 gap-4">{sortedItemsFlat.map(renderCard)}</div>
                   ) : (
                     order.map((sid) => {
                       const groupItems = groups.get(sid) ?? [];

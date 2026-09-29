@@ -299,7 +299,11 @@ export default function ExperiencesPage() {
                 }
                 groups.get(k)!.push(it);
               });
+              for (const [k, list] of groups) {
+                groups.set(k, orderByOrder(list));
+              }
             }
+            const sortedItemsFlat = orderByOrder(items);
             const renderAsSubSnap = order.length > 0;
             return (
               <section
@@ -317,7 +321,7 @@ export default function ExperiencesPage() {
                       Próximamente más experiencias en esta categoría.
                     </p>
                   ) : !renderAsSubSnap ? (
-                    <div className="grid grid-cols-2 gap-4">{items.map((s, i) => renderCard(s, i))}</div>
+                    <div className="grid grid-cols-2 gap-4">{sortedItemsFlat.map((s, i) => renderCard(s, i))}</div>
                   ) : (
                     order.map((sid) => {
                       const groupItems = groups.get(sid) ?? [];
