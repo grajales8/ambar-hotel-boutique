@@ -681,7 +681,8 @@ export default function CatalogEditor({
                             <div className="scrollbar-thin flex items-center gap-1.5 overflow-x-auto pb-1">
                               <button
                                 onClick={() =>
-                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__all__" })}
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__all__" }))
+                                }
                                 className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
                                   activeSub === "__all__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
                                 }`}
@@ -691,7 +692,8 @@ export default function CatalogEditor({
                               </button>
                               <button
                                 onClick={() =>
-                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__unassigned__" })}
+                                  setActiveSubByCat((prev) => ({ ...prev, [cat.id]: "__unassigned__" }))
+                                }
                                 className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
                                   activeSub === "__unassigned__" ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
                                 }`}
@@ -706,7 +708,8 @@ export default function CatalogEditor({
                                   <button
                                     key={sub.id}
                                     onClick={() =>
-                                      setActiveSubByCat((prev) => ({ ...prev, [cat.id]: sub.id })}
+                                      setActiveSubByCat((prev) => ({ ...prev, [cat.id]: sub.id }))
+                                    }
                                     className={`shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-medium transition-colors ${
                                       isOn ? "bg-[#B8935C] text-[#0B0B0C]" : "bg-[#161414] text-[#F5EFE6]"
                                     }`}
