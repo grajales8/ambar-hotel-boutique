@@ -98,7 +98,7 @@ export default function AdminDashboardPage() {
             categoriesStorageKey="minibarCategories"
             initialCategories={minibarCategories}
             initialItems={minibarItems}
-            allowGallery={true}
+            allowGallery={false}
           />
         )}
         {tab === "boutique" && (
