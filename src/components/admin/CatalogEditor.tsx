@@ -41,6 +41,227 @@ function reorderInPlace<T>(list: T[], fromIndex: number, toIndex: number): T[] {
   return next;
 }
 
+type CatalogItemCardHandlers = {
+  updateItem: (id: string, patch: Partial<MenuItem>) => void;
+  removeItem: (id: string) => void;
+  getItemImages: (item: MenuItem) => string[];
+  addItemImage: (itemId: string, url: string) => void;
+  removeItemImage: (itemId: string, index: number) => void;
+  moveItemImage: (itemId: string, index: number, direction: "up" | "down") => void;
+  makeItemImageCover: (itemId: string, index: number) => void;
+  onDropItem: (categoryId: string, dropTargetId: string) => void;
+  setDragItemId: (id: string | null) => void;
+  formatCOP: (n: number) => string;
+  orderByOrder: <T extends { order?: number; id: string }>(list: T[]) => T[];
+};
+
+function CatalogItemCard(props: {
+  item: MenuItem;
+  catId: string;
+  dragItemId: string | null;
+  allowGallery: boolean;
+  subcategories: Subcategory[];
+  h: CatalogItemCardHandlers;
+}) {
+  const { item, catId, dragItemId, allowGallery, subcategories, h } = props;
+  const isItemDrag = dragItemId === item.id;
+  const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
+    h.setDragItemId(item.id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", item.id);
+    const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
+    if (card) {
+      try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
+    }
+  };
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        h.onDropItem(catId, item.id);
+        h.setDragItemId(null);
+      }}
+      className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+        isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
+      }`}
+      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+        <div className="w-full sm:w-40 flex sm:block items-start gap-2">
+          <span
+            draggable
+            onDragStart={startItemDrag}
+            onDragEnd={() => h.setDragItemId(null)}
+            className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+            title="Agarrar para arrastrar y reordenar"
+          >
+            <GripVertical size={18} strokeWidth={2} />
+          </span>
+          <span
+            draggable
+            onDragStart={startItemDrag}
+            onDragEnd={() => h.setDragItemId(null)}
+            className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
+            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+            title="Agarrar para arrastrar y reordenar"
+          >
+            <GripVertical size={18} strokeWidth={2} />
+          </span>
+          <div className="flex-1 sm:flex-none">
+            {allowGallery ? (
+              <div>
+                <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
+                  Galería de fotos ({h.getItemImages(item).length})
+                </label>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                  {h.getItemImages(item).map((img, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="relative h-20 w-full overflow-hidden rounded-lg">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt="" className="h-full w-full object-cover" />
+                        {i === 0 && (
+                          <span
+                            className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
+                            style={{ border: "1px solid rgba(184,147,92,0.35)" }}
+                          >
+                            <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
+                            Portada
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        {i !== 0 && (
+                          <button
+                            onClick={() => h.makeItemImageCover(item.id, i)}
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                            aria-label="Usar como portada"
+                            title="Usar como portada"
+                          >
+                            <Star size={12} strokeWidth={2} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => h.moveItemImage(item.id, i, "up")}
+                          disabled={i === 0}
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                          aria-label="Mover antes"
+                        >
+                          <ChevronUp size={12} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          onClick={() => h.moveItemImage(item.id, i, "down")}
+                          disabled={i === h.getItemImages(item).length - 1}
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                          aria-label="Mover después"
+                        >
+                          <ChevronDown size={12} strokeWidth={2.5} />
+                        </button>
+                        <button
+                          onClick={() => h.removeItemImage(item.id, i)}
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                          aria-label="Eliminar foto"
+                        >
+                          <Trash2 size={12} strokeWidth={2} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="w-full">
+                    <ImageUploader value="" onChange={(url) => url && h.addItemImage(item.id, url)} />
+                  </div>
+                </div>
+                {h.getItemImages(item).length === 0 && (
+                  <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
+                    <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
+                    Agrega al menos una foto para que se muestre en el catálogo.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <ImageUploader
+                value={item.image}
+                onChange={(url) => h.updateItem(item.id, { image: url })}
+              />
+            )}
+          </div>
+        </div>
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex flex-col sm:flex-row sm:gap-2">
+            <input
+              value={item.name}
+              onChange={(e) => h.updateItem(item.id, { name: e.target.value })}
+              className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+              placeholder="Nombre del producto"
+            />
+            <select
+              value={item.subcategory ?? ""}
+              onChange={(e) =>
+                h.updateItem(item.id, {
+                  subcategory: e.target.value ? e.target.value : undefined,
+                })
+              }
+              className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+            >
+              <option value="">(Sin subcategoría)</option>
+              {h.orderByOrder(subcategories).map((s) => (
+                <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <textarea
+            value={item.description}
+            onChange={(e) => h.updateItem(item.id, { description: e.target.value })}
+            rows={2}
+            className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+            placeholder="Descripción"
+          />
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <input
+              type="number"
+              value={item.price}
+              onChange={(e) =>
+                h.updateItem(item.id, { price: Number(e.target.value) })
+              }
+              className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+            />
+            <span className="text-xs text-[#D4CCBF]">{h.formatCOP(item.price)}</span>
+            <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
+              <input
+                type="checkbox"
+                checked={item.available}
+                onChange={(e) =>
+                  h.updateItem(item.id, { available: e.target.checked })
+                }
+              />
+              Disponible
+            </label>
+            <div className="ml-auto">
+              <button
+                onClick={() => h.removeItem(item.id)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                aria-label="Eliminar producto"
+              >
+                <Trash2 size={14} strokeWidth={2} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CatalogEditor({
   storageKey,
   categoriesStorageKey,
@@ -597,205 +818,11 @@ export default function CatalogEditor({
                           const isSubDrag = dragSubId === sub.id;
                           const isSubExpanded = expandedSubByCat[cat.id] === sub.id;
                           const subItems = catItems.filter((it) => it.subcategory === sub.id);
-                          const ItemCard = (p: { item: MenuItem }) => {
-                            const item = p.item;
-                            const isItemDrag = dragItemId === item.id;
-                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
-                              setDragItemId(item.id);
-                              e.dataTransfer.effectAllowed = "move";
-                              e.dataTransfer.setData("text/plain", item.id);
-                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
-                              if (card) {
-                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
-                              }
-                            };
-                            return (
-                              <div
-                                key={item.id}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.dataTransfer.dropEffect = "move";
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  onDropItemWithin(cat.id, item.id);
-                                  setDragItemId(null);
-                                }}
-                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
-                                  isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
-                                }`}
-                                style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-                              >
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                                  <div className="w-full sm:w-40 flex sm:block items-start gap-2">
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
-                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <div className="flex-1 sm:flex-none">
-                                      {allowGallery ? (
-                                        <div>
-                                          <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
-                                            Galería de fotos ({getItemImages(item).length})
-                                          </label>
-                                          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                            {getItemImages(item).map((img, i) => (
-                                              <div key={i} className="space-y-1">
-                                                <div className="relative h-20 w-full overflow-hidden rounded-lg">
-                                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                  <img src={img} alt="" className="h-full w-full object-cover" />
-                                                  {i === 0 && (
-                                                    <span
-                                                      className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
-                                                      style={{ border: "1px solid rgba(184,147,92,0.35)" }}
-                                                    >
-                                                      <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
-                                                      Portada
-                                                    </span>
-                                                  )}
-                                                </div>
-                                                <div className="flex items-center justify-center gap-1">
-                                                  {i !== 0 && (
-                                                    <button
-                                                      onClick={() => makeItemImageCover(item.id, i)}
-                                                      className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
-                                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                      aria-label="Usar como portada"
-                                                      title="Usar como portada"
-                                                    >
-                                                      <Star size={12} strokeWidth={2} />
-                                                    </button>
-                                                  )}
-                                                  <button
-                                                    onClick={() => moveItemImage(item.id, i, "up")}
-                                                    disabled={i === 0}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Mover antes"
-                                                  >
-                                                    <ChevronUp size={12} strokeWidth={2.5} />
-                                                  </button>
-                                                  <button
-                                                    onClick={() => moveItemImage(item.id, i, "down")}
-                                                    disabled={i === getItemImages(item).length - 1}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Mover después"
-                                                  >
-                                                    <ChevronDown size={12} strokeWidth={2.5} />
-                                                  </button>
-                                                  <button
-                                                    onClick={() => removeItemImage(item.id, i)}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                                    aria-label="Eliminar foto"
-                                                  >
-                                                    <Trash2 size={12} strokeWidth={2} />
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            ))}
-                                            <div className="w-full">
-                                              <ImageUploader value="" onChange={(url) => url && addItemImage(item.id, url)} />
-                                            </div>
-                                          </div>
-                                          {getItemImages(item).length === 0 && (
-                                            <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
-                                              <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
-                                              Agrega al menos una foto para que se muestre en el catálogo.
-                                            </p>
-                                          )}
-                                        </div>
-                                      ) : (
-                                        <ImageUploader
-                                          value={item.image}
-                                          onChange={(url) => updateItem(item.id, { image: url })}
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="min-w-0 flex-1 space-y-2">
-                                    <div className="flex flex-col sm:flex-row sm:gap-2">
-                                      <input
-                                        value={item.name}
-                                        onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                                        className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder="Nombre del producto"
-                                      />
-                                      <select
-                                        value={item.subcategory ?? ""}
-                                        onChange={(e) =>
-                                          updateItem(item.id, {
-                                            subcategory: e.target.value ? e.target.value : undefined,
-                                          })
-                                        }
-                                        className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      >
-                                        <option value="">(Sin subcategoría)</option>
-                                        {orderByOrder(cat.subcategories).map((s) => (
-                                          <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
-                                            {s.label}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-                                    <textarea
-                                      value={item.description}
-                                      onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                                      rows={2}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción"
-                                    />
-                                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                                      <input
-                                        type="number"
-                                        value={item.price}
-                                        onChange={(e) =>
-                                          updateItem(item.id, { price: Number(e.target.value) })
-                                        }
-                                        className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      />
-                                      <span className="text-xs text-[#D4CCBF]">{formatCOP(item.price)}</span>
-                                      <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
-                                        <input
-                                          type="checkbox"
-                                          checked={item.available}
-                                          onChange={(e) =>
-                                            updateItem(item.id, { available: e.target.checked })
-                                          }
-                                        />
-                                        Disponible
-                                      </label>
-                                      <div className="ml-auto">
-                                        <button
-                                          onClick={() => removeItem(item.id)}
-                                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                          aria-label="Eliminar producto"
-                                        >
-                                          <Trash2 size={14} strokeWidth={2} />
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
+                          const itemCardHandlers: CatalogItemCardHandlers = {
+                            updateItem, removeItem, getItemImages, addItemImage,
+                            removeItemImage, moveItemImage, makeItemImageCover,
+                            onDropItem: onDropItemWithin, setDragItemId,
+                            formatCOP, orderByOrder,
                           };
                           return (
                             <div
@@ -913,7 +940,15 @@ export default function CatalogEditor({
                                   ) : (
                                     <div className="space-y-3">
                                       {orderByOrder(subItems).map((item) => (
-                                        <ItemCard key={item.id} item={item} />
+                                        <CatalogItemCard
+                                          key={item.id}
+                                          item={item}
+                                          catId={cat.id}
+                                          dragItemId={dragItemId}
+                                          allowGallery={allowGallery}
+                                          subcategories={cat.subcategories}
+                                          h={itemCardHandlers}
+                                        />
                                       ))}
                                     </div>
                                   )}
@@ -927,205 +962,11 @@ export default function CatalogEditor({
                         {(() => {
                           const unassigned = catItems.filter((it) => !it.subcategory);
                           const isSubExpanded = expandedSubByCat[cat.id] === "__unassigned__";
-                          const ItemCard = (p: { item: MenuItem }) => {
-                            const item = p.item;
-                            const isItemDrag = dragItemId === item.id;
-                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
-                              setDragItemId(item.id);
-                              e.dataTransfer.effectAllowed = "move";
-                              e.dataTransfer.setData("text/plain", item.id);
-                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
-                              if (card) {
-                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
-                              }
-                            };
-                            return (
-                              <div
-                                key={item.id}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.dataTransfer.dropEffect = "move";
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  onDropItemWithin(cat.id, item.id);
-                                  setDragItemId(null);
-                                }}
-                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
-                                  isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
-                                }`}
-                                style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-                              >
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                                  <div className="w-full sm:w-40 flex sm:block items-start gap-2">
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
-                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <div className="flex-1 sm:flex-none">
-                                      {allowGallery ? (
-                                        <div>
-                                          <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
-                                            Galería de fotos ({getItemImages(item).length})
-                                          </label>
-                                          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                            {getItemImages(item).map((img, i) => (
-                                              <div key={i} className="space-y-1">
-                                                <div className="relative h-20 w-full overflow-hidden rounded-lg">
-                                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                  <img src={img} alt="" className="h-full w-full object-cover" />
-                                                  {i === 0 && (
-                                                    <span
-                                                      className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
-                                                      style={{ border: "1px solid rgba(184,147,92,0.35)" }}
-                                                    >
-                                                      <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
-                                                      Portada
-                                                    </span>
-                                                  )}
-                                                </div>
-                                                <div className="flex items-center justify-center gap-1">
-                                                  {i !== 0 && (
-                                                    <button
-                                                      onClick={() => makeItemImageCover(item.id, i)}
-                                                      className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
-                                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                      aria-label="Usar como portada"
-                                                      title="Usar como portada"
-                                                    >
-                                                      <Star size={12} strokeWidth={2} />
-                                                    </button>
-                                                  )}
-                                                  <button
-                                                    onClick={() => moveItemImage(item.id, i, "up")}
-                                                    disabled={i === 0}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Mover antes"
-                                                  >
-                                                    <ChevronUp size={12} strokeWidth={2.5} />
-                                                  </button>
-                                                  <button
-                                                    onClick={() => moveItemImage(item.id, i, "down")}
-                                                    disabled={i === getItemImages(item).length - 1}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Mover después"
-                                                  >
-                                                    <ChevronDown size={12} strokeWidth={2.5} />
-                                                  </button>
-                                                  <button
-                                                    onClick={() => removeItemImage(item.id, i)}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                                    style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                                    aria-label="Eliminar foto"
-                                                  >
-                                                    <Trash2 size={12} strokeWidth={2} />
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            ))}
-                                            <div className="w-full">
-                                              <ImageUploader value="" onChange={(url) => url && addItemImage(item.id, url)} />
-                                            </div>
-                                          </div>
-                                          {getItemImages(item).length === 0 && (
-                                            <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
-                                              <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
-                                              Agrega al menos una foto para que se muestre en el catálogo.
-                                            </p>
-                                          )}
-                                        </div>
-                                      ) : (
-                                        <ImageUploader
-                                          value={item.image}
-                                          onChange={(url) => updateItem(item.id, { image: url })}
-                                        />
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="min-w-0 flex-1 space-y-2">
-                                    <div className="flex flex-col sm:flex-row sm:gap-2">
-                                      <input
-                                        value={item.name}
-                                        onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                                        className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder="Nombre del producto"
-                                      />
-                                      <select
-                                        value={item.subcategory ?? ""}
-                                        onChange={(e) =>
-                                          updateItem(item.id, {
-                                            subcategory: e.target.value ? e.target.value : undefined,
-                                          })
-                                        }
-                                        className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      >
-                                        <option value="">(Sin subcategoría)</option>
-                                        {orderByOrder(cat.subcategories).map((s) => (
-                                          <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
-                                            {s.label}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-                                    <textarea
-                                      value={item.description}
-                                      onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                                      rows={2}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción"
-                                    />
-                                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                                      <input
-                                        type="number"
-                                        value={item.price}
-                                        onChange={(e) =>
-                                          updateItem(item.id, { price: Number(e.target.value) })
-                                        }
-                                        className="w-28 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      />
-                                      <span className="text-xs text-[#D4CCBF]">{formatCOP(item.price)}</span>
-                                      <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
-                                        <input
-                                          type="checkbox"
-                                          checked={item.available}
-                                          onChange={(e) =>
-                                            updateItem(item.id, { available: e.target.checked })
-                                          }
-                                        />
-                                        Disponible
-                                      </label>
-                                      <div className="ml-auto">
-                                        <button
-                                          onClick={() => removeItem(item.id)}
-                                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                          aria-label="Eliminar producto"
-                                        >
-                                          <Trash2 size={14} strokeWidth={2} />
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
+                          const itemCardHandlers: CatalogItemCardHandlers = {
+                            updateItem, removeItem, getItemImages, addItemImage,
+                            removeItemImage, moveItemImage, makeItemImageCover,
+                            onDropItem: onDropItemWithin, setDragItemId,
+                            formatCOP, orderByOrder,
                           };
                           return (
                             <div
@@ -1199,7 +1040,15 @@ export default function CatalogEditor({
                                   ) : (
                                     <div className="space-y-3">
                                       {orderByOrder(unassigned).map((item) => (
-                                        <ItemCard key={item.id} item={item} />
+                                        <CatalogItemCard
+                                          key={item.id}
+                                          item={item}
+                                          catId={cat.id}
+                                          dragItemId={dragItemId}
+                                          allowGallery={allowGallery}
+                                          subcategories={cat.subcategories}
+                                          h={itemCardHandlers}
+                                        />
                                       ))}
                                     </div>
                                   )}

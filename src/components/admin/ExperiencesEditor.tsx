@@ -45,6 +45,246 @@ function reorderInPlace<T>(list: T[], fromIndex: number, toIndex: number): T[] {
   return next;
 }
 
+type ExperiencesServiceCardHandlers = {
+  updateService: (id: string, patch: Partial<ExperienceService>) => void;
+  removeService: (id: string) => void;
+  addServiceImage: (serviceId: string, url: string) => void;
+  removeServiceImage: (serviceId: string, index: number) => void;
+  moveServiceImage: (serviceId: string, index: number, direction: "up" | "down") => void;
+  makeServiceImageCover: (serviceId: string, index: number) => void;
+  onDropItem: (categoryId: string, dropTargetId: string) => void;
+  setDragItemId: (id: string | null) => void;
+  formatCOP: (n: number) => string;
+  orderByOrder: <T extends { order?: number; id: string }>(list: T[]) => T[];
+};
+
+function ExperiencesServiceCard(props: {
+  service: ExperienceService;
+  catId: string;
+  dragItemId: string | null;
+  subcategories: Subcategory[];
+  h: ExperiencesServiceCardHandlers;
+}) {
+  const { service, catId, dragItemId, subcategories, h } = props;
+  const isItemDrag = dragItemId === service.id;
+  const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
+    h.setDragItemId(service.id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", service.id);
+    const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
+    if (card) {
+      try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
+    }
+  };
+  return (
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        h.onDropItem(catId, service.id);
+        h.setDragItemId(null);
+      }}
+      className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+        isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
+      }`}
+      style={{ border: "1px solid rgba(184,147,92,0.22)" }}
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+        <div className="w-full sm:w-56 flex sm:block items-start gap-2">
+          <span
+            draggable
+            onDragStart={startItemDrag}
+            onDragEnd={() => h.setDragItemId(null)}
+            className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
+            title="Agarrar para arrastrar y reordenar"
+          >
+            <GripVertical size={18} strokeWidth={2} />
+          </span>
+          <span
+            draggable
+            onDragStart={startItemDrag}
+            onDragEnd={() => h.setDragItemId(null)}
+            className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
+            style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+            title="Agarrar para arrastrar y reordenar"
+          >
+            <GripVertical size={18} strokeWidth={2} />
+          </span>
+          <div className="flex-1 sm:flex-none w-full">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
+                Galería de fotos ({service.images.length})
+              </label>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                {service.images.map((img, i) => (
+                  <div key={i} className="space-y-1">
+                    <div className="relative h-20 w-full overflow-hidden rounded-lg">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img} alt="" className="h-full w-full object-cover" />
+                      {i === 0 && (
+                        <span
+                          className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
+                          style={{ border: "1px solid rgba(184,147,92,0.35)" }}
+                        >
+                          <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
+                          Portada
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-center gap-1">
+                      {i !== 0 && (
+                        <button
+                          onClick={() => h.makeServiceImageCover(service.id, i)}
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
+                          style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                          aria-label="Usar como portada"
+                          title="Usar como portada"
+                        >
+                          <Star size={12} strokeWidth={2} />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => h.moveServiceImage(service.id, i, "up")}
+                        disabled={i === 0}
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                        aria-label="Mover antes"
+                      >
+                        <ChevronUp size={12} strokeWidth={2.5} />
+                      </button>
+                      <button
+                        onClick={() => h.moveServiceImage(service.id, i, "down")}
+                        disabled={i === service.images.length - 1}
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
+                        style={{ border: "1px solid rgba(184,147,92,0.28)" }}
+                        aria-label="Mover después"
+                      >
+                        <ChevronDown size={12} strokeWidth={2.5} />
+                      </button>
+                      <button
+                        onClick={() => h.removeServiceImage(service.id, i)}
+                        className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                        style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                        aria-label="Eliminar foto"
+                      >
+                        <Trash2 size={12} strokeWidth={2} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <div className="w-full">
+                  <ImageUploader value="" onChange={(url) => url && h.addServiceImage(service.id, url)} />
+                </div>
+              </div>
+              {service.images.length === 0 && (
+                <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
+                  <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
+                  Agrega al menos una foto. Recomendado: 1200 × 900 px (4:3).
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="min-w-0 flex-1 space-y-2.5">
+          <div className="flex flex-col sm:flex-row sm:gap-2">
+            <input
+              value={service.name}
+              onChange={(e) => h.updateService(service.id, { name: e.target.value })}
+              className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+              placeholder="Nombre del servicio"
+            />
+            <select
+              value={service.subcategory ?? ""}
+              onChange={(e) =>
+                h.updateService(service.id, {
+                  subcategory: e.target.value ? e.target.value : undefined,
+                })
+              }
+              className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+            >
+              <option value="">(Sin subcategoría)</option>
+              {h.orderByOrder(subcategories).map((s) => (
+                <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
+                  {s.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <textarea
+            value={service.shortDescription}
+            onChange={(e) => h.updateService(service.id, { shortDescription: e.target.value })}
+            rows={2}
+            className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+            placeholder="Descripción corta (para la tarjeta del catálogo)"
+          />
+          <textarea
+            value={service.fullDescription}
+            onChange={(e) => h.updateService(service.id, { fullDescription: e.target.value })}
+            rows={3}
+            className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+            placeholder="Descripción completa (para la página de detalle)"
+          />
+          <div>
+            <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
+              Qué incluye (una línea por ítem)
+            </label>
+            <textarea
+              value={service.includes.join("\n")}
+              onChange={(e) =>
+                h.updateService(service.id, {
+                  includes: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
+                })
+              }
+              rows={3}
+              className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
+              placeholder={"Pétalos de rosa\nVelas decorativas\nBotella de vino"}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <span className="text-xs text-[#D4CCBF]">Precio (deja vacío para &quot;Consultar&quot;)</span>
+            <input
+              type="number"
+              value={service.price ?? ""}
+              onChange={(e) =>
+                h.updateService(service.id, {
+                  price: e.target.value === "" ? undefined : Number(e.target.value),
+                })
+              }
+              className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
+            />
+            {service.price != null && (
+              <span className="text-xs text-[#D4CCBF]">{h.formatCOP(service.price)}</span>
+            )}
+            <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
+              <input
+                type="checkbox"
+                checked={service.active}
+                onChange={(e) =>
+                  h.updateService(service.id, { active: e.target.checked })
+                }
+              />
+              Disponible (visible para huéspedes)
+            </label>
+            <div className="ml-auto">
+              <button
+                onClick={() => h.removeService(service.id)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
+                style={{ border: "1px solid rgba(248,113,113,0.25)" }}
+                aria-label="Eliminar servicio"
+              >
+                <Trash2 size={14} strokeWidth={2} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const STORAGE_KEY = "experiences";
 const CATEGORIES_STORAGE_KEY = "experienceCategories";
 
@@ -523,226 +763,11 @@ export default function ExperiencesEditor() {
                           const isSubDrag = dragSubId === sub.id;
                           const isSubExpanded = expandedSubByCat[cat.id] === sub.id;
                           const subServices = catServices.filter((s) => s.subcategory === sub.id);
-                          const ServiceCard = (p: { service: ExperienceService }) => {
-                            const service = p.service;
-                            const isItemDrag = dragItemId === service.id;
-                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
-                              setDragItemId(service.id);
-                              e.dataTransfer.effectAllowed = "move";
-                              e.dataTransfer.setData("text/plain", service.id);
-                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
-                              if (card) {
-                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
-                              }
-                            };
-                            return (
-                              <div
-                                key={service.id}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.dataTransfer.dropEffect = "move";
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  onDropItemWithin(cat.id, service.id);
-                                  setDragItemId(null);
-                                }}
-                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
-                                  isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
-                                }`}
-                                style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-                              >
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                                  <div className="w-full sm:w-56 flex sm:block items-start gap-2">
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
-                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <div className="flex-1 sm:flex-none w-full">
-                                      <div>
-                                        <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
-                                          Galería de fotos ({service.images.length})
-                                        </label>
-                                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                          {service.images.map((img, i) => (
-                                            <div key={i} className="space-y-1">
-                                              <div className="relative h-20 w-full overflow-hidden rounded-lg">
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={img} alt="" className="h-full w-full object-cover" />
-                                                {i === 0 && (
-                                                  <span
-                                                    className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.35)" }}
-                                                  >
-                                                    <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
-                                                    Portada
-                                                  </span>
-                                                )}
-                                              </div>
-                                              <div className="flex items-center justify-center gap-1">
-                                                {i !== 0 && (
-                                                  <button
-                                                    onClick={() => makeServiceImageCover(service.id, i)}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Usar como portada"
-                                                    title="Usar como portada"
-                                                  >
-                                                    <Star size={12} strokeWidth={2} />
-                                                  </button>
-                                                )}
-                                                <button
-                                                  onClick={() => moveServiceImage(service.id, i, "up")}
-                                                  disabled={i === 0}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                  aria-label="Mover antes"
-                                                >
-                                                  <ChevronUp size={12} strokeWidth={2.5} />
-                                                </button>
-                                                <button
-                                                  onClick={() => moveServiceImage(service.id, i, "down")}
-                                                  disabled={i === service.images.length - 1}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                  aria-label="Mover después"
-                                                >
-                                                  <ChevronDown size={12} strokeWidth={2.5} />
-                                                </button>
-                                                <button
-                                                  onClick={() => removeServiceImage(service.id, i)}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                                  style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                                  aria-label="Eliminar foto"
-                                                >
-                                                  <Trash2 size={12} strokeWidth={2} />
-                                                </button>
-                                              </div>
-                                            </div>
-                                          ))}
-                                          <div className="w-full">
-                                            <ImageUploader value="" onChange={(url) => url && addServiceImage(service.id, url)} />
-                                          </div>
-                                        </div>
-                                        {service.images.length === 0 && (
-                                          <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
-                                            <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
-                                            Agrega al menos una foto. Recomendado: 1200 × 900 px (4:3).
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="min-w-0 flex-1 space-y-2.5">
-                                    <div className="flex flex-col sm:flex-row sm:gap-2">
-                                      <input
-                                        value={service.name}
-                                        onChange={(e) => updateService(service.id, { name: e.target.value })}
-                                        className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder="Nombre del servicio"
-                                      />
-                                      <select
-                                        value={service.subcategory ?? ""}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            subcategory: e.target.value ? e.target.value : undefined,
-                                          })
-                                        }
-                                        className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      >
-                                        <option value="">(Sin subcategoría)</option>
-                                        {orderByOrder(cat.subcategories).map((s) => (
-                                          <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
-                                            {s.label}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-                                    <textarea
-                                      value={service.shortDescription}
-                                      onChange={(e) => updateService(service.id, { shortDescription: e.target.value })}
-                                      rows={2}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción corta (para la tarjeta del catálogo)"
-                                    />
-                                    <textarea
-                                      value={service.fullDescription}
-                                      onChange={(e) => updateService(service.id, { fullDescription: e.target.value })}
-                                      rows={3}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción completa (para la página de detalle)"
-                                    />
-                                    <div>
-                                      <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
-                                        Qué incluye (una línea por ítem)
-                                      </label>
-                                      <textarea
-                                        value={service.includes.join("\n")}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            includes: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
-                                          })
-                                        }
-                                        rows={3}
-                                        className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder={"Pétalos de rosa\nVelas decorativas\nBotella de vino"}
-                                      />
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                                      <span className="text-xs text-[#D4CCBF]">Precio (deja vacío para &quot;Consultar&quot;)</span>
-                                      <input
-                                        type="number"
-                                        value={service.price ?? ""}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            price: e.target.value === "" ? undefined : Number(e.target.value),
-                                          })
-                                        }
-                                        className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      />
-                                      {service.price != null && (
-                                        <span className="text-xs text-[#D4CCBF]">{formatCOP(service.price)}</span>
-                                      )}
-                                      <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
-                                        <input
-                                          type="checkbox"
-                                          checked={service.active}
-                                          onChange={(e) =>
-                                            updateService(service.id, { active: e.target.checked })
-                                          }
-                                        />
-                                        Disponible (visible para huéspedes)
-                                      </label>
-                                      <div className="ml-auto">
-                                        <button
-                                          onClick={() => removeService(service.id)}
-                                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                          aria-label="Eliminar servicio"
-                                        >
-                                          <Trash2 size={14} strokeWidth={2} />
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
+                          const serviceCardHandlers: ExperiencesServiceCardHandlers = {
+                            updateService, removeService, addServiceImage, removeServiceImage,
+                            moveServiceImage, makeServiceImageCover,
+                            onDropItem: onDropItemWithin, setDragItemId,
+                            formatCOP, orderByOrder,
                           };
                           return (
                             <div
@@ -860,7 +885,14 @@ export default function ExperiencesEditor() {
                                   ) : (
                                     <div className="space-y-3">
                                       {orderByOrder(subServices).map((srv) => (
-                                        <ServiceCard key={srv.id} service={srv} />
+                                        <ExperiencesServiceCard
+                                          key={srv.id}
+                                          service={srv}
+                                          catId={cat.id}
+                                          dragItemId={dragItemId}
+                                          subcategories={cat.subcategories}
+                                          h={serviceCardHandlers}
+                                        />
                                       ))}
                                     </div>
                                   )}
@@ -874,226 +906,11 @@ export default function ExperiencesEditor() {
                         {(() => {
                           const unassigned = catServices.filter((s) => !s.subcategory);
                           const isSubExpanded = expandedSubByCat[cat.id] === "__unassigned__";
-                          const ServiceCard = (p: { service: ExperienceService }) => {
-                            const service = p.service;
-                            const isItemDrag = dragItemId === service.id;
-                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
-                              setDragItemId(service.id);
-                              e.dataTransfer.effectAllowed = "move";
-                              e.dataTransfer.setData("text/plain", service.id);
-                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
-                              if (card) {
-                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
-                              }
-                            };
-                            return (
-                              <div
-                                key={service.id}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.dataTransfer.dropEffect = "move";
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  onDropItemWithin(cat.id, service.id);
-                                  setDragItemId(null);
-                                }}
-                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
-                                  isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
-                                }`}
-                                style={{ border: "1px solid rgba(184,147,92,0.22)" }}
-                              >
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                                  <div className="w-full sm:w-56 flex sm:block items-start gap-2">
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <span
-                                      draggable
-                                      onDragStart={startItemDrag}
-                                      onDragEnd={() => setDragItemId(null)}
-                                      className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
-                                      style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                      title="Agarrar para arrastrar y reordenar"
-                                    >
-                                      <GripVertical size={18} strokeWidth={2} />
-                                    </span>
-                                    <div className="flex-1 sm:flex-none w-full">
-                                      <div>
-                                        <label className="mb-1.5 block text-xs font-medium text-[#D4CCBF]">
-                                          Galería de fotos ({service.images.length})
-                                        </label>
-                                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                          {service.images.map((img, i) => (
-                                            <div key={i} className="space-y-1">
-                                              <div className="relative h-20 w-full overflow-hidden rounded-lg">
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={img} alt="" className="h-full w-full object-cover" />
-                                                {i === 0 && (
-                                                  <span
-                                                    className="absolute left-1 top-1 flex items-center gap-0.5 rounded-full bg-[#2A2724] px-1.5 py-0.5 text-[9px] font-medium text-[#F5EFE6]"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.35)" }}
-                                                  >
-                                                    <Star size={9} className="fill-[#B8935C] text-[#B8935C]" />
-                                                    Portada
-                                                  </span>
-                                                )}
-                                              </div>
-                                              <div className="flex items-center justify-center gap-1">
-                                                {i !== 0 && (
-                                                  <button
-                                                    onClick={() => makeServiceImageCover(service.id, i)}
-                                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C]"
-                                                    style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                    aria-label="Usar como portada"
-                                                    title="Usar como portada"
-                                                  >
-                                                    <Star size={12} strokeWidth={2} />
-                                                  </button>
-                                                )}
-                                                <button
-                                                  onClick={() => moveServiceImage(service.id, i, "up")}
-                                                  disabled={i === 0}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                  aria-label="Mover antes"
-                                                >
-                                                  <ChevronUp size={12} strokeWidth={2.5} />
-                                                </button>
-                                                <button
-                                                  onClick={() => moveServiceImage(service.id, i, "down")}
-                                                  disabled={i === service.images.length - 1}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2A2724] text-[#B8935C] disabled:opacity-30"
-                                                  style={{ border: "1px solid rgba(184,147,92,0.28)" }}
-                                                  aria-label="Mover después"
-                                                >
-                                                  <ChevronDown size={12} strokeWidth={2.5} />
-                                                </button>
-                                                <button
-                                                  onClick={() => removeServiceImage(service.id, i)}
-                                                  className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                                  style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                                  aria-label="Eliminar foto"
-                                                >
-                                                  <Trash2 size={12} strokeWidth={2} />
-                                                </button>
-                                              </div>
-                                            </div>
-                                          ))}
-                                          <div className="w-full">
-                                            <ImageUploader value="" onChange={(url) => url && addServiceImage(service.id, url)} />
-                                          </div>
-                                        </div>
-                                        {service.images.length === 0 && (
-                                          <p className="mt-1 flex items-center gap-1 text-xs text-[#D4CCBF]">
-                                            <ImagePlus size={12} className="text-[#B8935C]" strokeWidth={2} />
-                                            Agrega al menos una foto. Recomendado: 1200 × 900 px (4:3).
-                                          </p>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="min-w-0 flex-1 space-y-2.5">
-                                    <div className="flex flex-col sm:flex-row sm:gap-2">
-                                      <input
-                                        value={service.name}
-                                        onChange={(e) => updateService(service.id, { name: e.target.value })}
-                                        className="w-full sm:flex-1 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm font-medium text-[#F5EFE6] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder="Nombre del servicio"
-                                      />
-                                      <select
-                                        value={service.subcategory ?? ""}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            subcategory: e.target.value ? e.target.value : undefined,
-                                          })
-                                        }
-                                        className="w-full sm:w-56 mt-2 sm:mt-0 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      >
-                                        <option value="">(Sin subcategoría)</option>
-                                        {orderByOrder(cat.subcategories).map((s) => (
-                                          <option key={s.id} value={s.id} className="bg-[#1E1C1A]">
-                                            {s.label}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
-                                    <textarea
-                                      value={service.shortDescription}
-                                      onChange={(e) => updateService(service.id, { shortDescription: e.target.value })}
-                                      rows={2}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción corta (para la tarjeta del catálogo)"
-                                    />
-                                    <textarea
-                                      value={service.fullDescription}
-                                      onChange={(e) => updateService(service.id, { fullDescription: e.target.value })}
-                                      rows={3}
-                                      className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                      placeholder="Descripción completa (para la página de detalle)"
-                                    />
-                                    <div>
-                                      <label className="mb-1 block text-xs font-medium text-[#D4CCBF]">
-                                        Qué incluye (una línea por ítem)
-                                      </label>
-                                      <textarea
-                                        value={service.includes.join("\n")}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            includes: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
-                                          })
-                                        }
-                                        rows={3}
-                                        className="w-full resize-none rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-xs text-[#D4CCBF] outline-none placeholder-[#D4CCBF]/60 focus:border-[#B8935C]"
-                                        placeholder={"Pétalos de rosa\nVelas decorativas\nBotella de vino"}
-                                      />
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                                      <span className="text-xs text-[#D4CCBF]">Precio (deja vacío para &quot;Consultar&quot;)</span>
-                                      <input
-                                        type="number"
-                                        value={service.price ?? ""}
-                                        onChange={(e) =>
-                                          updateService(service.id, {
-                                            price: e.target.value === "" ? undefined : Number(e.target.value),
-                                          })
-                                        }
-                                        className="w-32 rounded-lg border border-[rgba(184,147,92,0.18)] bg-[#0B0B0C] px-3 py-2 text-sm text-[#F5EFE6] outline-none focus:border-[#B8935C]"
-                                      />
-                                      {service.price != null && (
-                                        <span className="text-xs text-[#D4CCBF]">{formatCOP(service.price)}</span>
-                                      )}
-                                      <label className="flex items-center gap-1.5 text-xs text-[#D4CCBF] ml-auto sm:ml-0">
-                                        <input
-                                          type="checkbox"
-                                          checked={service.active}
-                                          onChange={(e) =>
-                                            updateService(service.id, { active: e.target.checked })
-                                          }
-                                        />
-                                        Disponible (visible para huéspedes)
-                                      </label>
-                                      <div className="ml-auto">
-                                        <button
-                                          onClick={() => removeService(service.id)}
-                                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/15 text-red-400"
-                                          style={{ border: "1px solid rgba(248,113,113,0.25)" }}
-                                          aria-label="Eliminar servicio"
-                                        >
-                                          <Trash2 size={14} strokeWidth={2} />
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
+                          const serviceCardHandlers: ExperiencesServiceCardHandlers = {
+                            updateService, removeService, addServiceImage, removeServiceImage,
+                            moveServiceImage, makeServiceImageCover,
+                            onDropItem: onDropItemWithin, setDragItemId,
+                            formatCOP, orderByOrder,
                           };
                           return (
                             <div
@@ -1167,7 +984,14 @@ export default function ExperiencesEditor() {
                                   ) : (
                                     <div className="space-y-3">
                                       {orderByOrder(unassigned).map((srv) => (
-                                        <ServiceCard key={srv.id} service={srv} />
+                                        <ExperiencesServiceCard
+                                          key={srv.id}
+                                          service={srv}
+                                          catId={cat.id}
+                                          dragItemId={dragItemId}
+                                          subcategories={cat.subcategories}
+                                          h={serviceCardHandlers}
+                                        />
                                       ))}
                                     </div>
                                   )}
