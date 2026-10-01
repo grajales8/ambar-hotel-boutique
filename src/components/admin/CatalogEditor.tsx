@@ -600,15 +600,18 @@ export default function CatalogEditor({
                           const ItemCard = (p: { item: MenuItem }) => {
                             const item = p.item;
                             const isItemDrag = dragItemId === item.id;
+                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
+                              setDragItemId(item.id);
+                              e.dataTransfer.effectAllowed = "move";
+                              e.dataTransfer.setData("text/plain", item.id);
+                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
+                              if (card) {
+                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
+                              }
+                            };
                             return (
                               <div
                                 key={item.id}
-                                draggable
-                                onDragStart={(e) => {
-                                  setDragItemId(item.id);
-                                  e.dataTransfer.effectAllowed = "move";
-                                  e.dataTransfer.setData("text/plain", item.id);
-                                }}
                                 onDragOver={(e) => {
                                   e.preventDefault();
                                   e.dataTransfer.dropEffect = "move";
@@ -618,8 +621,7 @@ export default function CatalogEditor({
                                   onDropItemWithin(cat.id, item.id);
                                   setDragItemId(null);
                                 }}
-                                onDragEnd={() => setDragItemId(null)}
-                                className={`rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
                                   isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
                                 }`}
                                 style={{ border: "1px solid rgba(184,147,92,0.22)" }}
@@ -627,12 +629,18 @@ export default function CatalogEditor({
                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
                                   <div className="w-full sm:w-40 flex sm:block items-start gap-2">
                                     <span
+                                      draggable
+                                      onDragStart={startItemDrag}
+                                      onDragEnd={() => setDragItemId(null)}
                                       className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
                                       title="Agarrar para arrastrar y reordenar"
                                     >
                                       <GripVertical size={18} strokeWidth={2} />
                                     </span>
                                     <span
+                                      draggable
+                                      onDragStart={startItemDrag}
+                                      onDragEnd={() => setDragItemId(null)}
                                       className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
                                       style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                                       title="Agarrar para arrastrar y reordenar"
@@ -922,15 +930,18 @@ export default function CatalogEditor({
                           const ItemCard = (p: { item: MenuItem }) => {
                             const item = p.item;
                             const isItemDrag = dragItemId === item.id;
+                            const startItemDrag = (e: React.DragEvent<HTMLElement>) => {
+                              setDragItemId(item.id);
+                              e.dataTransfer.effectAllowed = "move";
+                              e.dataTransfer.setData("text/plain", item.id);
+                              const card = e.currentTarget.closest(".item-card") as HTMLElement | null;
+                              if (card) {
+                                try { e.dataTransfer.setDragImage(card, 24, 16); } catch {}
+                              }
+                            };
                             return (
                               <div
                                 key={item.id}
-                                draggable
-                                onDragStart={(e) => {
-                                  setDragItemId(item.id);
-                                  e.dataTransfer.effectAllowed = "move";
-                                  e.dataTransfer.setData("text/plain", item.id);
-                                }}
                                 onDragOver={(e) => {
                                   e.preventDefault();
                                   e.dataTransfer.dropEffect = "move";
@@ -940,8 +951,7 @@ export default function CatalogEditor({
                                   onDropItemWithin(cat.id, item.id);
                                   setDragItemId(null);
                                 }}
-                                onDragEnd={() => setDragItemId(null)}
-                                className={`rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
+                                className={`item-card rounded-xl bg-[#161414] p-3.5 sm:p-4 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all ${
                                   isItemDrag ? "opacity-60 scale-[0.995] ring-2 ring-[#B8935C]/60" : ""
                                 }`}
                                 style={{ border: "1px solid rgba(184,147,92,0.22)" }}
@@ -949,12 +959,18 @@ export default function CatalogEditor({
                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
                                   <div className="w-full sm:w-40 flex sm:block items-start gap-2">
                                     <span
+                                      draggable
+                                      onDragStart={startItemDrag}
+                                      onDragEnd={() => setDragItemId(null)}
                                       className="hidden sm:flex h-8 w-6 -ml-2 mt-1 mr-1 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing"
                                       title="Agarrar para arrastrar y reordenar"
                                     >
                                       <GripVertical size={18} strokeWidth={2} />
                                     </span>
                                     <span
+                                      draggable
+                                      onDragStart={startItemDrag}
+                                      onDragEnd={() => setDragItemId(null)}
                                       className="sm:hidden inline-flex h-8 w-8 items-center justify-center text-[#B8935C]/90 shrink-0 cursor-grab active:cursor-grabbing rounded-lg bg-[#0B0B0C]"
                                       style={{ border: "1px solid rgba(184,147,92,0.28)" }}
                                       title="Agarrar para arrastrar y reordenar"
