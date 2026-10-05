@@ -52,10 +52,11 @@ html, body {
 
 body {
   font-family: var(--font-body);
+  font-size: 100%;
 }
 
-h1, h2, h3, .font-display {
-  font-family: var(--font-display);
+:where(h1, h2, h3, .font-display) {
+  font-family: var(--font-display) !important;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -63,27 +64,33 @@ h1, h2, h3, .font-display {
   text-rendering: geometricPrecision;
   font-variant-ligatures: common-ligatures;
   font-variant-numeric: oldstyle-nums proportional-nums;
-  font-variation-settings: "SOFT" 50, "WONK" 0;
+  font-variation-settings: "SOFT" 50;
   letter-spacing: 0;
-  font-size: 106%;
   line-height: 1.2;
+  font-size: 106%;
 }
-.font-display:where(.text-xs, .text-sm) {
+:where(.font-display.text-xs, .font-display.text-sm,
+  h1.text-xs, h1.text-sm, h2.text-xs, h2.text-sm, h3.text-xs, h3.text-sm) {
   font-weight: 600;
-  letter-spacing: 0.01em;
-}
-.font-display:where(.text-base, .text-lg, .text-xl) {
-  font-weight: 500;
   letter-spacing: 0.005em;
 }
-.font-display:where(.text-2xl, .text-3xl) {
+:where(.font-display.text-base, .font-display.text-lg, .font-display.text-xl,
+  h1.text-base, h1.text-lg, h1.text-xl, h2.text-base, h2.text-lg, h2.text-xl,
+  h3.text-base, h3.text-lg, h3.text-xl) {
+  font-weight: 500;
+  letter-spacing: 0.003em;
+}
+:where(.font-display.text-2xl, .font-display.text-3xl,
+  h1.text-2xl, h1.text-3xl, h2.text-2xl, h2.text-3xl, h3.text-2xl, h3.text-3xl) {
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.003em;
   font-size: 104%;
 }
-.font-display:where(.text-4xl, .text-5xl, .text-6xl) {
+:where(.font-display.text-4xl, .font-display.text-5xl, .font-display.text-6xl,
+  h1.text-4xl, h1.text-5xl, h1.text-6xl, h2.text-4xl, h2.text-5xl, h2.text-6xl,
+  h3.text-4xl, h3.text-5xl, h3.text-6xl) {
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.008em;
   font-size: 103%;
 }
 
