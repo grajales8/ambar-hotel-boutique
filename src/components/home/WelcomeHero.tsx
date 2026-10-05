@@ -11,7 +11,7 @@ export default function WelcomeHero() {
     >
       <Image
         src="/rooms/habitacion-bienvenida.jpg"
-        alt="Habitación de AMBAR Hotel Boutique"
+        alt="Habitación de Ambar Hotel Boutique"
         fill
         priority
         className="object-cover object-[center_55%]"
@@ -32,7 +32,7 @@ export default function WelcomeHero() {
       >
         <Image
           src="/brand/logo-dorado.png"
-          alt="AMBAR Hotel Boutique"
+          alt="Ambar Hotel Boutique"
           width={640}
           height={486}
           className="h-auto w-[145px] md:w-[175px]"

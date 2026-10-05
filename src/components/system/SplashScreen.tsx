@@ -24,7 +24,7 @@ export default function SplashScreen() {
         >
           <motion.img
             src="/brand/logo-dorado.png"
-            alt="AMBAR Hotel Boutique"
+            alt="Ambar Hotel Boutique"
             initial={{ opacity: 0, scale: 0.86 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, ease: "easeOut" }}

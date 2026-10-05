@@ -133,7 +133,7 @@ export default function HotelGuidePage() {
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <PageHeader title="Guía del Hotel" subtitle="Todo sobre AMBAR, en un solo lugar" />
+      <PageHeader title="Guía del Hotel" subtitle="Todo sobre Ambar, en un solo lugar" />
 
       <div className="space-y-3 px-5 pt-4">
         {/* 1. Sobre AMBAR Hotel Boutique */}
@@ -278,7 +278,7 @@ export default function HotelGuidePage() {
               className="h-full w-full border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Ubicación de AMBAR Hotel Boutique"
+              title="Ubicación de Ambar Hotel Boutique"
             />
             <a
               href={mapsUrl}

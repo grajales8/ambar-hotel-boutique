@@ -30,7 +30,7 @@ export default function DiscoverPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-10">
-      <PageHeader title="Descubre Cali" subtitle="Recomendaciones cerca de AMBAR" />
+      <PageHeader title="Descubre Cali" subtitle="Recomendaciones cerca de Ambar" />
 
       <div className="space-y-4 px-5 pt-4">
         {loading && (

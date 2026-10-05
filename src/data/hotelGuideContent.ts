@@ -4,7 +4,7 @@
 // siguiendo el mismo patrón que ya usan Restaurante, Minibar, etc.
 
 export const hotelIntro = {
-  title: "Sobre ÁMBAR Hotel Boutique",
+  title: "Sobre Ambar Hotel Boutique",
   paragraphs: [
     "Somos un hotel diseñado para brindar una experiencia que combina comodidad, atención personalizada y un ambiente moderno, ideal para viajes de negocios, descanso o celebraciones especiales.",
     "Contamos con 26 habitaciones completamente equipadas, pensadas para ofrecer el equilibrio perfecto entre confort y funcionalidad. Además, disponemos de 2 salones para reuniones y eventos, restaurante, servicio de minibar y una amplia oferta de servicios que buscan hacer tu estadía más cómoda y agradable.",
@@ -117,4 +117,4 @@ export const hotelLocation = {
 };
 
 export const hotelCommitment =
-  "En ÁMBAR Hotel Boutique trabajamos para que cada huésped disfrute de una experiencia cálida, tranquila y memorable, respaldada por un servicio cercano y el compromiso de superar sus expectativas.";
+  "En Ambar Hotel Boutique trabajamos para que cada huésped disfrute de una experiencia cálida, tranquila y memorable, respaldada por un servicio cercano y el compromiso de superar sus expectativas.";

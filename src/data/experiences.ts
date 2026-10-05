@@ -197,7 +197,7 @@ export const experienceServices: ExperienceService[] = [
     subcategory: "cocteleria",
     shortDescription: "Coctelería clásica y de autor por 4 horas ilimitadas.",
     fullDescription:
-      "Barra libre premium durante 4 horas para tu evento. Incluye vinos, licores internacionales, cocteles clásicos y una selección de cocteles firma del barman del Ámbar.",
+      "Barra libre premium durante 4 horas para tu evento. Incluye vinos, licores internacionales, cocteles clásicos y una selección de cocteles firma del barman del Ambar.",
     includes: ["Barra móvil premium", "Cocteleros certificados", "Vodka, whisky, ron, ginebra, vinos"],
     benefits: ["Coctel firma personalizado con tu logo/evento"],
     price: 120000,

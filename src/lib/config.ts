@@ -9,9 +9,9 @@
 // ---------------------------------------------------------------------------
 
 export const siteConfig = {
-  hotelName: "AMBAR Hotel Boutique",
-  shortName: "AMBAR",
-  tagline: "Bienvenido a AMBAR Hotel Boutique",
+  hotelName: "Ambar Hotel Boutique",
+  shortName: "Ambar",
+  tagline: "Bienvenido a Ambar Hotel Boutique",
   city: "Cali",
   themeColor: "#0B0B0C",
   backgroundColor: "#0B0B0C",

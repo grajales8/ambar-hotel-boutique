@@ -46,7 +46,7 @@ export default function AdminDashboardPage() {
         <div className="flex items-center justify-between max-w-[1400px] mx-auto">
           <div>
             <h1 className="font-display text-2xl md:text-3xl text-[#F5EFE6]">Panel administrativo</h1>
-            <p className="text-sm text-[#D4CCBF]">AMBAR Hotel Boutique</p>
+            <p className="text-sm text-[#D4CCBF]">Ambar Hotel Boutique</p>
           </div>
           <button
             onClick={() => {

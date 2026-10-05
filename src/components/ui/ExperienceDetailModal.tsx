@@ -8,7 +8,7 @@ import { formatCOP } from "@/lib/cart-context";
 import { openWhatsapp } from "@/lib/whatsapp";
 
 function buildServiceMsg(service: ExperienceService) {
-  return `Hola, soy huésped de AMBAR Hotel Boutique y quisiera más información sobre: ${service.name}.`;
+  return `Hola, soy huésped de Ambar Hotel Boutique y quisiera más información sobre: ${service.name}.`;
 }
 
 export default function ExperienceDetailModal({

@@ -2,7 +2,7 @@ import { HotelInfo } from "@/lib/types";
 import { WHATSAPP_NUMBER, GOOGLE_REVIEW_URL } from "@/lib/config";
 
 export const hotelInfo: HotelInfo = {
-  name: "AMBAR Hotel Boutique",
+  name: "Ambar Hotel Boutique",
   tagline: "Un refugio elegante en el corazón de Cali",
   whatsappNumber: WHATSAPP_NUMBER,
   emergencyNumbers: [

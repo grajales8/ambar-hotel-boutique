@@ -7,7 +7,7 @@ export const guideSections: GuideSection[] = [
     icon: "Sparkles",
     image: "/rooms/habitacion-bienvenida.jpg",
     content: [
-      "Nos alegra tenerte en AMBAR Hotel Boutique. Esta guía reúne todo lo que necesitas para sentirte como en casa durante tu estadía.",
+      "Nos alegra tenerte en Ambar Hotel Boutique. Esta guía reúne todo lo que necesitas para sentirte como en casa durante tu estadía.",
       "Si en algún momento necesitas algo que no encuentres aquí, escríbenos por el chat de recepción; estamos disponibles las 24 horas.",
     ],
     scope: "habitacion",
@@ -61,7 +61,7 @@ export const guideSections: GuideSection[] = [
     icon: "Landmark",
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200&auto=format&fit=crop",
     content: [
-      "AMBAR nació de la idea de crear un espacio íntimo y cálido en Cali, donde cada detalle está pensado para el descanso y el buen servicio.",
+      "Ambar nació de la idea de crear un espacio íntimo y cálido en Cali, donde cada detalle está pensado para el descanso y el buen servicio.",
       "Nuestro nombre honra la calidez y la luz dorada que caracteriza a la ciudad, presente en cada rincón del hotel.",
     ],
     scope: "hotel",

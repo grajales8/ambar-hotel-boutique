@@ -13,7 +13,7 @@ import ExperienceDetailModal from "@/components/ui/ExperienceDetailModal";
 import { openWhatsapp } from "@/lib/whatsapp";
 
 function buildServiceMsg(service: ExperienceService) {
-  return `Hola, soy huésped de AMBAR Hotel Boutique y quisiera más información sobre: ${service.name}.`;
+  return `Hola, soy huésped de Ambar Hotel Boutique y quisiera más información sobre: ${service.name}.`;
 }
 
 function orderByOrder<T extends { order?: number; id: string }>(list: T[]): T[] {
@@ -235,7 +235,7 @@ export default function ExperiencesPage() {
   return (
     <main className="h-[100svh] overflow-hidden flex flex-col bg-[#0B0B0C]">
       <div className="sticky top-0 z-30 flex-none bg-[#0B0B0C]">
-        <PageHeader sticky={false} title="Servicios & Experiencias" subtitle="El portafolio de AMBAR para tu ocasión" />
+        <PageHeader sticky={false} title="Servicios & Experiencias" subtitle="El portafolio de Ambar para tu ocasión" />
 
         <div className="px-5 py-3 flex-none">
           <CategoryTabs

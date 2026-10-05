@@ -93,7 +93,7 @@ export default function MenuGrid() {
       <div className="mt-4 md:mt-6 space-y-3 md:space-y-4">
         <motion.a
           href={buildWhatsappLink(
-            "Hola, soy huésped de AMBAR Hotel Boutique y quisiera hacer una consulta."
+            "Hola, soy huésped de Ambar Hotel Boutique y quisiera hacer una consulta."
           )}
           target="_blank"
           rel="noopener noreferrer"

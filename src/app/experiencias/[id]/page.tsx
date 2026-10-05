@@ -52,7 +52,7 @@ export default function ExperienceDetailPage() {
     );
   }
 
-  const whatsappMessage = `Hola, quisiera más información sobre "${service.name}" en AMBAR Hotel Boutique.`;
+  const whatsappMessage = `Hola, quisiera más información sobre "${service.name}" en Ambar Hotel Boutique.`;
 
   return (
     <main className="min-h-screen bg-[#0B0B0C] pb-12">

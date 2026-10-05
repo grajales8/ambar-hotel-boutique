@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
         <Lock size={30} className="text-[#B8935C]" />
       </div>
       <h1 className="font-display mt-8 text-3xl text-[#F5EFE6]">Panel administrativo</h1>
-      <p className="mt-2 text-base text-[#D4CCBF]">AMBAR Hotel Boutique</p>
+      <p className="mt-2 text-base text-[#D4CCBF]">Ambar Hotel Boutique</p>
 
       <form onSubmit={handleSubmit} className="mt-10 w-full max-w-md space-y-5">
         <div className="space-y-2">

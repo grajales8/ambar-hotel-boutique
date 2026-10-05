@@ -185,7 +185,7 @@ function BoutiqueContent() {
   return (
     <main className="h-[100svh] overflow-hidden flex flex-col bg-[#0B0B0C]">
       <div className="sticky top-0 z-30 flex-none bg-[#0B0B0C]">
-        <PageHeader sticky={false} title="Boutique" subtitle="Detalles de AMBAR para llevar" />
+        <PageHeader sticky={false} title="Boutique" subtitle="Detalles de Ambar para llevar" />
 
         <div className="px-5 py-3 flex-none">
           <CategoryTabs
