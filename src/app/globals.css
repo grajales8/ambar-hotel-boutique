@@ -20,7 +20,7 @@
   --color-ink: #F5EFE6;
   --color-ink-soft: #D4CCBF;
 
-  --font-display: "Fraunces", serif;
+  --font-display: "Cormorant Garamond", "Fraunces", serif;
   --font-body: "Manrope", sans-serif;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -56,6 +56,17 @@ body {
 
 h1, h2, h3, .font-display {
   font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-variant-ligatures: common-ligatures discretionary-ligatures;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.005em;
+}
+.font-display.text-sm,
+.font-display.text-base,
+.font-display.text-lg {
+  letter-spacing: 0.01em;
 }
 
 /* Sello dorado — elemento de firma reutilizado como divisor de sección */
